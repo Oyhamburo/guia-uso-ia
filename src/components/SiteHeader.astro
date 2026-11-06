@@ -17,6 +17,21 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
       </span>
       <span class="map-cta"><span aria-hidden="true">⌂</span> Mapa del recorrido</span>
     </a>
+    <button
+      class="presentation-toggle"
+      type="button"
+      data-presentation-toggle
+      aria-pressed="false"
+      aria-label="Activar modo presentación"
+      title="Mostrar esta guía como diapositivas"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="13" rx="2"></rect>
+        <path d="M8 21h8M12 17v4"></path>
+        <path d="m10 8 5 2.5-5 2.5Z" class="play"></path>
+      </svg>
+      <span data-presentation-toggle-label>Presentar</span>
+    </button>
   </nav>
 </header>
 
@@ -34,12 +49,15 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   .top-nav {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     min-height: 74px;
   }
 
   .home-link {
     display: flex;
-    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
@@ -108,6 +126,40 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
     outline-offset: 4px;
   }
 
+  .presentation-toggle {
+    display: inline-flex;
+    min-height: 50px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+    padding: .75rem 1.15rem;
+    border: 2px solid #ffe1a0;
+    border-radius: 1rem;
+    background: #f5bd43;
+    box-shadow: 3px 4px 0 #071720;
+    color: #172c3a;
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
+    transition: translate 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  }
+
+  .presentation-toggle svg {
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .presentation-toggle svg .play { fill: currentColor; stroke: none; }
+  .presentation-toggle:hover { translate: 0 -2px; box-shadow: 3px 6px 0 #071720; background: #ffd269; }
+  .presentation-toggle[aria-pressed="true"] { border-color: #b8f0e0; background: #176b55; color: white; }
+  .presentation-toggle:focus-visible { outline: 3px solid white; outline-offset: 4px; }
+
   @media (max-width: 760px) {
     .top-nav {
       min-height: 0;
@@ -119,12 +171,24 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
     }
 
     .map-cta {
-      padding-inline: 0.65rem;
-      font-size: 0.78rem;
+      display: none;
+    }
+
+    .presentation-toggle {
+      min-height: 46px;
+      gap: .45rem;
+      padding: .62rem .78rem;
+      border-radius: .85rem;
+      font-size: .78rem;
+    }
+
+    .presentation-toggle svg {
+      width: 1.15rem;
+      height: 1.15rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .map-cta { transition: none; }
+    .map-cta, .presentation-toggle { transition: none; }
   }
 </style>

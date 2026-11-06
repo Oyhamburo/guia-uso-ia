@@ -1,0 +1,388 @@
+<div class="presentation-controls" data-presentation-controls hidden role="group" aria-label="Controles de presentación">
+  <button type="button" class="slide-button previous" data-presentation-previous aria-label="Diapositiva anterior">
+    <span aria-hidden="true">←</span><span>Anterior</span>
+  </button>
+  <div class="presentation-status">
+    <strong data-presentation-counter>1 / 1</strong>
+    <span data-presentation-label aria-live="polite">Presentación</span>
+  </div>
+  <button type="button" class="slide-button next" data-presentation-next aria-label="Diapositiva siguiente">
+    <span>Siguiente</span><span aria-hidden="true">→</span>
+  </button>
+  <button type="button" class="exit-button" data-presentation-exit>
+    <span aria-hidden="true">×</span><span>Salir</span>
+  </button>
+</div>
+
+<script>
+  const STORAGE_KEY = "expedicion-ia:presentation";
+  const EDGE_KEY = "expedicion-ia:presentation-edge";
+  const SLIDE_KEY = `expedicion-ia:slide:${location.pathname}`;
+
+  const body = document.body;
+  const main = document.querySelector<HTMLElement>("main#contenido");
+  const controls = document.querySelector<HTMLElement>("[data-presentation-controls]");
+  const previousButton = controls?.querySelector<HTMLButtonElement>("[data-presentation-previous]");
+  const nextButton = controls?.querySelector<HTMLButtonElement>("[data-presentation-next]");
+  const exitButton = controls?.querySelector<HTMLButtonElement>("[data-presentation-exit]");
+  const counter = controls?.querySelector<HTMLElement>("[data-presentation-counter]");
+  const liveLabel = controls?.querySelector<HTMLElement>("[data-presentation-label]");
+  const toggles = [...document.querySelectorAll<HTMLButtonElement>("[data-presentation-toggle]")];
+
+  let slides: HTMLElement[] = [];
+  let currentSlide = 0;
+  let savedScroll = 0;
+  let isPresenting = false;
+  let fullscreenRequested = false;
+  let presentationTrigger: HTMLElement | null = null;
+  const addedFocusTargets = new Set<HTMLElement>();
+  const originalSlideState = new Map<HTMLElement, {
+    hidden: HTMLElement["hidden"];
+    inert: boolean;
+    ariaHidden: string | null;
+    scrollTop: number;
+  }>();
+
+  const storage = {
+    get(key: string) {
+      try { return sessionStorage.getItem(key); } catch { return null; }
+    },
+    set(key: string, value: string) {
+      try { sessionStorage.setItem(key, value); } catch { /* Storage can be unavailable. */ }
+    },
+    remove(key: string) {
+      try { sessionStorage.removeItem(key); } catch { /* Storage can be unavailable. */ }
+    }
+  };
+
+  const isSafeRoute = (link: HTMLAnchorElement) => {
+    if (link.hasAttribute("download") || (link.target && link.target !== "_self")) return false;
+    try {
+      const target = new URL(link.href, location.href);
+      const sameDocument = target.pathname === location.pathname && target.search === location.search;
+      return target.origin === location.origin
+        && (target.protocol === "http:" || target.protocol === "https:")
+        && !sameDocument;
+    } catch {
+      return false;
+    }
+  };
+
+  const routeLink = (direction: "previous" | "next") => {
+    if (!main) return null;
+    const selectors = direction === "next"
+      ? [
+          ".trail-summary a.button",
+          ".level-actions a.next",
+          ".next-route a.primary",
+          ".next-expedition a",
+          "nav[aria-label*='Continuar'] a:last-of-type"
+        ]
+      : [
+          ".trail-summary a.previous",
+          ".level-actions > a:first-child",
+          ".next-route > a:first-child",
+          ".quiz-nav a.back",
+          ".hero-actions a:first-child",
+          "a.button[href*='/parte-2/preguntas/']"
+        ];
+    for (const selector of selectors) {
+      const link = main.querySelector<HTMLAnchorElement>(selector);
+      if (link?.href && isSafeRoute(link)) return link;
+    }
+    return null;
+  };
+
+  const slideName = (slide: HTMLElement, index: number) => {
+    const heading = slide.querySelector<HTMLElement>("h1, h2, h3, summary");
+    return heading?.textContent?.trim() || `Diapositiva ${index + 1}`;
+  };
+
+  const updateToggles = () => {
+    toggles.forEach((toggle) => {
+      toggle.setAttribute("aria-pressed", String(isPresenting));
+      toggle.setAttribute("aria-label", isPresenting ? "Salir del modo presentación" : "Activar modo presentación");
+      toggle.title = isPresenting ? "Volver a la página con desplazamiento" : "Mostrar esta guía como diapositivas";
+      const label = toggle.querySelector<HTMLElement>("[data-presentation-toggle-label]");
+      if (label) {
+        toggle.dataset.presentationInactiveLabel ||= label.textContent?.trim() || "Presentar";
+        label.textContent = isPresenting ? "Salir" : toggle.dataset.presentationInactiveLabel;
+      }
+    });
+  };
+
+  const showSlide = (index: number, { focus = true } = {}) => {
+    if (!slides.length) return;
+    currentSlide = Math.max(0, Math.min(index, slides.length - 1));
+    slides.forEach((slide, slideIndex) => {
+      const active = slideIndex === currentSlide;
+      slide.hidden = !active;
+      slide.inert = !active;
+      if (active) slide.removeAttribute("aria-hidden");
+      else slide.setAttribute("aria-hidden", "true");
+      slide.classList.toggle("is-active-slide", active);
+      if (active) slide.scrollTop = 0;
+    });
+
+    storage.set(SLIDE_KEY, String(currentSlide));
+    if (counter) counter.textContent = `${currentSlide + 1} / ${slides.length}`;
+    if (liveLabel) liveLabel.textContent = slideName(slides[currentSlide], currentSlide);
+
+    const previousRoute = routeLink("previous");
+    const nextRoute = routeLink("next");
+    if (previousButton) {
+      previousButton.disabled = currentSlide === 0 && !previousRoute;
+      previousButton.setAttribute("aria-label", currentSlide === 0 && previousRoute ? "Ir a la pantalla anterior" : "Diapositiva anterior");
+    }
+    if (nextButton) {
+      nextButton.disabled = currentSlide === slides.length - 1 && !nextRoute;
+      nextButton.setAttribute("aria-label", currentSlide === slides.length - 1 && nextRoute ? "Ir a la pantalla siguiente" : "Diapositiva siguiente");
+    }
+
+    if (focus) {
+      const heading = slides[currentSlide].querySelector<HTMLElement>("h1, h2, h3") || slides[currentSlide];
+      if (!heading.hasAttribute("tabindex")) {
+        heading.setAttribute("tabindex", "-1");
+        addedFocusTargets.add(heading);
+      }
+      requestAnimationFrame(() => heading.focus({ preventScroll: true }));
+    }
+  };
+
+  const prepareSlides = () => {
+    if (!main) return [];
+    return [...main.children].filter((element): element is HTMLElement => {
+      if (!(element instanceof HTMLElement)) return false;
+      if (["NAV", "SCRIPT", "STYLE", "TEMPLATE"].includes(element.tagName)) return false;
+      if (element.matches("[data-presentation-ignore]") || element.hidden || element.inert) return false;
+      return element.getAttribute("aria-hidden") !== "true";
+    });
+  };
+
+  const restoreSlides = () => {
+    slides.forEach((slide) => {
+      const original = originalSlideState.get(slide);
+      slide.hidden = original?.hidden ?? false;
+      slide.inert = original?.inert ?? false;
+      if (original?.ariaHidden == null) slide.removeAttribute("aria-hidden");
+      else slide.setAttribute("aria-hidden", original.ariaHidden);
+      if (original) slide.scrollTop = original.scrollTop;
+      slide.removeAttribute("data-presentation-slide");
+      slide.classList.remove("is-active-slide");
+    });
+    addedFocusTargets.forEach((element) => element.removeAttribute("tabindex"));
+    addedFocusTargets.clear();
+    originalSlideState.clear();
+    slides = [];
+  };
+
+  const enterPresentation = async ({ requestFullscreen = false, focus = true, trigger = null as HTMLElement | null } = {}) => {
+    if (!main || !controls || isPresenting) return;
+    slides = prepareSlides();
+    if (!slides.length) return;
+
+    savedScroll = window.scrollY;
+    presentationTrigger = trigger;
+    isPresenting = true;
+    document.documentElement.classList.add("is-presenting");
+    body.classList.add("is-presenting");
+    controls.hidden = false;
+    slides.forEach((slide) => {
+      originalSlideState.set(slide, {
+        hidden: slide.hidden,
+        inert: slide.inert,
+        ariaHidden: slide.getAttribute("aria-hidden"),
+        scrollTop: slide.scrollTop
+      });
+      slide.setAttribute("data-presentation-slide", "");
+    });
+    storage.set(STORAGE_KEY, "true");
+    updateToggles();
+
+    const edge = storage.get(EDGE_KEY);
+    storage.remove(EDGE_KEY);
+    const storedIndex = Number.parseInt(storage.get(SLIDE_KEY) || "0", 10);
+    const initialIndex = edge === "last" ? slides.length - 1 : edge === "first" ? 0 : Number.isFinite(storedIndex) ? storedIndex : 0;
+    showSlide(initialIndex, { focus });
+
+    if (requestFullscreen && document.documentElement.requestFullscreen && !document.fullscreenElement) {
+      try {
+        fullscreenRequested = true;
+        await document.documentElement.requestFullscreen();
+      } catch {
+        fullscreenRequested = false;
+      }
+    }
+  };
+
+  const exitPresentation = async ({ exitFullscreen = true } = {}) => {
+    if (!isPresenting) return;
+    isPresenting = false;
+    document.documentElement.classList.remove("is-presenting");
+    body.classList.remove("is-presenting");
+    if (controls) controls.hidden = true;
+    restoreSlides();
+    storage.remove(STORAGE_KEY);
+    updateToggles();
+    window.scrollTo({ top: savedScroll, behavior: "auto" });
+
+    if (exitFullscreen && document.fullscreenElement && document.exitFullscreen) {
+      try { await document.exitFullscreen(); } catch { /* The browser may have already exited. */ }
+    }
+    fullscreenRequested = false;
+    const focusTarget = presentationTrigger?.isConnected ? presentationTrigger : toggles[0];
+    presentationTrigger = null;
+    requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true }));
+  };
+
+  const navigate = (direction: "previous" | "next") => {
+    if (!isPresenting) return;
+    if (direction === "previous" && currentSlide > 0) return showSlide(currentSlide - 1);
+    if (direction === "next" && currentSlide < slides.length - 1) return showSlide(currentSlide + 1);
+    const link = routeLink(direction);
+    if (!link) return;
+    storage.set(EDGE_KEY, direction === "previous" ? "last" : "first");
+    storage.set(STORAGE_KEY, "true");
+    // Native fullscreen ends during navigation. The CSS presentation state stays
+    // persisted so the next page can resume without another permission prompt.
+    fullscreenRequested = false;
+    location.assign(link.href);
+  };
+
+  toggles.forEach((toggle) => toggle.addEventListener("click", () => {
+    if (isPresenting) void exitPresentation();
+    else void enterPresentation({ requestFullscreen: true, trigger: toggle });
+  }));
+  previousButton?.addEventListener("click", () => navigate("previous"));
+  nextButton?.addEventListener("click", () => navigate("next"));
+  exitButton?.addEventListener("click", () => void exitPresentation());
+
+  document.addEventListener("keydown", (event) => {
+    if (!isPresenting) return;
+    const target = event.target as HTMLElement | null;
+    if (event.defaultPrevented) return;
+    const interactive = target?.closest("a, button, input, textarea, select, summary, [contenteditable='true'], [role='button'], [role='slider'], [role='radio']");
+    if (interactive && event.key !== "Escape") return;
+    if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+      event.preventDefault();
+      navigate("next");
+    } else if (["ArrowLeft", "PageUp"].includes(event.key)) {
+      event.preventDefault();
+      navigate("previous");
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      void exitPresentation();
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!isPresenting || !(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>("a[href]");
+    if (link && isSafeRoute(link)) {
+      fullscreenRequested = false;
+      storage.set(EDGE_KEY, "first");
+    }
+  }, { capture: true });
+
+  window.addEventListener("beforeunload", () => {
+    // Page changes implicitly end native fullscreen. Do not interpret that as
+    // the user leaving presentation mode; sessionStorage resumes it next page.
+    fullscreenRequested = false;
+  });
+
+  document.addEventListener("fullscreenchange", () => {
+    if (fullscreenRequested && !document.fullscreenElement && isPresenting) {
+      fullscreenRequested = false;
+      void exitPresentation({ exitFullscreen: false });
+    }
+  });
+
+  updateToggles();
+  if (storage.get(STORAGE_KEY) === "true") {
+    void enterPresentation({ requestFullscreen: false, focus: false });
+  }
+</script>
+
+<style>
+  .presentation-controls {
+    position: fixed;
+    right: 50%;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 100;
+    display: grid;
+    grid-template-columns: auto minmax(120px, auto) auto auto;
+    align-items: center;
+    gap: .45rem;
+    padding: .45rem;
+    border: 1px solid rgb(255 255 255 / 22%);
+    border-radius: 999px;
+    background: rgb(23 44 58 / 94%);
+    box-shadow: 0 14px 45px rgb(7 23 32 / 38%);
+    color: white;
+    translate: 50% 0;
+    backdrop-filter: blur(16px);
+  }
+
+  .presentation-controls[hidden] { display: none; }
+  .slide-button, .exit-button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: .4rem; padding: .6rem .8rem; border: 0; border-radius: 999px; color: white; font: inherit; font-weight: 850; cursor: pointer; }
+  .slide-button { background: rgb(255 255 255 / 12%); }
+  .slide-button.next { background: #f5bd43; color: #172c3a; }
+  .exit-button { background: #99412f; }
+  .slide-button:hover:not(:disabled), .exit-button:hover { filter: brightness(1.12); }
+  .slide-button:focus-visible, .exit-button:focus-visible { outline: 3px solid #ffe1a0; outline-offset: 3px; }
+  .slide-button:disabled { opacity: .35; cursor: not-allowed; }
+  .presentation-status { display: grid; min-width: 0; justify-items: center; padding-inline: .45rem; line-height: 1.1; }
+  .presentation-status strong { color: #ffe1a0; font-family: var(--font-mono); font-size: .78rem; }
+  .presentation-status span { max-width: 22ch; overflow: hidden; color: #dce6e2; font-size: .7rem; text-overflow: ellipsis; white-space: nowrap; }
+
+  :global(html.is-presenting), :global(body.is-presenting) { height: 100%; overflow: hidden; overscroll-behavior: none; }
+  :global(body.is-presenting .skip-link) { display: none; }
+  :global(body.is-presenting .site-header) { position: fixed; inset: 0 0 auto; z-index: 90; }
+  :global(body.is-presenting .site-footer) { display: none; }
+  :global(body.is-presenting #contenido) {
+    position: fixed;
+    inset: 74px 0 0;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  :global(body.is-presenting #contenido > :not([data-presentation-slide])) { display: none !important; }
+  :global(body.is-presenting #contenido > [data-presentation-slide][hidden]) { display: none !important; }
+  :global(body.is-presenting #contenido > [data-presentation-slide]) {
+    position: absolute;
+    inset: clamp(.75rem, 2vw, 1.5rem) 1rem 5.4rem;
+    width: min(1180px, calc(100% - 2rem)) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    animation: presentation-in 180ms ease-out;
+  }
+  :global(body.is-presenting #contenido > .level-hero[data-presentation-slide]::before) { display: none; }
+  :global(body.is-presenting .map-home > [data-presentation-slide]) { width: min(1440px, calc(100% - 1rem)) !important; }
+  :global(body.is-presenting .map-canvas) { height: calc(100dvh - 150px) !important; min-height: 560px !important; }
+  :global(body.is-presenting .map-heading) { scale: .82; transform-origin: left top; }
+
+  @keyframes presentation-in { from { opacity: 0; translate: 24px 0; } to { opacity: 1; translate: 0 0; } }
+
+  @media (max-width: 760px) {
+    .presentation-controls { right: .5rem; bottom: max(.5rem, env(safe-area-inset-bottom)); left: .5rem; grid-template-columns: auto 1fr auto auto; border-radius: 1rem; translate: 0; }
+    .slide-button span:not([aria-hidden="true"]), .exit-button span:last-child { display: none; }
+    .slide-button, .exit-button { width: 44px; padding: 0; }
+    :global(body.is-presenting #contenido) { inset-block-start: 64px; }
+    :global(body.is-presenting #contenido > [data-presentation-slide]) { inset: .5rem .5rem 4.7rem; width: calc(100% - 1rem) !important; }
+    :global(body.is-presenting .map-canvas) { height: calc(100dvh - 128px) !important; min-height: 0 !important; }
+    :global(body.is-presenting .map-heading) { scale: .72; transform-origin: left top; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(body.is-presenting #contenido > [data-presentation-slide]) { animation: none; }
+  }
+</style>

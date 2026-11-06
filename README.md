@@ -4,6 +4,10 @@ Una guía visual y práctica para aprender a usar inteligencia artificial con cr
 
 La portada es el único mapa global. Desde allí se puede entrar a cualquier parada; dentro de cada recorrido, la navegación avanza de una pantalla a la siguiente. Los juegos y evaluaciones aparecen únicamente al final de cada parte.
 
+## Modo presentación
+
+El botón **Presentar** del navbar transforma la ruta actual en diapositivas a pantalla completa. Se puede avanzar con los controles, las flechas, `Page Up` / `Page Down` o la barra espaciadora, y salir con `Escape` o **Salir**. El modo se mantiene al pasar de un nivel al siguiente.
+
 ## Recorridos
 
 - **Parte 1 · Primeras huellas:** tres niveles para personas sin conocimientos técnicos y un campamento con tres juegos.
