@@ -1,0 +1,201 @@
+---
+import DinoAvatar from "./DinoAvatar.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+
+const stops = [
+  {
+    step: "01",
+    title: "Conocé a la IA",
+    copy: "Qué puede hacer, qué no y qué estás usando realmente.",
+    dino: "bruna",
+    color: "sky",
+    path: "parte-1/nivel-1/"
+  },
+  {
+    step: "02",
+    title: "Dale una misión clara",
+    copy: "Transformá una idea suelta en un pedido útil.",
+    dino: "paco",
+    color: "fossil",
+    path: "parte-1/nivel-2/"
+  },
+  {
+    step: "03",
+    title: "Usala con criterio",
+    copy: "Verificá, cuidá los datos y decidí según el riesgo.",
+    dino: "vera",
+    color: "coral",
+    path: "parte-1/nivel-3/"
+  },
+  {
+    step: "J",
+    title: "Campamento de juegos",
+    copy: "Practicá lo aprendido con desafíos cortos y feedback inmediato.",
+    dino: "anky",
+    color: "fern",
+    path: "parte-1/juegos/"
+  }
+] as const;
+---
+
+<section class="expedition-map" id="mapa" aria-labelledby="map-title">
+  <div class="map-heading">
+    <div>
+      <span class="eyebrow">Parte 1 · Expedición inicial</span>
+      <h2 id="map-title">Tres paradas. Cero requisitos técnicos.</h2>
+      <p>Podés hacer el recorrido completo o entrar directo al tema que necesitás.</p>
+    </div>
+    <span class="map-key"><span aria-hidden="true">●</span> recorrido recomendado</span>
+  </div>
+
+  <ol class="stops">
+    {stops.map((stop) => (
+      <li class={`stop stop-${stop.color}`}>
+        <a href={href(stop.path)}>
+          <span class="stop-number">{stop.step}</span>
+          <DinoAvatar dino={stop.dino} size="sm" />
+          <span class="stop-copy">
+            <strong>{stop.title}</strong>
+            <small>{stop.copy}</small>
+          </span>
+          <span class="stop-arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .expedition-map {
+    position: relative;
+    padding: clamp(1.3rem, 4vw, 2.5rem);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(rgb(255 253 247 / 76%), rgb(255 253 247 / 76%)),
+      repeating-radial-gradient(circle at 20% 30%, transparent 0 25px, rgb(23 107 85 / 11%) 26px 28px);
+    box-shadow: 6px 7px 0 var(--ink);
+  }
+
+  .map-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  h2 { max-width: 14ch; margin-top: 0.45rem; }
+  .map-heading p { max-width: 55ch; margin: 0.8rem 0 0; color: var(--muted); }
+
+  .map-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .map-key span { color: var(--coral); }
+
+  .stops {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stops::before {
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    left: 5%;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, var(--coral) 0 12px, transparent 12px 23px);
+    content: "";
+  }
+
+  .stop { --stop: var(--jungle); position: relative; z-index: 1; }
+  .stop-sky { --stop: var(--sky); }
+  .stop-fossil { --stop: #9b6600; }
+  .stop-coral { --stop: var(--coral); }
+  .stop-fern { --stop: var(--jungle); }
+
+  .stop a {
+    display: grid;
+    min-height: 330px;
+    grid-template-rows: auto 120px 1fr auto;
+    align-items: start;
+    gap: 0.35rem;
+    padding: 1rem;
+    border: 2px solid var(--ink);
+    border-radius: 22px;
+    background: var(--white);
+    box-shadow: 4px 5px 0 var(--ink);
+    color: var(--ink);
+    text-decoration: none;
+    transition: translate 160ms ease, box-shadow 160ms ease;
+  }
+
+  .stop a:hover {
+    translate: 0 -4px;
+    box-shadow: 5px 8px 0 var(--ink);
+    color: var(--ink);
+  }
+
+  .stop-number {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 13px;
+    background: var(--stop);
+    color: white;
+    font-family: var(--font-display);
+    font-weight: 900;
+  }
+
+  .stop :global(.dino-avatar) { align-self: center; justify-self: center; max-height: 120px; }
+  .stop :global(.dino-avatar svg) { max-height: 120px; }
+
+  .stop-copy { display: grid; gap: 0.35rem; }
+  .stop-copy { min-width: 0; }
+  .stop-copy strong { color: var(--stop); font-family: var(--font-display); font-size: 1.18rem; line-height: 1.1; }
+  .stop-copy small { color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
+  .stop-arrow { justify-self: end; color: var(--stop); font-size: 1.5rem; font-weight: 900; }
+
+  @media (max-width: 930px) {
+    .stops { grid-template-columns: 1fr 1fr; }
+    .stops::before { display: none; }
+    .stop a { min-height: 290px; }
+  }
+
+  @media (max-width: 590px) {
+    .expedition-map { padding-inline: 0.85rem; }
+    .map-heading { display: grid; align-items: start; }
+    .map-key { white-space: normal; }
+    .stops { grid-template-columns: 1fr; }
+    .stop a {
+      min-height: 0;
+      grid-template-columns: 42px 72px minmax(0, 1fr) auto;
+      grid-template-rows: 1fr;
+      align-items: center;
+      padding: 0.75rem;
+    }
+    .stop :global(.dino-avatar) { max-width: 72px; }
+    .stop :global(.dino-avatar svg) { max-height: 64px; }
+    .stop-copy strong,
+    .stop-copy small { overflow-wrap: anywhere; }
+  }
+</style>

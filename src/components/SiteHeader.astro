@@ -1,0 +1,160 @@
+---
+interface Props {
+  current?: "home" | "parte-1" | "juegos" | "parte-2" | "parte-3";
+}
+
+const { current = "home" } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+const links = [
+  { key: "parte-1", label: "Expedición inicial", path: "parte-1/" },
+  { key: "juegos", label: "Juegos", path: "parte-1/juegos/" },
+  { key: "parte-2", label: "Laboratorio técnico", path: "parte-2/" },
+  { key: "parte-3", label: "Próxima expedición", path: "parte-3/" }
+];
+---
+
+<header class="site-header">
+  <nav class="top-nav wrap" aria-label="Navegación principal">
+    <a class="brand" href={href("")} aria-current={current === "home" ? "page" : undefined}>
+      <span class="brand-footprint" aria-hidden="true">◆</span>
+      <span><strong>Expedición IA</strong><small>Aprender sin perder el criterio</small></span>
+    </a>
+    <div class="nav-scroller" tabindex="0" aria-label="Secciones de la guía">
+      <ul class="nav-links">
+        {links.map((link) => (
+          <li>
+            <a href={href(link.path)} aria-current={current === link.key ? "page" : undefined}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    border-bottom: 1px solid rgb(255 255 255 / 14%);
+    background: rgb(23 44 58 / 94%);
+    box-shadow: 0 6px 20px rgb(23 44 58 / 12%);
+    backdrop-filter: blur(14px);
+  }
+
+  .top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 74px;
+    gap: 1.5rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.7rem;
+    color: white;
+    text-decoration: none;
+  }
+
+  .brand:hover {
+    color: #fff4c4;
+  }
+
+  .brand-footprint {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    rotate: 45deg;
+    border: 2px solid #ffe1a0;
+    border-radius: 13px 18px 13px 18px;
+    background: #f5bd43;
+    color: var(--night);
+    box-shadow: 3px 3px 0 #071720;
+  }
+
+  .brand > span:last-child {
+    display: grid;
+    line-height: 1.1;
+  }
+
+  .brand strong {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+  }
+
+  .brand small {
+    margin-top: 0.2rem;
+    color: #cadad4;
+    font-size: 0.72rem;
+  }
+
+  .nav-scroller {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .nav-links {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.35rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: #e8f0ed;
+    font-size: 0.86rem;
+    font-weight: 760;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav-links a:hover {
+    border-color: rgb(255 255 255 / 22%);
+    background: rgb(255 255 255 / 9%);
+    color: white;
+  }
+
+  .nav-links a[aria-current="page"] {
+    border-color: #ffe1a0;
+    background: #f5bd43;
+    color: var(--night);
+  }
+
+  @media (max-width: 760px) {
+    .top-nav {
+      display: grid;
+      min-height: 0;
+      padding-block: 0.65rem 0.4rem;
+      gap: 0.25rem;
+    }
+
+    .brand small {
+      display: none;
+    }
+
+    .nav-scroller {
+      width: 100%;
+    }
+
+    .nav-links {
+      padding-inline: 0;
+    }
+  }
+</style>

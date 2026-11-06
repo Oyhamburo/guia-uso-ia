@@ -1,0 +1,53 @@
+---
+import "../styles/global.css";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  current?: "home" | "parte-1" | "juegos" | "parte-2" | "parte-3";
+  theme?: "field" | "technical";
+  hideChrome?: boolean;
+}
+
+const {
+  title,
+  description = "Una expedición visual para aprender a usar inteligencia artificial con criterio.",
+  current: currentProp,
+  theme = "field",
+  hideChrome = false
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = title === "Expedición IA" ? title : `${title} · Expedición IA`;
+const current = currentProp ?? (
+  Astro.url.pathname.includes("/parte-1/juegos") ? "juegos" :
+  Astro.url.pathname.includes("/parte-1") ? "parte-1" :
+  Astro.url.pathname.includes("/parte-2") ? "parte-2" :
+  Astro.url.pathname.includes("/parte-3") ? "parte-3" : "home"
+);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content={theme === "technical" ? "#172c3a" : "#f7f3e8"} />
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}favicon.svg`} />
+    <link rel="canonical" href={canonical} />
+    <title>{fullTitle}</title>
+  </head>
+  <body data-theme={theme}>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    {!hideChrome && <SiteHeader current={current} />}
+    <slot />
+    {!hideChrome && <SiteFooter />}
+  </body>
+</html>

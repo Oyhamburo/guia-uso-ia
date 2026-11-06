@@ -1,0 +1,67 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+---
+
+<footer class="site-footer">
+  <div class="footer-grid wrap">
+    <div>
+      <strong>Expedición IA</strong>
+      <p>Una guía viva, visual y sin promesas mágicas.</p>
+    </div>
+    <nav aria-label="Enlaces del pie">
+      <a href={`${base}parte-1/`}>Empezar</a>
+      <a href={`${base}parte-1/juegos/`}>Practicar</a>
+      <a href="https://oyhamburo.github.io/iaventuras/">IAventuras ↗</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 3rem;
+    padding-block: 2.8rem;
+    border-top: 1px solid var(--line);
+    background: rgb(238 231 213 / 78%);
+  }
+
+  .footer-grid {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  strong {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+  }
+
+  p {
+    margin: 0.3rem 0 0;
+    color: var(--muted);
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: 1rem;
+  }
+
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 800;
+  }
+
+  @media (max-width: 620px) {
+    .footer-grid {
+      display: grid;
+    }
+
+    nav {
+      justify-content: start;
+    }
+  }
+</style>

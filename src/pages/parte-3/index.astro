@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LevelHero from "../../components/LevelHero.astro";
+import ConceptCard from "../../components/ConceptCard.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+---
+
+<BaseLayout
+  title="Próxima expedición"
+  description="La futura parte avanzada de Expedición IA sobre coordinación de varios agentes."
+  current="parte-3"
+  theme="technical"
+>
+  <main id="contenido">
+    <div class="wrap page-shell">
+      <LevelHero
+        eyebrow="Parte 3 · Próxima expedición"
+        title="La manada avanzada todavía está explorando."
+        intro="Más adelante vamos a entrar en coordinación de varios agentes, delegación y verificación independiente. Por ahora, el recorrido termina en el laboratorio técnico."
+        dino="roco"
+        dinoLabel="Roco"
+        guide="No publicamos una zona nueva hasta poder explicarla y practicarla bien."
+        tone="technical"
+        compact={true}
+      >
+        <a slot="actions" class="button" href={`${base}parte-2/`}>Volver al laboratorio</a>
+        <a slot="actions" class="button secondary" href={base}>Ir al mapa principal</a>
+      </LevelHero>
+    </div>
+
+    <section class="section wrap" aria-labelledby="preview-title">
+      <div class="section-heading">
+        <span class="eyebrow">Lo que estamos preparando</span>
+        <h2 id="preview-title">Tres preguntas antes de sumar agentes.</h2>
+      </div>
+      <div class="card-grid">
+        <ConceptCard title="¿Qué delegar?" number="1" accent="violet">
+          <p>Una responsabilidad concreta, no una consigna vaga.</p>
+        </ConceptCard>
+        <ConceptCard title="¿Qué pueden tocar?" number="2" accent="coral">
+          <p>Alcance, permisos y límites explícitos.</p>
+        </ConceptCard>
+        <ConceptCard title="¿Qué evidencia vuelve?" number="3" accent="sky">
+          <p>Hallazgos, cambios y pruebas que otra persona pueda revisar.</p>
+        </ConceptCard>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .page-shell { padding-block: 1.1rem 0; }
+</style>

@@ -1,0 +1,78 @@
+---
+import DinoAvatar from "./DinoAvatar.astro";
+
+interface Props {
+  title?: string;
+  items: string[];
+  dino?: "cera" | "paco" | "vera" | "anky" | "bruna" | "roco";
+  nextHref?: string;
+  nextLabel?: string;
+}
+
+const {
+  title = "Lo que te llevás en la mochila",
+  items,
+  dino = "vera",
+  nextHref,
+  nextLabel = "Seguir la expedición"
+} = Astro.props;
+---
+
+<section class="trail-summary" aria-labelledby="trail-summary-title">
+  <DinoAvatar dino={dino} mood="celebrating" size="sm" />
+  <div>
+    <span class="eyebrow">Resumen de campo</span>
+    <h2 id="trail-summary-title">{title}</h2>
+    <ul>
+      {items.map((item) => <li><span aria-hidden="true">✓</span>{item}</li>)}
+    </ul>
+    {nextHref && <a class="button" href={nextHref}>{nextLabel} →</a>}
+  </div>
+</section>
+
+<style>
+  .trail-summary {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-items: center;
+    gap: 1.5rem;
+    padding: clamp(1.3rem, 3vw, 2.2rem);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-xl);
+    background: #e6f1e9;
+    box-shadow: 5px 6px 0 var(--ink);
+  }
+
+  h2 { margin-top: 0.4rem; font-size: clamp(1.8rem, 4vw, 3rem); }
+
+  ul {
+    display: grid;
+    gap: 0.55rem;
+    margin: 1.25rem 0 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: start;
+    gap: 0.4rem;
+  }
+
+  li span {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--jungle);
+    color: white;
+    font-weight: 900;
+  }
+
+  @media (max-width: 620px) {
+    .trail-summary { grid-template-columns: 1fr; }
+    .trail-summary :global(.dino-avatar) { max-width: 125px; justify-self: center; }
+  }
+</style>
