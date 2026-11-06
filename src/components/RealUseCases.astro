@@ -1,9 +1,9 @@
-<section class="real-use-cases people-cases" aria-labelledby="people-cases-title">
+<section class="real-use-cases" aria-labelledby="real-cases-title">
   <header class="cases-heading">
-    <span class="step">04A</span>
+    <span class="step">04</span>
     <div>
       <p>Casos reales · ya se está usando</p>
-      <h2 id="people-cases-title">Personas y creación</h2>
+      <h2 id="real-cases-title">Seis formas en que ya se usa</h2>
     </div>
   </header>
 
@@ -67,19 +67,7 @@
         <a href="https://www.figma.com/blog/figma-make-general-availability/" target="_blank" rel="noreferrer">Ver Figma Make ↗</a>
       </footer>
     </article>
-  </div>
-</section>
 
-<section class="real-use-cases systems-cases" aria-labelledby="systems-cases-title">
-  <header class="cases-heading">
-    <span class="step">04B</span>
-    <div>
-      <p>Casos reales · distintos grados de autonomía</p>
-      <h2 id="systems-cases-title">Ciencia, código y calles</h2>
-    </div>
-  </header>
-
-  <div class="case-grid">
     <article class="case-card alphafold-card">
       <div class="case-visual protein-visual" aria-hidden="true">
         <svg viewBox="0 0 320 110">
@@ -144,39 +132,37 @@
 
 <style>
   .real-use-cases {
-    margin: 3rem 0;
-    padding: clamp(1.2rem, 4vw, 2.25rem);
-    border-radius: 1.8rem;
-    background: linear-gradient(145deg, #f6f0fa, #eef7fb);
+    margin: 2rem 0;
+    padding: clamp(1rem, 2.5vw, 1.55rem);
+    border-radius: 1.5rem;
+    background: linear-gradient(145deg, #f6f0fa 0%, #eef7fb 48%, #edf7f1 73%, #fff7e7 100%);
     box-shadow: 0 18px 50px rgb(32 48 43 / 9%);
   }
 
-  .systems-cases { background: linear-gradient(145deg, #edf7f1, #fff7e7); }
-
   .cases-heading {
     display: flex;
-    gap: 1rem;
+    gap: .75rem;
     align-items: center;
-    margin-bottom: 1.1rem;
+    margin-bottom: .75rem;
   }
 
   .step {
     display: grid;
-    flex: 0 0 52px;
-    width: 52px;
-    height: 48px;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 42px;
     place-items: center;
     border-radius: 16px;
     background: #20302b;
     color: white;
-    font-size: .82rem;
+    font-size: .76rem;
     font-weight: 900;
   }
 
   .cases-heading p {
     margin: 0;
     color: #6b3d91;
-    font-size: .72rem;
+    font-size: .66rem;
     font-weight: 900;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -184,14 +170,14 @@
 
   .cases-heading h2 {
     margin: .1rem 0 0;
-    font-size: clamp(1.7rem, 4vw, 2.7rem);
+    font-size: clamp(1.45rem, 3.2vw, 2.15rem);
     line-height: 1;
   }
 
   .case-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: .8rem;
+    gap: .6rem;
   }
 
   .case-card {
@@ -200,7 +186,7 @@
     display: grid;
     grid-template-rows: auto 1fr auto;
     border: 1px solid #d5dcd7;
-    border-radius: 1.1rem;
+    border-radius: .95rem;
     background: rgb(255 255 255 / 92%);
     box-shadow: 0 7px 18px rgb(32 48 43 / 7%);
   }
@@ -209,36 +195,36 @@
     position: relative;
     overflow: hidden;
     width: 100%;
-    aspect-ratio: 16 / 6.2;
-    max-height: 112px;
+    aspect-ratio: 16 / 4.5;
+    max-height: 82px;
   }
 
   .video-visual { background: #171126; }
   .video-visual iframe { width: 100%; height: 100%; border: 0; }
 
-  .case-body { padding: .8rem .85rem .55rem; }
-  .area { color: #5a397d; font-size: .7rem; font-weight: 900; letter-spacing: .055em; text-transform: uppercase; }
-  .case-body h3 { margin: .28rem 0; font-size: clamp(1.08rem, 2vw, 1.3rem); }
-  .case-body p { margin: 0; color: #526159; font-size: .88rem; line-height: 1.35; }
+  .case-body { padding: .55rem .68rem .35rem; }
+  .area { color: #5a397d; font-size: .62rem; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+  .case-body h3 { margin: .18rem 0; font-size: clamp(.96rem, 1.55vw, 1.12rem); line-height: 1.08; }
+  .case-body p { margin: 0; color: #526159; font-size: .76rem; line-height: 1.25; }
 
   footer {
     display: flex;
-    min-height: 48px;
+    min-height: 38px;
     align-items: center;
     justify-content: space-between;
-    gap: .45rem;
-    padding: .6rem .85rem .75rem;
+    gap: .35rem;
+    padding: .35rem .68rem .5rem;
   }
 
-  footer a { color: #176b55; font-size: .75rem; font-weight: 850; text-decoration-thickness: .08em; }
+  footer a { color: #176b55; font-size: .68rem; font-weight: 850; text-decoration-thickness: .08em; }
   .case-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .25rem .55rem; }
 
   .maturity {
     display: inline-flex;
     flex: 0 0 auto;
-    padding: .25rem .48rem;
+    padding: .2rem .4rem;
     border-radius: 999px;
-    font-size: .62rem;
+    font-size: .55rem;
     font-weight: 900;
     letter-spacing: .03em;
     text-transform: uppercase;
