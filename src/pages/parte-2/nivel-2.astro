@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LevelHero from "../../components/LevelHero.astro";
+import FieldNote from "../../components/FieldNote.astro";
+import ContextPack from "../../components/ContextPack.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
+---
+
+<BaseLayout title="T2 · La mochila de contexto" description="Tokens, sesión, peticiones, contexto, posición y compactación explicados visualmente." current="parte-2" theme="technical">
+  <main id="contenido" class="tech-level">
+    <LevelHero eyebrow="Parte 2 · Nivel técnico 2" title="La mochila de contexto" intro="El modelo no mantiene una conversación abierta por sí mismo. En cada llamada recibe una selección concreta de instrucciones, mensajes, archivos y resultados." dino="bruna" dinoLabel="Bruna ve el mapa completo" guide="Más espacio no significa que cada dato sea igual de visible." tone="sky">
+      <div slot="actions" class="hero-actions"><a href="#mesa">Abrir la mochila ↓</a><a href={href("parte-2/")}>Mapa técnico</a></div>
+    </LevelHero>
+
+    <section id="mesa" class="visual-section" aria-labelledby="mesa-title">
+      <header><span class="step">01 · La mesa temporal</span><h2 id="mesa-title">Sesión, petición y contexto</h2><p>Tres palabras cercanas que describen cosas diferentes.</p></header>
+      <div class="session-flow" aria-label="Una sesión contiene varias peticiones y cada petición tiene su propio contexto">
+        <article><span>1</span><h3>Sesión</h3><p>La aplicación conserva conversación, estado, archivos y acciones acumuladas.</p></article>
+        <span class="arrow" aria-hidden="true">→</span>
+        <article><span>2</span><h3>Petición</h3><p>Cada mensaje o decisión del agente provoca una llamada nueva.</p></article>
+        <span class="arrow" aria-hidden="true">→</span>
+        <article><span>3</span><h3>Contexto</h3><p>Es la información exacta que el modelo recibe en esa llamada.</p></article>
+      </div>
+      <p class="truth"><b>Una sesión puede tener muchas peticiones.</b> Si una decisión no se vuelve a enviar, el modelo no puede verla aunque siga visible en la interfaz.</p>
+    </section>
+
+    <section class="visual-section" aria-labelledby="token-title">
+      <header><span class="step">02 · La unidad</span><h2 id="token-title">Un token no es una palabra</h2><p>Puede ser una palabra corta, parte de una palabra, un signo o varios caracteres. Por eso un millón de tokens no equivale a un millón de palabras.</p></header>
+      <div class="token-demo" aria-label="Ejemplo conceptual de cómo una frase puede dividirse en tokens"><span>Los</span><span>dino</span><span>saurios</span><span>usan</span><span>IA</span><span>con</span><span>criterio</span><span>.</span></div>
+      <div class="budget" aria-label="Ejemplo conceptual del reparto de una ventana de contexto">
+        <div class="rules">Instrucciones</div><div class="chat">Conversación</div><div class="files">Archivos</div><div class="tools">Tools</div><div class="output">Salida</div>
+      </div>
+      <small class="caption">Ejemplo visual: las proporciones cambian según la tarea y la API.</small>
+    </section>
+
+    <ContextPack />
+
+    <section class="visual-section" aria-labelledby="position-title">
+      <header><span class="step">03 · La posición</span><h2 id="position-title">La información puede perderse en el medio</h2></header>
+      <div class="position-card">
+        <div class="curve" role="img" aria-label="Curva conceptual con mejor recuperación al principio y al final, y menor recuperación en el centro">
+          <svg viewBox="0 0 640 260" aria-hidden="true">
+            <path class="axis" d="M55 30V210H600" /><path class="line" d="M70 60C180 72 185 180 320 187C455 180 470 72 585 58" />
+            <circle cx="70" cy="60" r="8" /><circle class="risk" cx="320" cy="187" r="8" /><circle cx="585" cy="58" r="8" />
+            <text x="56" y="238">Inicio</text><text x="295" y="238">Medio</text><text x="550" y="238">Final</text>
+          </svg>
+        </div>
+        <div><h3>Lost in the middle</h3><p>En contextos largos, distintos modelos mostraron una tendencia: recuperan mejor información ubicada al principio o al final y pueden fallar más con datos enterrados en el centro.</p><ul><li>Reglas críticas al comienzo.</li><li>Material largo con títulos claros.</li><li>Objetivo y resultado esperado reforzados al final.</li></ul><p class="caveat">Es una tendencia medida, no una ley universal.</p></div>
+      </div>
+      <p class="source">Referencia: <a href="https://aclanthology.org/2024.tacl-1.9/" rel="noreferrer">Lost in the Middle, TACL 2024</a>.</p>
+    </section>
+
+    <section class="visual-section" aria-labelledby="compact-title">
+      <header><span class="step">04 · Cuando no entra más</span><h2 id="compact-title">Compactar libera espacio, pero no es gratis</h2></header>
+      <div class="compact-flow">
+        <article><span aria-hidden="true">🧳</span><b>Contexto lleno</b><small>mensajes, archivos y resultados</small></article><span aria-hidden="true">→</span>
+        <article><span aria-hidden="true">🗜️</span><b>Compactación</b><small>seleccionar, resumir, quitar repetición</small></article><span aria-hidden="true">→</span>
+        <article><span aria-hidden="true">📝</span><b>Contexto nuevo</b><small>resumen + reciente + esencial</small></article>
+      </div>
+      <p class="truth warning"><b>El costo:</b> pueden perderse matices, excepciones, decisiones pequeñas o relaciones causales. El modelo continúa desde el resumen; no conserva mágicamente el texto original.</p>
+    </section>
+
+    <FieldNote summary="Ventanas publicadas: una foto fechada" variant="technical">
+      <p>Estos números cambian rápido y no garantizan recuperación perfecta. Verificados el <time datetime="2026-11-06">6 de noviembre de 2026</time>:</p>
+      <div class="model-windows">
+        <span><b>GPT-6 Astra</b><small>1.050.000 tokens</small></span>
+        <span><b>Claude Fable 5.1 / Opus 5.5 / Sonnet 5.5 / Haiku 5.5</b><small>1.000.000 tokens</small></span>
+        <span><b>Gemini 3.8 Flash</b><small>1.048.576 tokens de entrada</small></span>
+      </div>
+      <p class="source">Fuentes oficiales: <a href="https://developers.openai.com/api/docs/models/gpt-6-astra" rel="noreferrer">OpenAI</a>, <a href="https://platform.claude.com/docs/en/models/overview" rel="noreferrer">Anthropic</a> y <a href="https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash" rel="noreferrer">Google</a>.</p>
+    </FieldNote>
+
+    <section class="quick-check"><span class="step">Chequeo de salida</span><h2>La ventana indica cuánto puede entrar.<br><strong>No cuánto se entiende perfectamente.</strong></h2></section>
+
+    <nav class="level-actions" aria-label="Navegación del recorrido técnico"><a href={href("parte-2/nivel-1/")}>← Anatomía de un agente</a><a class="next" href={href("parte-2/nivel-3/")}>Siguiente: trabajo confiable →</a></nav>
+  </main>
+</BaseLayout>
+
+<style>
+  .tech-level { width: min(1100px, calc(100% - 2rem)); margin: 0 auto; padding-bottom: 5rem; }.hero-actions { display: flex; flex-wrap: wrap; gap: .65rem; }.hero-actions a { min-height: 2.75rem; display: inline-flex; align-items: center; padding: .65rem .9rem; border-radius: .8rem; background: #fff; color: #20302b; text-decoration: none; font-weight: 850; }
+  .visual-section { padding: clamp(3rem, 8vw, 6.5rem) 0 0; scroll-margin-top: 6rem; }.visual-section > header { max-width: 780px; margin-bottom: 1.25rem; }.step { display: block; color: #245d7c; font-size: .75rem; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }h2 { margin: .35rem 0 .6rem; font-size: clamp(2rem, 5vw, 4rem); line-height: 1; letter-spacing: -.035em; }header p, article p { color: #51605a; }
+  .session-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: .65rem; align-items: center; }.session-flow article { min-height: 11rem; padding: 1.2rem; border: 1px solid rgba(47,113,150,.22); border-radius: 1.2rem; background: #f0f8fb; }.session-flow article > span { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .6rem; background: #2f7196; color: #fff; font-weight: 900; }.session-flow h3 { margin: .75rem 0 .3rem; }.session-flow p { margin: 0; }.arrow { color: #2f7196; font-size: 1.35rem; font-weight: 900; }
+  .truth { margin: 1rem 0 0; padding: 1rem 1.15rem; border-left: 4px solid #2f7196; border-radius: 0 1rem 1rem 0; background: #e7f4fa; color: #4f5d58; }.truth.warning { border-color: #d99a1e; background: #fff7e5; }
+  .token-demo { display: flex; flex-wrap: wrap; gap: .35rem; padding: 1.25rem; border-radius: 1.2rem; background: #172c3a; }.token-demo span { padding: .45rem .6rem; border: 1px solid rgba(255,255,255,.18); border-radius: .55rem; background: rgba(255,255,255,.1); color: #fff; font: 800 .9rem ui-monospace, monospace; }
+  .budget { display: flex; min-height: 4rem; margin-top: 1rem; overflow: hidden; border-radius: 1rem; }.budget div { display: grid; place-items: center; padding: .5rem; color: #172c3a; font-size: .72rem; font-weight: 900; text-align: center; }.rules{width:15%;background:#c4b5fd}.chat{width:23%;background:#9bd8ea}.files{width:34%;background:#9ed7b5}.tools{width:18%;background:#f5c45f}.output{width:10%;background:#ef9a86}.caption { display: block; margin-top: .4rem; color: #65716d; }
+  .position-card { display: grid; grid-template-columns: 1.1fr .9fr; gap: 1.5rem; align-items: center; padding: clamp(1rem, 3vw, 1.6rem); border: 1px solid rgba(47,113,150,.2); border-radius: 1.4rem; background: #f4f9fa; }.curve { padding: .5rem; border-radius: 1rem; background: #fff; }.curve svg { display: block; width: 100%; height: auto; }.curve .axis { fill: none; stroke: #ccd8d4; stroke-width: 2; }.curve .line { fill: none; stroke: #2f7196; stroke-width: 8; stroke-linecap: round; }.curve circle { fill: #6941a5; }.curve circle.risk { fill: #c9573f; }.curve text { fill: #52615c; font-size: 15px; }.position-card h3 { margin: 0; font-size: 1.5rem; }.position-card p, .position-card li { color: #51605a; }.caveat { padding: .7rem .8rem; border-radius: .8rem; background: #fff3d6; }.source { color: #65716d; font-size: .83rem; }.source a { color: #245d7c; font-weight: 800; }
+  .compact-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: .65rem; align-items: center; }.compact-flow article { display: grid; justify-items: center; min-height: 9rem; align-content: center; gap: .25rem; padding: 1rem; border: 1px solid rgba(32,48,43,.14); border-radius: 1.1rem; background: #fff; text-align: center; }.compact-flow article > span { font-size: 1.8rem; }.compact-flow small { color: #65716d; }
+  .model-windows { display: grid; gap: .5rem; }.model-windows > span { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem .8rem; border-radius: .8rem; background: rgba(47,113,150,.07); }.model-windows small { text-align: right; }
+  .quick-check { margin: clamp(3rem, 8vw, 6rem) 0 2rem; padding: clamp(1.3rem, 4vw, 2.4rem); border-radius: 1.5rem; background: #172c3a; color: #fff; }.quick-check .step { color: #8fd5e9; }.quick-check h2 { margin-bottom: 0; }.quick-check strong { color: #f5c45f; }
+  .level-actions { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; }.level-actions a { color: #375249; font-weight: 850; }.level-actions .next { color: #245d7c; }a:focus-visible { outline: 3px solid #d99a1e; outline-offset: 4px; }
+  @media(max-width:760px){.session-flow,.compact-flow{grid-template-columns:1fr}.arrow,.compact-flow>span{transform:rotate(90deg);text-align:center}.position-card{grid-template-columns:1fr}.budget{flex-direction:column}.budget div{width:100%!important;min-height:2.5rem}.model-windows>span{display:grid}.model-windows small{text-align:left}.level-actions{flex-direction:column}}
+</style>

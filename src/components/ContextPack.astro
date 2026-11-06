@@ -1,0 +1,92 @@
+---
+const items = [
+  { id: "rules", label: "Reglas críticas", units: 2, keep: true, icon: "🧭" },
+  { id: "goal", label: "Objetivo actual", units: 2, keep: true, icon: "🎯" },
+  { id: "files", label: "Archivos relevantes", units: 4, keep: true, icon: "🗂️" },
+  { id: "chat", label: "Conversación reciente", units: 3, keep: true, icon: "💬" },
+  { id: "logs", label: "Logs repetidos", units: 5, keep: false, icon: "📜" },
+  { id: "old", label: "Hipótesis descartadas", units: 4, keep: false, icon: "🦴" }
+];
+---
+
+<section class="context-pack" data-context-pack data-limit="12" aria-labelledby="pack-title">
+  <div class="pack-copy">
+    <span class="kicker">Mini laboratorio</span>
+    <h2 id="pack-title">Armá una mochila de contexto</h2>
+    <p>Elegí qué enviarías en la próxima petición. Tenés <strong>12 espacios</strong>: guardar todo también tiene costo.</p>
+    <div class="meter-copy"><span data-pack-status>0 de 12 espacios</span><span data-pack-hint>Elegí lo esencial</span></div>
+    <div class="meter" role="progressbar" aria-label="Espacio de contexto usado" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0">
+      <span data-pack-meter></span>
+    </div>
+  </div>
+  <div class="pack-items" role="group" aria-label="Elementos disponibles para el contexto">
+    {items.map((item) => (
+      <button type="button" class="pack-item" data-pack-item data-id={item.id} data-units={item.units} data-recommended={String(item.keep)} aria-pressed="false">
+        <span class="item-icon" aria-hidden="true">{item.icon}</span>
+        <span><b>{item.label}</b><small>{item.units} espacios</small></span>
+        <span class="pick" aria-hidden="true">+</span>
+      </button>
+    ))}
+  </div>
+  <p class="pack-feedback" data-pack-feedback aria-live="polite">La aplicación reconstruye esta selección en cada llamada al modelo.</p>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-context-pack]").forEach((pack) => {
+    const limit = Number(pack.dataset.limit || 12);
+    const buttons = [...pack.querySelectorAll<HTMLButtonElement>("[data-pack-item]")];
+    const meter = pack.querySelector<HTMLElement>("[data-pack-meter]");
+    const progress = pack.querySelector<HTMLElement>("[role='progressbar']");
+    const status = pack.querySelector<HTMLElement>("[data-pack-status]");
+    const hint = pack.querySelector<HTMLElement>("[data-pack-hint]");
+    const feedback = pack.querySelector<HTMLElement>("[data-pack-feedback]");
+
+    const update = () => {
+      const chosen = buttons.filter((button) => button.getAttribute("aria-pressed") === "true");
+      const used = chosen.reduce((sum, button) => sum + Number(button.dataset.units || 0), 0);
+      const overflow = used > limit;
+      if (meter) meter.style.width = `${Math.min(100, (used / limit) * 100)}%`;
+      progress?.setAttribute("aria-valuenow", String(Math.min(used, limit)));
+      if (status) status.textContent = `${used} de ${limit} espacios`;
+      if (hint) hint.textContent = overflow ? "Te pasaste del límite" : used === limit ? "Mochila completa" : "Todavía hay lugar";
+      pack.classList.toggle("is-over", overflow);
+
+      if (!feedback) return;
+      if (overflow) feedback.textContent = "No entra todo. Sacá resultados repetidos o material que ya no cambia la decisión.";
+      else if (chosen.length === 0) feedback.textContent = "Sin contexto, el modelo sólo puede responder a una versión vacía del problema.";
+      else if (used === limit && chosen.every((button) => button.dataset.recommended === "true")) feedback.textContent = "Buen recorte: objetivo, reglas y evidencia relevante. La selección importa tanto como el tamaño.";
+      else feedback.textContent = "Preguntate qué dato cambiaría realmente la próxima decisión del agente.";
+    };
+
+    buttons.forEach((button) => button.addEventListener("click", () => {
+      const selected = button.getAttribute("aria-pressed") === "true";
+      button.setAttribute("aria-pressed", String(!selected));
+      button.querySelector(".pick")!.textContent = selected ? "+" : "✓";
+      update();
+    }));
+  });
+</script>
+
+<style>
+  .context-pack { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(1rem, 3vw, 2rem); margin: 2rem 0; padding: clamp(1rem, 3vw, 2rem); border: 1px solid rgba(47,113,150,.24); border-radius: 1.5rem; background: linear-gradient(145deg, rgba(225,243,249,.9), rgba(255,255,255,.88)); }
+  .kicker { color: #245d7c; font-size: .75rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+  h2 { margin: .35rem 0 .65rem; font-size: clamp(1.55rem, 3vw, 2.3rem); line-height: 1.05; }
+  .pack-copy p { color: var(--muted, #51605a); }
+  .meter-copy { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.35rem; font-size: .82rem; font-weight: 800; }
+  .meter { height: .75rem; margin-top: .45rem; overflow: hidden; border-radius: 999px; background: rgba(32,48,43,.1); }
+  .meter span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2f7196, #6941a5); transition: width .2s ease; }
+  .is-over .meter span { background: #b83d32; }
+  .pack-items { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }
+  .pack-item { display: grid; grid-template-columns: auto 1fr auto; gap: .7rem; align-items: center; min-height: 4.7rem; padding: .75rem; border: 1px solid rgba(32,48,43,.14); border-radius: 1rem; background: rgba(255,255,255,.82); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+  .pack-item:hover { border-color: rgba(47,113,150,.5); }
+  .pack-item:focus-visible { outline: 3px solid #d99a1e; outline-offset: 2px; }
+  .pack-item[aria-pressed="true"] { border-color: #2f7196; background: #e7f4fa; box-shadow: inset 0 0 0 1px #2f7196; }
+  .item-icon { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: .75rem; background: #f4f7f6; font-size: 1.2rem; }
+  .pack-item b, .pack-item small { display: block; }
+  .pack-item small { margin-top: .1rem; color: var(--muted, #51605a); }
+  .pick { color: #2f7196; font-weight: 900; }
+  .pack-feedback { grid-column: 1 / -1; margin: 0; padding: .8rem 1rem; border-radius: .9rem; background: rgba(255,255,255,.7); color: var(--muted, #51605a); }
+  @media (max-width: 760px) { .context-pack { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .pack-items { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .meter span { transition: none; } }
+</style>

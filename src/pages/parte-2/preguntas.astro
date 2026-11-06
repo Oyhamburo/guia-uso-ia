@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TechnicalQuiz from "../../components/TechnicalQuiz.astro";
+import { technicalQuestions } from "../../data/part2";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
+---
+
+<BaseLayout title="Preguntas técnicas · Expedición IA" description="Doce escenarios sobre agentes, permisos, contexto y evidencia." current="parte-2" theme="technical">
+  <main id="contenido" class="quiz-page">
+    <a class="back" href={href("parte-2/")}>← Volver al mapa técnico</a>
+    <TechnicalQuiz questions={technicalQuestions} />
+    <aside class="next-expedition">
+      <div><span>Próxima expedición</span><h2>Parte 3 · La manada avanzada</h2><p>Coordinación de varios agentes, roles, delegación, trabajo paralelo y verificación independiente.</p></div>
+      <a href={href("parte-3/")}>Ver el adelanto →</a>
+    </aside>
+  </main>
+</BaseLayout>
+
+<style>
+  .quiz-page { width: min(1100px, calc(100% - 2rem)); margin: 0 auto; padding: clamp(1.5rem, 5vw, 4rem) 0 5rem; }
+  .back { display: inline-flex; margin-bottom: 1.4rem; color: #375249; font-weight: 850; }
+  .back:focus-visible, .next-expedition a:focus-visible { outline: 3px solid #d99a1e; outline-offset: 4px; }
+  .next-expedition { width: min(940px, 100%); display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center; margin: 2rem auto 0; padding: 1.25rem; border: 1px solid rgba(105,65,165,.23); border-radius: 1.25rem; background: #f2edfb; }
+  .next-expedition span { color: #5c358f; font-size: .73rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+  .next-expedition h2 { margin: .25rem 0; font-size: clamp(1.4rem, 3vw, 2rem); }
+  .next-expedition p { max-width: 60ch; margin: 0; color: #51605a; }
+  .next-expedition a { min-height: 2.8rem; display: inline-flex; align-items: center; padding: .7rem .9rem; border-radius: .85rem; background: #20302b; color: #fff; text-decoration: none; font-weight: 850; white-space: nowrap; }
+  @media(max-width:680px){.next-expedition{grid-template-columns:1fr}}
+</style>

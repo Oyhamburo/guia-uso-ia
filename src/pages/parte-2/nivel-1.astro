@@ -1,0 +1,120 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LevelHero from "../../components/LevelHero.astro";
+import FieldNote from "../../components/FieldNote.astro";
+import AgentLoop from "../../components/AgentLoop.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
+---
+
+<BaseLayout title="T1 · Anatomía de un agente" description="Modelo, agente, harness, herramientas, skills, guardrails y MCP sin confundir sus responsabilidades." current="parte-2" theme="technical">
+  <main id="contenido" class="tech-level">
+    <LevelHero eyebrow="Parte 2 · Nivel técnico 1" title="Anatomía de un agente" intro="No todo es “la IA”. Separar las piezas permite entender quién propone, quién ejecuta y quién pone los límites." dino="roco" dinoLabel="Roco abre el tablero del laboratorio" guide="Seguí el recorrido de una acción, no una lista de marcas." tone="technical">
+      <div slot="actions" class="hero-actions"><a href="#ciclo">Ver el ciclo ↓</a><a href={href("parte-2/")}>Mapa técnico</a></div>
+    </LevelHero>
+
+    <section class="visual-section" aria-labelledby="entrada-title">
+      <header><span class="step">01 · Dónde ocurre</span><h2 id="entrada-title">El pedido entra por un cliente</h2><p>El mismo modelo puede aparecer en una web, una app o una terminal. Lo que cambia es el software que lo rodea y qué puede hacer.</p></header>
+      <div class="triptych">
+        <article><span aria-hidden="true">▣</span><h3>Web</h3><p>El backend del producto mantiene conversación, permisos y herramientas.</p></article>
+        <article><span aria-hidden="true">◫</span><h3>Desktop</h3><p>Puede integrar archivos, sistema operativo y atajos locales.</p></article>
+        <article><span aria-hidden="true">›_</span><h3>Terminal</h3><p>Expone archivos y comandos dentro de un alcance controlado.</p></article>
+      </div>
+      <p class="truth"><b>El modelo no se da permisos a sí mismo.</b> Puede proponer una acción; el runtime decide si la tool existe, si está autorizada o si necesita aprobación.</p>
+    </section>
+
+    <section id="ciclo" class="visual-section" aria-labelledby="ciclo-title">
+      <header><span class="step">02 · El ciclo</span><h2 id="ciclo-title">Agente y tool no son sinónimos</h2></header>
+      <AgentLoop />
+      <div class="compare">
+        <article class="agent"><span>Agente</span><h3>Conserva el objetivo</h3><ul><li>Decide qué hacer después.</li><li>Puede usar muchas tools.</li><li>Continúa al observar resultados.</li></ul></article>
+        <article class="tool"><span>Tool</span><h3>Expone una operación</h3><ul><li>Puede ser simple o compleja.</li><li>Recibe parámetros y devuelve algo.</li><li>No dirige el objetivo global.</li></ul></article>
+      </div>
+    </section>
+
+    <section class="visual-section" aria-labelledby="harness-title">
+      <header><span class="step">03 · El entorno</span><h2 id="harness-title">El harness arma la mesa de trabajo</h2><p>Es el software que mantiene el ciclo: prepara contexto, expone herramientas, carga instrucciones y aplica límites.</p></header>
+      <div class="harness-board">
+        <div class="harness-core"><span aria-hidden="true">⚙</span><strong>Harness</strong><small>estado + contexto + permisos</small></div>
+        <div class="satellite"><b>Modelo</b><span>genera la próxima salida</span></div>
+        <div class="satellite"><b>Tools</b><span>leen, buscan o ejecutan</span></div>
+        <div class="satellite"><b>Skills</b><span>aportan un método reusable</span></div>
+        <div class="satellite"><b>Guardrails</b><span>reducen lo permitido</span></div>
+      </div>
+
+      <div class="two-concepts">
+        <article><span class="tag teal">Skill · cómo hacerlo</span><h3>Amplía conocimiento</h3><p>Describe un método, orden o criterio especializado: revisar un PR, desplegar o diseñar un diagrama.</p></article>
+        <article><span class="tag amber">Guardrail · bajo qué condiciones</span><h3>Reduce libertad</h3><p>Bloquea, valida o pide aprobación: no revelar secretos, no borrar datos, no publicar sin confirmar.</p></article>
+      </div>
+
+      <FieldNote summary="Guardrail blando frente a guardrail duro" variant="warning">
+        <div class="note-grid"><p><b>Blando:</b> es una instrucción dentro del contexto. Depende de que el modelo la siga.</p><p><b>Duro:</b> vive fuera del modelo: sandbox, permiso denegado, esquema obligatorio o aprobación humana. Aunque el modelo insista, la acción no ocurre.</p></div>
+      </FieldNote>
+    </section>
+
+    <section class="visual-section" aria-labelledby="pieces-title">
+      <header><span class="step">04 · Tres piezas</span><h2 id="pieces-title">Pensar, ejecutar y conectar</h2></header>
+      <div class="piece-grid">
+        <article><span class="piece-icon violet" aria-hidden="true">◇</span><h3>Modelo</h3><p>Recibe contexto y produce una salida: texto, datos estructurados, contenido multimodal o una solicitud de herramienta.</p></article>
+        <article><span class="piece-icon green" aria-hidden="true">⚙</span><h3>Tool</h3><p>Realiza una operación acotada y devuelve un resultado al ciclo.</p></article>
+        <article><span class="piece-icon amber" aria-hidden="true">⇄</span><h3>MCP</h3><p>Es un protocolo. Un servidor puede publicar tools, recursos y prompts para clientes compatibles.</p></article>
+      </div>
+      <FieldNote summary="¿Dónde viven las instrucciones y las skills?" variant="technical">
+        <p>No existe una ubicación universal. Pueden estar versionadas en el repositorio —por ejemplo <code>AGENTS.md</code>, <code>CLAUDE.md</code> o carpetas de skills—, en la configuración personal de una máquina o incluidas por el producto. Los archivos configuran el harness; no son el harness.</p>
+        <p><b>El recorrido importa:</b> el harness registra lo disponible, usa metadata para clasificarlo, prepara el contexto y controla cada acción. Una carpeta ayuda a ordenar, pero no convierte por sí sola un archivo en skill o guardrail: eso depende de cómo el producto lo carga, qué prioridad le da y si el límite también está implementado fuera del prompt.</p>
+      </FieldNote>
+    </section>
+
+    <section class="quick-check" aria-labelledby="check-title">
+      <div><span class="step">Chequeo de salida</span><h2 id="check-title">Si puede preguntarse “¿qué hago ahora?” y continuar…</h2></div>
+      <strong>…estás viendo comportamiento de agente.</strong>
+      <p>Si sólo recibe parámetros, ejecuta y devuelve, estás viendo una tool.</p>
+    </section>
+
+    <nav class="level-actions" aria-label="Navegación del recorrido técnico"><a href={href("parte-2/")}>← Mapa técnico</a><a class="next" href={href("parte-2/nivel-2/")}>Siguiente: la mochila de contexto →</a></nav>
+  </main>
+</BaseLayout>
+
+<style>
+  .tech-level { width: min(1100px, calc(100% - 2rem)); margin: 0 auto; padding-bottom: 5rem; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+  .hero-actions a { min-height: 2.75rem; display: inline-flex; align-items: center; padding: .65rem .9rem; border-radius: .8rem; background: #fff; color: #20302b; text-decoration: none; font-weight: 850; }
+  .visual-section { padding: clamp(3rem, 8vw, 6.5rem) 0 0; scroll-margin-top: 6rem; }
+  .visual-section > header { max-width: 760px; margin-bottom: 1.25rem; }
+  .step { display: block; color: #5c358f; font-size: .75rem; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }
+  h2 { margin: .35rem 0 .6rem; font-size: clamp(2rem, 5vw, 4rem); line-height: 1; letter-spacing: -.035em; }
+  header p, article p { color: #51605a; }
+  .triptych, .piece-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+  .triptych article, .piece-grid article, .two-concepts article { padding: 1.25rem; border: 1px solid rgba(32,48,43,.14); border-radius: 1.2rem; background: rgba(255,255,255,.76); }
+  .triptych article > span { color: #6941a5; font: 900 1.5rem ui-monospace, monospace; }
+  article h3 { margin: .55rem 0 .25rem; }
+  article p { margin: 0; }
+  .truth { margin: 1rem 0 0; padding: 1rem 1.15rem; border-left: 4px solid #d99a1e; border-radius: 0 1rem 1rem 0; background: #fff7e5; color: #4f5d58; }
+  .compare, .two-concepts { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+  .compare article { padding: 1.3rem; border-radius: 1.2rem; }
+  .compare .agent { background: #f1ecfb; border: 1px solid rgba(105,65,165,.28); }
+  .compare .tool { background: #e8f5ef; border: 1px solid rgba(23,107,85,.25); }
+  .compare article > span, .tag { font-size: .75rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .compare ul { margin: .75rem 0 0; padding-left: 1.1rem; color: #51605a; }
+  .harness-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; padding: 1rem; border: 1px solid rgba(105,65,165,.22); border-radius: 1.5rem; background: #f4f0fb; }
+  .harness-core { grid-column: 1 / -1; justify-self: center; min-width: min(320px, 100%); display: grid; justify-items: center; gap: .15rem; padding: 1rem; border-radius: 1rem; background: #20302b; color: #fff; }
+  .harness-core > span { font-size: 1.4rem; }
+  .harness-core small { color: #dce5e1; }
+  .satellite { display: grid; gap: .2rem; padding: 1rem; border-radius: 1rem; background: #fff; text-align: center; }
+  .satellite span { color: #51605a; font-size: .85rem; }
+  .two-concepts { margin: .8rem 0; }
+  .tag { display: inline-flex; padding: .4rem .55rem; border-radius: 999px; }
+  .tag.teal { background: #dff3e9; color: #145c49; }
+  .tag.amber { background: #fff0cc; color: #714c00; }
+  .note-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  .note-grid p { margin: 0; }
+  code { padding: .15rem .35rem; border-radius: .4rem; background: rgba(105,65,165,.1); }
+  .piece-icon { display: grid; place-items: center; width: 2.8rem; height: 2.8rem; border-radius: .9rem; font-size: 1.25rem; }
+  .piece-icon.violet { background: #eee8fa; color: #5c358f; }.piece-icon.green { background: #dff3e9; color: #145c49; }.piece-icon.amber { background: #fff0cc; color: #714c00; }
+  .quick-check { margin: clamp(3rem, 8vw, 6rem) 0 2rem; padding: clamp(1.3rem, 4vw, 2.4rem); border-radius: 1.5rem; background: #172c3a; color: #fff; }
+  .quick-check .step { color: #f5c45f; }.quick-check h2 { max-width: 20ch; }.quick-check > strong { color: #9fe0ca; font-size: clamp(1.25rem, 3vw, 2rem); }.quick-check p { color: #dce6e8; }
+  .level-actions { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; }.level-actions a { color: #375249; font-weight: 850; }.level-actions .next { color: #5c358f; }
+  a:focus-visible { outline: 3px solid #d99a1e; outline-offset: 4px; }
+  @media (max-width: 720px) { .triptych, .piece-grid, .harness-board { grid-template-columns: 1fr; }.harness-core { grid-column: auto; }.compare, .two-concepts, .note-grid { grid-template-columns: 1fr; }.level-actions { flex-direction: column; } }
+</style>

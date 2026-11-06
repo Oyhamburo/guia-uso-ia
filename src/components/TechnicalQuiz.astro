@@ -1,0 +1,82 @@
+---
+import type { TechnicalQuestion } from "../data/part2";
+
+interface Props {
+  questions: TechnicalQuestion[];
+}
+
+const { questions } = Astro.props;
+const payload = JSON.stringify(questions).replaceAll("<", "\\u003c");
+---
+
+<section class="technical-quiz" data-technical-quiz aria-labelledby="quiz-title">
+  <header class="quiz-head">
+    <div>
+      <span class="kicker">Bitácora técnica</span>
+      <h1 id="quiz-title">¿Qué aprendiste debajo del capó?</h1>
+      <p>Doce escenarios. Sin ranking: cada respuesta abre una explicación.</p>
+    </div>
+    <div class="quiz-progress" aria-live="polite">
+      <span data-quiz-counter>Pregunta 1 de {questions.length}</span>
+      <div class="progress-track" role="progressbar" aria-label="Progreso del desafío" aria-valuemin="1" aria-valuemax={questions.length} aria-valuenow="1"><span data-quiz-progress></span></div>
+    </div>
+  </header>
+
+  <div class="quiz-stage" data-quiz-stage>
+    <span class="topic" data-quiz-topic></span>
+    <h2 id="quiz-question" data-quiz-prompt tabindex="-1"></h2>
+    <div class="quiz-options" data-quiz-options role="group" aria-labelledby="quiz-question"></div>
+    <div class="quiz-feedback" data-quiz-feedback hidden tabindex="-1">
+      <strong data-feedback-title></strong>
+      <p data-feedback-copy></p>
+    </div>
+    <button class="next-button" type="button" data-quiz-next hidden>Siguiente huella →</button>
+  </div>
+
+  <div class="quiz-finish" data-quiz-finish hidden>
+    <span aria-hidden="true">🦖</span>
+    <h2 data-quiz-finish-title tabindex="-1">Expedición completada</h2>
+    <p data-quiz-summary></p>
+    <div class="topic-recap" data-topic-recap></div>
+    <button type="button" data-quiz-restart>Volver a intentarlo</button>
+  </div>
+
+  <script type="application/json" data-quiz-data set:html={payload}></script>
+</section>
+
+<script>
+  import "../scripts/technical-quiz.js";
+</script>
+
+<style>
+  .technical-quiz { width: min(940px, 100%); margin: 0 auto; }
+  .quiz-head { display: grid; grid-template-columns: 1fr minmax(190px, .35fr); gap: 1.5rem; align-items: end; margin-bottom: 1.25rem; }
+  .kicker, .topic { color: #5c358f; font-size: .75rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+  h1 { margin: .35rem 0 .5rem; font-size: clamp(2rem, 5vw, 4rem); line-height: .95; }
+  .quiz-head p { margin: 0; color: var(--muted, #51605a); }
+  .quiz-progress { display: grid; gap: .45rem; font-size: .84rem; font-weight: 800; }
+  .progress-track { height: .7rem; overflow: hidden; border-radius: 999px; background: rgba(32,48,43,.1); }
+  .progress-track span { display: block; width: 8.33%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #6941a5, #2f7196); transition: width .25s ease; }
+  .quiz-stage, .quiz-finish { padding: clamp(1.1rem, 4vw, 2.5rem); border: 1px solid rgba(105,65,165,.26); border-radius: 1.6rem; background: rgba(255,255,255,.82); box-shadow: 0 22px 55px rgba(35,46,41,.1); }
+  .quiz-stage h2 { max-width: 30ch; margin: .55rem 0 1.35rem; font-size: clamp(1.4rem, 3vw, 2.15rem); line-height: 1.15; }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  :global(.quiz-option) { min-height: 4.5rem; padding: 1rem; border: 1px solid rgba(32,48,43,.18); border-radius: 1rem; background: #fff; color: inherit; font: inherit; font-weight: 750; text-align: left; cursor: pointer; }
+  :global(.quiz-option:hover) { border-color: #6941a5; }
+  :global(.quiz-option:focus-visible), .next-button:focus-visible, .quiz-finish button:focus-visible { outline: 3px solid #d99a1e; outline-offset: 3px; }
+  :global(.quiz-option.is-correct) { border-color: #176b55; background: #e7f6ef; }
+  :global(.quiz-option.is-wrong) { border-color: #b83d32; background: #fff0ed; }
+  :global(.quiz-option:disabled) { color: inherit; cursor: default; opacity: 1; }
+  .quiz-feedback { margin-top: 1rem; padding: 1rem 1.1rem; border-radius: 1rem; background: #f5f1ff; }
+  .quiz-feedback strong { display: block; margin-bottom: .25rem; }
+  .quiz-feedback p { margin: 0; color: var(--muted, #51605a); }
+  .next-button, .quiz-finish button { min-height: 3rem; margin-top: 1rem; padding: .75rem 1.05rem; border: 0; border-radius: .9rem; background: #20302b; color: #fff; font: inherit; font-weight: 850; cursor: pointer; }
+  .quiz-finish { text-align: center; }
+  .quiz-finish > span { font-size: 4rem; }
+  .quiz-finish h2 { margin: .4rem 0; font-size: clamp(1.8rem, 4vw, 3rem); }
+  .quiz-finish p { color: var(--muted, #51605a); }
+  .topic-recap { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: 1rem; }
+  :global(.recap-chip) { padding: .5rem .7rem; border-radius: 999px; background: #f1ecfb; font-size: .82rem; font-weight: 800; }
+  [hidden] { display: none !important; }
+  @media (max-width: 680px) { .quiz-head { grid-template-columns: 1fr; } .quiz-options { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .progress-track span { transition: none; } }
+</style>
