@@ -346,23 +346,25 @@
   :global(body.is-presenting #contenido) {
     position: fixed;
     inset: 74px 0 0;
+    display: grid !important;
+    place-items: center;
     width: 100% !important;
     max-width: none !important;
     min-height: 0 !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: clamp(.75rem, 2vw, 1.5rem) 1rem 5.4rem !important;
     overflow: hidden !important;
   }
   :global(body.is-presenting #contenido > :not([data-presentation-slide])) { display: none !important; }
   :global(body.is-presenting #contenido > [data-presentation-slide][hidden]) { display: none !important; }
   :global(body.is-presenting #contenido > [data-presentation-slide]) {
-    position: absolute;
-    inset: clamp(.75rem, 2vw, 1.5rem) 1rem 5.4rem;
-    width: min(1180px, calc(100% - 2rem)) !important;
-    height: auto !important;
+    position: relative;
+    inset: auto;
+    width: min(1180px, 100%) !important;
+    height: fit-content !important;
     min-height: 0 !important;
-    max-height: none !important;
-    margin: 0 auto !important;
+    max-height: 100% !important;
+    margin: 0 !important;
     align-content: safe center;
     overflow-x: hidden;
     overflow-y: auto;
@@ -371,8 +373,13 @@
     animation: presentation-in 180ms ease-out;
   }
   :global(body.is-presenting #contenido > .level-hero[data-presentation-slide]::before) { display: none; }
-  :global(body.is-presenting .map-home > [data-presentation-slide]) { width: min(1440px, calc(100% - 1rem)) !important; }
-  :global(body.is-presenting .map-canvas) { height: calc(100dvh - 150px) !important; min-height: 560px !important; }
+  :global(body.is-presenting #contenido > .visual-section[data-presentation-slide]) { padding: clamp(1.25rem, 3vw, 2.5rem) 0 !important; }
+  :global(body.is-presenting #contenido.map-home > .map-shell[data-presentation-slide]) {
+    width: min(1120px, calc(150dvh - 500px), 100%) !important;
+    align-content: start;
+  }
+  :global(body.is-presenting .map-canvas) { aspect-ratio: 3 / 2; height: auto !important; min-height: 0 !important; }
+  :global(body.is-presenting .map-canvas .stamp-two) { display: none; }
   :global(body.is-presenting .map-heading) { scale: .82; transform-origin: left top; }
 
   @keyframes presentation-in { from { opacity: 0; translate: 24px 0; } to { opacity: 1; translate: 0 0; } }
@@ -381,10 +388,11 @@
     .presentation-controls { right: .5rem; bottom: max(.5rem, env(safe-area-inset-bottom)); left: .5rem; grid-template-columns: auto 1fr auto auto; border-radius: 1rem; translate: 0; }
     .slide-button span:not([aria-hidden="true"]), .exit-button span:last-child { display: none; }
     .slide-button, .exit-button { width: 44px; padding: 0; }
-    :global(body.is-presenting #contenido) { inset-block-start: 64px; }
-    :global(body.is-presenting #contenido > [data-presentation-slide]) { inset: .5rem .5rem 4.7rem; width: calc(100% - 1rem) !important; }
-    :global(body.is-presenting .map-canvas) { height: calc(100dvh - 128px) !important; min-height: 0 !important; }
-    :global(body.is-presenting .map-heading) { scale: .72; transform-origin: left top; }
+    :global(body.is-presenting #contenido) { inset-block-start: 64px; padding: .5rem .5rem 4.7rem !important; }
+    :global(body.is-presenting #contenido > [data-presentation-slide]) { width: 100% !important; }
+    :global(body.is-presenting #contenido.map-home > .map-shell[data-presentation-slide]) { max-height: 100%; overflow-y: auto; align-content: start; }
+    :global(body.is-presenting .map-canvas) { aspect-ratio: auto; height: 1780px !important; }
+    :global(body.is-presenting .map-heading) { scale: 1; }
   }
 
   @media (prefers-reduced-motion: reduce) {
