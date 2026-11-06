@@ -1,12 +1,42 @@
-# Guía para usar IA con criterio
+# Expedición IA
 
-Guía en cuatro niveles para usar inteligencia artificial en equipo:
+Una guía visual y práctica para aprender a usar inteligencia artificial con criterio. La experiencia usa dinosaurios, tarjetas breves y actividades interactivas para avanzar desde lo cotidiano hasta conceptos técnicos.
 
-1. [Usar IA con criterio](guia-uso-ia.html)
-2. [Anatomía de un sistema de IA](guia-uso-ia-nivel-2.html)
-3. [Trabajar con IA](guia-uso-ia-nivel-3.html)
-4. [Agentes, subagentes y coordinación](guia-uso-ia-nivel-4.html)
+## Recorridos
 
-Son páginas HTML estáticas sin dependencias externas. Para verla localmente, abrí `guia-uso-ia.html` en el navegador.
+- **Parte 1 · Primeras huellas:** tres niveles para personas sin conocimientos técnicos y un campamento con tres juegos.
+- **Parte 2 · Territorio técnico:** agentes, contexto y trabajo confiable, con una evaluación final.
+- **Parte 3 · Próxima expedición:** anticipo del futuro nivel avanzado.
 
-Para repasar lo aprendido está el juego de preguntas [IAventuras](https://oyhamburo.github.io/iaventuras/).
+[IAventuras](https://oyhamburo.github.io/iaventuras/) sigue siendo un juego independiente y vive en su propio repositorio.
+
+## Desarrollo local
+
+Requiere Node.js 22.23.4 o superior.
+
+```bash
+npm install
+npm run dev
+```
+
+Otros comandos:
+
+```bash
+npm run check    # valida Astro y TypeScript
+npm run build    # valida y genera el sitio estático en dist/
+npm run preview  # sirve el build local
+```
+
+## Estructura
+
+```text
+src/components/  componentes visuales y juegos
+src/data/        contenido estructurado de cada recorrido
+src/pages/       rutas del sitio
+src/styles/      sistema visual global
+public/          favicon y redirecciones desde las URLs anteriores
+```
+
+## Publicación
+
+El sitio se construye con [Astro](https://astro.build/) y se publica en GitHub Pages mediante `.github/workflows/deploy.yml`. En la configuración del repositorio, **Pages → Build and deployment → Source** debe estar en **GitHub Actions**.
