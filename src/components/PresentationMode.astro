@@ -41,6 +41,7 @@
     inert: boolean;
     ariaHidden: string | null;
     scrollTop: number;
+    open?: boolean;
   }>();
 
   const storage = {
@@ -167,6 +168,7 @@
       if (original?.ariaHidden == null) slide.removeAttribute("aria-hidden");
       else slide.setAttribute("aria-hidden", original.ariaHidden);
       if (original) slide.scrollTop = original.scrollTop;
+      if (slide instanceof HTMLDetailsElement && original?.open !== undefined) slide.open = original.open;
       slide.removeAttribute("data-presentation-slide");
       slide.classList.remove("is-active-slide");
     });
@@ -192,8 +194,10 @@
         hidden: slide.hidden,
         inert: slide.inert,
         ariaHidden: slide.getAttribute("aria-hidden"),
-        scrollTop: slide.scrollTop
+        scrollTop: slide.scrollTop,
+        open: slide instanceof HTMLDetailsElement ? slide.open : undefined
       });
+      if (slide instanceof HTMLDetailsElement) slide.open = true;
       slide.setAttribute("data-presentation-slide", "");
     });
     storage.set(STORAGE_KEY, "true");
@@ -359,6 +363,7 @@
     min-height: 0 !important;
     max-height: none !important;
     margin: 0 auto !important;
+    align-content: safe center;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
