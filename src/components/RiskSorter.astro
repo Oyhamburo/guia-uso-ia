@@ -1,107 +1,321 @@
 ---
+import DinoAvatar from "./DinoAvatar.astro";
+
 const scenarios = [
-  {
-    text: "Pedís ideas de nombres para una actividad interna.",
-    answer: "green",
-    why: "Es exploratorio y fácil de descartar."
-  },
-  {
-    text: "La IA resume un informe que vas a compartir con todo el equipo.",
-    answer: "yellow",
-    why: "Revisá que no cambie datos, tono o conclusiones."
-  },
-  {
-    text: "Una respuesta recomienda cambiar una medicación.",
-    answer: "red",
-    why: "No actúes sólo con esa salida: necesitás una persona calificada."
-  },
-  {
-    text: "Querés pegar una planilla con nombres, mails y teléfonos.",
-    answer: "red",
-    why: "Frená: son datos personales y necesitás una herramienta y permiso adecuados."
-  }
-];
+  { icon: "💡", text: "Pedís ideas de nombres para una actividad interna.", answer: "green", why: "Es exploratorio, no usa datos sensibles y cualquier idea se puede descartar." },
+  { icon: "📣", text: "La IA resume un informe que vas a compartir con todo el equipo.", answer: "yellow", why: "Antes de compartirlo, revisá que no cambie datos, tono o conclusiones." },
+  { icon: "💊", text: "Una respuesta recomienda cambiar una medicación.", answer: "red", why: "No actúes sólo con esa salida: necesitás una persona calificada." },
+  { icon: "🔐", text: "Querés pegar una planilla con nombres, mails y teléfonos.", answer: "red", why: "Son datos personales: primero comprobá permisos y qué herramienta puede recibirlos." }
+] as const;
+
+const nests = [
+  { value: "green", icon: "🌱", label: "Explorá", help: "Bajo riesgo" },
+  { value: "yellow", icon: "🔎", label: "Verificá", help: "Revisá antes" },
+  { value: "red", icon: "🛑", label: "Frená", help: "Pedí ayuda" }
+] as const;
 ---
 
 <section class="risk-game" data-risk-game aria-labelledby="risk-game-title">
-  <header>
-    <div class="signal" aria-hidden="true"><i></i><i></i><i></i></div>
+  <header class="game-heading">
+    <div class="guide-dino" data-guide-dino aria-hidden="true"><DinoAvatar name="anky" mood="alert" size="small" /></div>
     <div>
       <p>Semáforo de decisiones</p>
-      <h3 id="risk-game-title">¿Explorás, verificás o frenás?</h3>
+      <h3 id="risk-game-title">Protegé el nido</h3>
+      <span>Una situación por vez. Elegí cuánto cuidado necesita.</span>
     </div>
   </header>
-  <p class="intro">Elegí una respuesta por situación. Después vas a ver el porqué.</p>
-  <form>
-    <ol>
+
+  <div class="trail-progress" aria-label="Avance del juego">
+    {scenarios.map((_, index) => (
+      <span data-progress-dot data-state={index === 0 ? "active" : "waiting"}>
+        <span class="sr-only">{index === 0 ? "Situación actual" : "Situación pendiente"}</span>
+      </span>
+    ))}
+  </div>
+
+  <p id="risk-instructions" class="instructions">
+    Arrastrá la tarjeta hasta un nido. También podés <strong>seleccionarla</strong> y después elegir el destino.
+  </p>
+
+  <div class="play-area" data-play-area>
+    <div class="card-deck" aria-live="polite">
       {scenarios.map((scenario, index) => (
-        <li data-answer={scenario.answer} data-why={scenario.why}>
-          <p><strong>{index + 1}.</strong> {scenario.text}</p>
-          <div class="risk-options">
-            <label><input type="radio" name={`risk-${index}`} value="green" /> <span>🟢 Explorá</span></label>
-            <label><input type="radio" name={`risk-${index}`} value="yellow" /> <span>🟡 Verificá</span></label>
-            <label><input type="radio" name={`risk-${index}`} value="red" /> <span>🔴 Frená</span></label>
-          </div>
-          <div class="explanation" hidden aria-live="polite"></div>
-        </li>
+        <button
+          type="button"
+          class="scenario-card"
+          data-risk-card
+          data-index={index}
+          data-answer={scenario.answer}
+          data-why={scenario.why}
+          aria-pressed="false"
+          aria-describedby="risk-instructions"
+          draggable="true"
+          hidden={index !== 0}
+        >
+          <span class="grab" aria-hidden="true">⠿</span>
+          <span class="scenario-icon" aria-hidden="true">{scenario.icon}</span>
+          <span>{scenario.text}</span>
+          <small>Arrastrame o tocame</small>
+        </button>
       ))}
-    </ol>
-    <button type="submit">Revisar decisiones</button>
-  </form>
-  <p class="summary" data-summary hidden aria-live="polite"></p>
+    </div>
+
+    <div class="nest-grid" aria-label="Destinos posibles">
+      {nests.map((nest) => (
+        <button type="button" class={`nest nest-${nest.value}`} data-risk-target={nest.value} aria-label={`Clasificar como ${nest.label}: ${nest.help}`}>
+          <span class="nest-icon" aria-hidden="true">{nest.icon}</span>
+          <strong>{nest.label}</strong>
+          <small>{nest.help}</small>
+          <span class="nest-mouth" aria-hidden="true"></span>
+        </button>
+      ))}
+    </div>
+
+    <div class="feedback" data-feedback hidden role="status" aria-live="polite" tabindex="-1"></div>
+    <button type="button" class="next-card" data-next-card hidden>Siguiente situación <span aria-hidden="true">→</span></button>
+  </div>
+
+  <div class="finish-panel" data-finish-panel hidden tabindex="-1">
+    <div class="finish-dino" aria-hidden="true"><DinoAvatar name="anky" mood="celebrating" size="medium" /></div>
+    <div>
+      <p>¡Nido protegido!</p>
+      <h4>Mediste el riesgo antes de actuar.</h4>
+      <button type="button" data-restart>Jugar otra vez</button>
+    </div>
+    <i class="spark spark-one" aria-hidden="true"></i><i class="spark spark-two" aria-hidden="true"></i><i class="spark spark-three" aria-hidden="true"></i>
+  </div>
 </section>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-risk-game]").forEach((game) => {
-    const form = game.querySelector("form");
-    const summary = game.querySelector<HTMLElement>("[data-summary]");
-    if (!form || !summary) return;
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const cards = [...game.querySelectorAll<HTMLElement>("li[data-answer]")];
-      let completed = 0;
-      let correct = 0;
-      cards.forEach((card) => {
-        const picked = card.querySelector<HTMLInputElement>("input:checked");
-        const explanation = card.querySelector<HTMLElement>(".explanation");
-        if (!picked || !explanation) return;
-        completed += 1;
-        const isCorrect = picked.value === card.dataset.answer;
-        if (isCorrect) correct += 1;
-        explanation.hidden = false;
-        explanation.dataset.state = isCorrect ? "ok" : "review";
-        explanation.textContent = `${isCorrect ? "Bien. " : "Revisalo. "}${card.dataset.why}`;
+    const cards = [...game.querySelectorAll<HTMLButtonElement>("[data-risk-card]")];
+    const targets = [...game.querySelectorAll<HTMLButtonElement>("[data-risk-target]")];
+    const dots = [...game.querySelectorAll<HTMLElement>("[data-progress-dot]")];
+    const playArea = game.querySelector<HTMLElement>("[data-play-area]");
+    const feedback = game.querySelector<HTMLElement>("[data-feedback]");
+    const nextButton = game.querySelector<HTMLButtonElement>("[data-next-card]");
+    const finish = game.querySelector<HTMLElement>("[data-finish-panel]");
+    const restart = game.querySelector<HTMLButtonElement>("[data-restart]");
+    const guide = game.querySelector<HTMLElement>("[data-guide-dino]");
+    if (!cards.length || !targets.length || !playArea || !feedback || !nextButton || !finish || !restart) return;
+
+    let current = 0;
+    let chosen = false;
+    let locked = false;
+    let completionEmitted = false;
+    const activeCard = () => cards[current];
+
+    const clearTargets = () => targets.forEach((target) => {
+      target.classList.remove("is-over");
+      delete target.dataset.state;
+    });
+
+    const selectCard = (card: HTMLButtonElement | undefined) => {
+      if (!card || locked || card !== activeCard()) return;
+      chosen = true;
+      card.setAttribute("aria-pressed", "true");
+      card.dataset.state = "selected";
+      guide?.setAttribute("data-state", "thinking");
+    };
+
+    const announceHint = () => {
+      feedback.hidden = false;
+      feedback.dataset.state = "hint";
+      feedback.innerHTML = "<strong>Primero elegí la tarjeta.</strong> Después tocá uno de los tres nidos.";
+      activeCard()?.focus();
+    };
+
+    const tryTarget = (target: HTMLButtonElement) => {
+      const card = activeCard();
+      if (!card || locked) return;
+      if (!chosen) return announceHint();
+
+      clearTargets();
+      const correct = target.dataset.riskTarget === card.dataset.answer;
+      target.dataset.state = correct ? "ok" : "retry";
+      feedback.hidden = false;
+      feedback.dataset.state = correct ? "ok" : "retry";
+      feedback.innerHTML = `<strong>${correct ? "¡Buena decisión!" : "Ese nido no protege este caso."}</strong> ${card.dataset.why || ""}`;
+
+      if (!correct) {
+        delete card.dataset.state;
+        void card.offsetWidth;
+        card.dataset.state = "retry";
+        guide?.setAttribute("data-state", "retry");
+        chosen = true;
+        card.setAttribute("aria-pressed", "true");
+        requestAnimationFrame(() => card.focus({ preventScroll: true }));
+        return;
+      }
+
+      locked = true;
+      card.dataset.state = "ok";
+      card.setAttribute("aria-pressed", "false");
+      guide?.setAttribute("data-state", "celebrate");
+      dots[current]?.setAttribute("data-state", "done");
+      nextButton.hidden = false;
+      nextButton.textContent = current === cards.length - 1 ? "Ver resultado" : "Siguiente situación →";
+      requestAnimationFrame(() => nextButton.focus({ preventScroll: true }));
+    };
+
+    const showCard = (index: number) => {
+      current = index;
+      chosen = false;
+      locked = false;
+      feedback.hidden = true;
+      feedback.textContent = "";
+      delete feedback.dataset.state;
+      nextButton.hidden = true;
+      clearTargets();
+      guide?.removeAttribute("data-state");
+      cards.forEach((card, cardIndex) => {
+        card.hidden = cardIndex !== current;
+        card.setAttribute("aria-pressed", "false");
+        delete card.dataset.state;
       });
-      summary.hidden = false;
-      summary.textContent = completed < cards.length
-        ? `Respondé las ${cards.length - completed} situaciones que faltan.`
-        : correct === cards.length
-          ? "¡Nido protegido! Mediste el riesgo antes de actuar."
-          : `Acertaste ${correct} de ${cards.length}. Leé cada explicación y volvé a intentarlo.`;
+      dots.forEach((dot, dotIndex) => {
+        const state = dotIndex < current ? "done" : dotIndex === current ? "active" : "waiting";
+        dot.dataset.state = state;
+        const label = dot.querySelector<HTMLElement>(".sr-only");
+        if (label) label.textContent = state === "done" ? "Situación completada" : state === "active" ? "Situación actual" : "Situación pendiente";
+        if (state === "active") dot.setAttribute("aria-current", "step");
+        else dot.removeAttribute("aria-current");
+      });
+      activeCard()?.focus({ preventScroll: true });
+    };
+
+    const complete = () => {
+      playArea.hidden = true;
+      finish.hidden = false;
+      if (!completionEmitted) {
+        completionEmitted = true;
+        game.dispatchEvent(new CustomEvent("game:complete", { bubbles: true }));
+      }
+      finish.focus({ preventScroll: true });
+    };
+
+    cards.forEach((card) => {
+      card.addEventListener("click", () => selectCard(card));
+      card.addEventListener("dragstart", (event) => {
+        if (card !== activeCard() || locked) return event.preventDefault();
+        selectCard(card);
+        card.dataset.state = "dragging";
+        event.dataTransfer?.setData("text/plain", card.dataset.index || "");
+        if (event.dataTransfer) event.dataTransfer.effectAllowed = "move";
+      });
+      card.addEventListener("dragend", () => {
+        if (!locked && card.dataset.state === "dragging") card.dataset.state = chosen ? "selected" : "";
+        targets.forEach((target) => target.classList.remove("is-over"));
+      });
+    });
+
+    targets.forEach((target) => {
+      target.addEventListener("click", () => tryTarget(target));
+      target.addEventListener("dragenter", (event) => { event.preventDefault(); target.classList.add("is-over"); });
+      target.addEventListener("dragover", (event) => { event.preventDefault(); if (event.dataTransfer) event.dataTransfer.dropEffect = "move"; });
+      target.addEventListener("dragleave", () => target.classList.remove("is-over"));
+      target.addEventListener("drop", (event) => {
+        event.preventDefault();
+        target.classList.remove("is-over");
+        const card = activeCard();
+        const draggedIndex = event.dataTransfer?.getData("text/plain");
+        if (!card || draggedIndex !== card.dataset.index) return;
+        selectCard(card);
+        tryTarget(target);
+      });
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (!locked) return;
+      if (current === cards.length - 1) complete();
+      else showCard(current + 1);
+    });
+
+    restart.addEventListener("click", () => {
+      completionEmitted = false;
+      finish.hidden = true;
+      playArea.hidden = false;
+      showCard(0);
     });
   });
 </script>
 
 <style>
-  .risk-game { padding: clamp(1rem, 3vw, 2rem); border-radius: 1.75rem; background: #f4f9f5; border: 2px solid #9bc8ae; }
-  header { display: flex; gap: 1rem; align-items: center; }
-  header p { margin: 0; color: #176b55; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
-  h3 { margin: .1rem 0 0; font-size: clamp(1.5rem, 4vw, 2.35rem); }
-  .intro { color: var(--muted, #526159); }
-  .signal { display: grid; gap: 3px; padding: 7px; border-radius: 999px; background: #26332e; }
-  .signal i { width: 14px; height: 14px; border-radius: 50%; background: #db4e3d; }
-  .signal i:nth-child(2) { background: #e5aa2e; }
-  .signal i:nth-child(3) { background: #5ea66e; }
-  ol { display: grid; gap: .8rem; padding: 0; list-style: none; }
-  li { padding: 1rem; border: 1px solid #c9ddd0; border-radius: 1rem; background: white; }
-  li p { margin: 0 0 .75rem; }
-  .risk-options { display: flex; flex-wrap: wrap; gap: .5rem; }
-  label { min-height: 44px; display: inline-flex; align-items: center; gap: .4rem; padding: .55rem .7rem; border-radius: 999px; background: #f1eee3; cursor: pointer; }
-  input { accent-color: #176b55; }
-  input:focus-visible + span { outline: 3px solid #2f7196; outline-offset: 3px; }
-  .explanation { margin-top: .7rem; padding: .65rem .8rem; border-radius: .7rem; background: #e4f5ea; color: #17503a; }
-  .explanation[data-state="review"] { background: #fff0e5; color: #77361f; }
-  button { min-height: 44px; padding: .75rem 1rem; border: 0; border-radius: 999px; background: #176b55; color: white; font: inherit; font-weight: 850; cursor: pointer; }
-  button:focus-visible { outline: 3px solid #2f7196; outline-offset: 3px; }
-  .summary { padding: .8rem 1rem; border-left: 4px solid #176b55; background: white; font-weight: 750; }
+  .risk-game { position: relative; overflow: hidden; padding: clamp(1rem, 3vw, 2rem); border: 2px solid #9bc8ae; border-radius: 1.75rem; background: radial-gradient(circle at 92% 8%, rgb(62 137 102 / 18%), transparent 13rem), linear-gradient(145deg, #f4f9f5, #fffaf0); box-shadow: 0 18px 50px rgb(32 48 43 / 10%); }
+  .game-heading { display: grid; grid-template-columns: 104px 1fr; align-items: center; gap: .8rem; }
+  .guide-dino { width: 104px; transform-origin: 50% 90%; }
+  .guide-dino[data-state="thinking"] { animation: dino-nod .6s ease-in-out; }
+  .guide-dino[data-state="retry"] { animation: dino-shake .45s ease-in-out; }
+  .guide-dino[data-state="celebrate"] { animation: dino-hop .7s ease-in-out; }
+  .game-heading p { margin: 0; color: #176b55; font-size: .72rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+  .game-heading h3 { margin: .08rem 0 .25rem; font-size: clamp(1.65rem, 4vw, 2.45rem); }
+  .game-heading span { color: #526159; font-size: .92rem; }
+  .trail-progress { display: flex; gap: .45rem; justify-content: center; margin: .65rem 0; }
+  .trail-progress > span { width: 34px; height: 8px; border-radius: 999px; background: #d8dfd9; transition: width 180ms ease, background 180ms ease; }
+  .trail-progress > span[data-state="active"] { width: 54px; background: #d99a1e; }
+  .trail-progress > span[data-state="done"] { background: #176b55; }
+  .instructions { margin: .35rem auto .8rem; color: #526159; font-size: .88rem; text-align: center; }
+  .play-area { display: grid; gap: .8rem; }
+  .card-deck { display: grid; min-height: 152px; place-items: center; perspective: 900px; }
+  .scenario-card { position: relative; width: min(660px, 100%); min-height: 138px; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: .7rem; padding: 1rem 2.4rem 1rem 1rem; border: 2px solid #20302b; border-radius: 1.25rem; background: #fffdf7; box-shadow: 5px 7px 0 #20302b; color: #20302b; cursor: grab; font: inherit; font-weight: 850; text-align: left; animation: card-arrive .35s ease-out, card-float 3s ease-in-out .4s infinite; transition: box-shadow 150ms ease, translate 150ms ease, rotate 150ms ease; }
+  .scenario-card:hover, .scenario-card[data-state="selected"] { translate: 0 -4px; box-shadow: 7px 10px 0 #20302b; }
+  .scenario-card[hidden] { display: none !important; }
+  .scenario-card[data-state="selected"] { outline: 4px solid #f5bd43; outline-offset: 3px; }
+  .scenario-card[data-state="dragging"] { opacity: .68; rotate: -2deg; cursor: grabbing; }
+  .scenario-card[data-state="retry"] { animation: card-shake .38s ease-in-out; }
+  .scenario-card[data-state="ok"] { border-color: #176b55; background: #e8f5ed; box-shadow: 5px 7px 0 #176b55; animation: card-land .42s ease-out; }
+  .scenario-card .grab { position: absolute; top: .6rem; right: .75rem; color: #85918a; font-size: 1.3rem; }
+  .scenario-icon { display: grid; width: 55px; height: 55px; place-items: center; border-radius: 1rem; background: #f2ebd8; font-size: 1.9rem; }
+  .scenario-card small { grid-column: 2; color: #68766f; font-size: .72rem; font-weight: 750; }
+  .nest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; }
+  .nest { position: relative; overflow: hidden; min-height: 112px; display: grid; place-items: center; align-content: center; gap: .05rem; padding: .75rem; border: 2px dashed currentColor; border-radius: 1.2rem; background: rgb(255 255 255 / 78%); color: #20302b; cursor: pointer; font: inherit; transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease; }
+  .nest:hover, .nest.is-over { transform: translateY(-4px) scale(1.02); box-shadow: 0 11px 20px rgb(32 48 43 / 15%); }
+  .nest.is-over { background: #fff1bd; }
+  .nest-icon { font-size: 1.65rem; transition: transform 150ms ease; }
+  .nest:hover .nest-icon, .nest.is-over .nest-icon { transform: scale(1.16) rotate(-4deg); }
+  .nest strong { font-size: 1rem; }
+  .nest small { color: #5c6a63; font-size: .72rem; }
+  .nest-green { color: #176b55; }
+  .nest-yellow { color: #9b6906; }
+  .nest-red { color: #a54231; }
+  .nest[data-state="ok"] { border-style: solid; background: #e3f3e8; animation: target-pop .45s ease-out; }
+  .nest[data-state="retry"] { background: #fff0e5; animation: card-shake .38s ease-in-out; }
+  .nest-mouth { position: absolute; right: 12%; bottom: -8px; left: 12%; height: 14px; border-radius: 50%; background: currentColor; opacity: .12; }
+  .feedback { padding: .72rem .9rem; border-left: 5px solid #176b55; border-radius: .7rem; background: #e8f5ed; color: #174c38; font-size: .9rem; }
+  .feedback[data-state="retry"], .feedback[data-state="hint"] { border-color: #c9573f; background: #fff0e5; color: #77361f; }
+  .next-card, .finish-panel button { min-height: 44px; justify-self: end; padding: .7rem 1rem; border: 2px solid #20302b; border-radius: 999px; background: #176b55; box-shadow: 3px 4px 0 #20302b; color: white; cursor: pointer; font: inherit; font-weight: 850; }
+  .finish-panel { position: relative; min-height: 330px; display: grid; grid-template-columns: minmax(170px, .7fr) 1.3fr; place-items: center; gap: 1rem; padding: 1.2rem; border-radius: 1.4rem; background: radial-gradient(circle, #fff9d8, #e3f3e8); text-align: center; }
+  .finish-panel[hidden], .play-area[hidden] { display: none; }
+  .finish-dino { width: min(230px, 100%); }
+  .finish-panel p { margin: 0; color: #176b55; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .finish-panel h4 { margin: .3rem 0 1rem; font-size: clamp(1.5rem, 4vw, 2.5rem); }
+  .spark { position: absolute; width: 10px; height: 22px; border-radius: 999px; background: #d99a1e; animation: spark 1.5s ease-in-out infinite; }
+  .spark-one { top: 16%; left: 12%; rotate: 25deg; }
+  .spark-two { top: 12%; right: 18%; rotate: -28deg; animation-delay: .25s; background: #6941a5; }
+  .spark-three { right: 8%; bottom: 19%; rotate: 65deg; animation-delay: .5s; background: #c9573f; }
+  @keyframes card-arrive { from { opacity: 0; transform: translateY(20px) scale(.96); } }
+  @keyframes card-float { 50% { transform: translateY(-2px); } }
+  @keyframes card-shake { 25% { transform: translateX(-7px) rotate(-1deg); } 75% { transform: translateX(7px) rotate(1deg); } }
+  @keyframes card-land { 50% { transform: scale(1.035); } }
+  @keyframes target-pop { 50% { transform: scale(1.05); } }
+  @keyframes dino-nod { 50% { transform: rotate(3deg) translateY(2px); } }
+  @keyframes dino-shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  @keyframes dino-hop { 50% { transform: translateY(-9px) rotate(-2deg); } }
+  @keyframes spark { 50% { transform: translateY(-8px) rotate(90deg); } }
+  :global(body.is-presenting) .risk-game { padding: .75rem 1rem; }
+  :global(body.is-presenting) .game-heading { grid-template-columns: 76px 1fr; }
+  :global(body.is-presenting) .guide-dino { width: 76px; }
+  :global(body.is-presenting) .scenario-card { min-height: 110px; }
+  :global(body.is-presenting) .nest { min-height: 88px; }
+  @media (max-width: 640px) {
+    .game-heading { grid-template-columns: 78px 1fr; }
+    .guide-dino { width: 78px; }
+    .nest-grid { grid-template-columns: 1fr; }
+    .nest { min-height: 76px; grid-template-columns: auto 1fr; justify-items: start; column-gap: .55rem; text-align: left; }
+    .nest-icon { grid-row: 1 / 3; }
+    .scenario-card { min-height: 126px; }
+    .finish-panel { grid-template-columns: 1fr; }
+    .finish-dino { width: 160px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .scenario-card, .guide-dino, .nest, .spark { animation: none !important; transition: none !important; } }
 </style>

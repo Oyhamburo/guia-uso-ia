@@ -1,9 +1,12 @@
 ---
+import DinoAvatar from "./DinoAvatar.astro";
+
 const choices = [
   {
     key: "objetivo",
     label: "Objetivo",
     icon: "🎯",
+    hint: "Qué querés conseguir",
     options: [
       "Preparar una invitación clara",
       "Hablar sobre un evento",
@@ -15,137 +18,363 @@ const choices = [
     key: "contexto",
     label: "Contexto",
     icon: "🗺️",
+    hint: "Para quién y con qué datos",
     options: [
-      "Para familias que no conocen la actividad",
       "Es importante",
+      "Para familias que no conocen la actividad",
       "Usá toda la información posible"
     ],
-    correct: 0
+    correct: 1
   },
   {
     key: "formato",
     label: "Formato",
     icon: "📦",
+    hint: "Cómo debe llegar",
     options: [
-      "Un mensaje de WhatsApp de hasta 80 palabras",
+      "Lo que te parezca",
       "Un buen formato",
-      "Lo que te parezca"
+      "Un mensaje de WhatsApp de hasta 80 palabras"
     ],
-    correct: 0
+    correct: 2
   },
   {
     key: "calidad",
     label: "Calidad",
     icon: "🔎",
+    hint: "Cómo revisar el resultado",
     options: [
-      "Debe incluir fecha, lugar y qué llevar",
       "Que quede perfecto",
+      "Debe incluir fecha, lugar y qué llevar",
       "Que suene inteligente"
     ],
-    correct: 0
+    correct: 1
   }
 ];
 ---
 
 <section class="prompt-builder" data-prompt-builder aria-labelledby="prompt-builder-title">
-  <div class="game-heading">
-    <span aria-hidden="true">🦕</span>
+  <header class="game-heading">
+    <div class="heading-copy">
+      <p>Taller jurásico</p>
+      <h3 id="prompt-builder-title">Armá un prompt que se sostenga</h3>
+      <p class="intro">Arrastrá la pieza más concreta a cada ranura. También podés tocar una pieza y después su destino.</p>
+    </div>
+    <div class="builder-guide" aria-hidden="true">
+      <div class="guide-neutral"><DinoAvatar name="bruna" mood="thinking" size="small" /></div>
+      <div class="guide-success"><DinoAvatar name="bruna" mood="celebrating" size="small" /></div>
+    </div>
+  </header>
+
+  <div class="build-progress" aria-label="Progreso del prompt">
+    {choices.map((choice) => <span title={choice.label} aria-hidden="true">●</span>)}
+  </div>
+
+  <div class="prompt-workbench">
+    {choices.map((choice) => (
+      <article class="prompt-part" data-prompt-part={choice.key}>
+        <header>
+          <span class="part-icon" aria-hidden="true">{choice.icon}</span>
+          <div><strong>{choice.label}</strong><small>{choice.hint}</small></div>
+        </header>
+
+        <div class="piece-rack" aria-label={`Opciones de ${choice.label}`}>
+          {choice.options.map((option, index) => (
+            <button
+              class="prompt-piece"
+              type="button"
+              draggable="true"
+              data-piece={`${choice.key}-${index}`}
+              data-part={choice.key}
+              data-correct={String(index === choice.correct)}
+              aria-pressed="false"
+              aria-label={`${option}. Seleccionar pieza.`}
+            >
+              <span aria-hidden="true">⋮⋮</span>
+              <span>{option}</span>
+            </button>
+          ))}
+        </div>
+
+        <button
+          class="prompt-slot"
+          type="button"
+          data-slot={choice.key}
+          data-empty-label={choice.label}
+          data-empty-hint={choice.hint}
+          aria-label={`Ranura ${choice.label}: ${choice.hint}. Vacía.`}
+        >
+          <span class="slot-plus" aria-hidden="true">＋</span>
+          <span class="slot-copy"><strong>Soltá acá</strong><small>{choice.label}</small></span>
+        </button>
+      </article>
+    ))}
+  </div>
+
+  <div class="builder-footer">
+    <p class="status" data-status role="status" aria-live="polite">Elegí una pieza para empezar.</p>
+    <button class="reset" type="button" data-reset>Desarmar el prompt</button>
+  </div>
+
+  <div class="result" data-result hidden tabindex="-1" aria-live="polite">
+    <div class="result-badge" aria-hidden="true">✓</div>
     <div>
-      <p>Mini desafío</p>
-      <h3 id="prompt-builder-title">Armá un prompt útil</h3>
+      <strong>¡Prompt listo para probar!</strong>
+      <p>Prepará una invitación clara para familias que no conocen la actividad. Entregala como un mensaje de WhatsApp de hasta 80 palabras. Debe incluir fecha, lugar y qué llevar.</p>
     </div>
   </div>
-  <p class="intro">Elegí la pieza más concreta de cada fila. No hay que arrastrar nada.</p>
-
-  <form>
-    <div class="choice-grid">
-      {choices.map((choice) => (
-        <fieldset data-group={choice.key} data-correct={choice.correct}>
-          <legend><span aria-hidden="true">{choice.icon}</span> {choice.label}</legend>
-          {choice.options.map((option, index) => (
-            <label>
-              <input type="radio" name={`prompt-${choice.key}`} value={index} />
-              <span>{option}</span>
-            </label>
-          ))}
-        </fieldset>
-      ))}
-    </div>
-    <div class="actions">
-      <button type="submit">Probar el prompt</button>
-      <button type="reset" class="secondary">Empezar de nuevo</button>
-    </div>
-  </form>
-
-  <div class="result" data-result hidden aria-live="polite" tabindex="-1"></div>
 </section>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-prompt-builder]").forEach((game) => {
-    const form = game.querySelector("form");
+    const pieces = [...game.querySelectorAll<HTMLButtonElement>("[data-piece]")];
+    const slots = [...game.querySelectorAll<HTMLButtonElement>("[data-slot]")];
+    const progress = [...game.querySelectorAll<HTMLElement>(".build-progress span")];
+    const status = game.querySelector<HTMLElement>("[data-status]");
     const result = game.querySelector<HTMLElement>("[data-result]");
-    if (!form || !result) return;
+    const reset = game.querySelector<HTMLButtonElement>("[data-reset]");
+    let selected: HTMLButtonElement | null = null;
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const groups = [...game.querySelectorAll<HTMLElement>("fieldset[data-correct]")];
-      const unanswered = groups.some((group) => !group.querySelector("input:checked"));
+    const setStatus = (message: string, state = "") => {
+      if (!status) return;
+      status.textContent = message;
+      status.dataset.state = state;
+    };
 
-      if (unanswered) {
-        result.hidden = false;
-        result.dataset.state = "hint";
-        result.innerHTML = "<strong>Falta una huella.</strong> Elegí una opción en cada fila.";
+    const pieceText = (piece: HTMLButtonElement) => piece.querySelectorAll("span")[1]?.textContent?.trim() ?? "La pieza";
+
+    const selectPiece = (piece: HTMLButtonElement) => {
+      if (piece.disabled) return;
+      const wasSelected = selected === piece;
+      pieces.forEach((item) => item.setAttribute("aria-pressed", "false"));
+      selected = wasSelected ? null : piece;
+      if (selected) {
+        selected.setAttribute("aria-pressed", "true");
+        setStatus(`Pieza elegida: ${pieceText(selected)}. Ahora tocá una ranura.`, "picked");
+      } else {
+        setStatus("Selección cancelada. Elegí otra pieza.");
+      }
+    };
+
+    const finish = () => {
+      if (game.dataset.complete === "true") return;
+      game.dataset.complete = "true";
+      game.dispatchEvent(new CustomEvent("game:complete", { bubbles: true }));
+      result?.removeAttribute("hidden");
+      result?.focus({ preventScroll: true });
+      for (let index = 0; index < 18; index += 1) {
+        const spark = document.createElement("i");
+        spark.className = "builder-spark";
+        spark.style.setProperty("--x", `${5 + Math.random() * 90}%`);
+        spark.style.setProperty("--delay", `${Math.random() * .5}s`);
+        spark.style.setProperty("--color", ["#d99a1e", "#6941a5", "#3e8966", "#2f7196"][index % 4]);
+        game.append(spark);
+        window.setTimeout(() => spark.remove(), 1900);
+      }
+    };
+
+    const place = (piece: HTMLButtonElement | null, slot: HTMLButtonElement) => {
+      if (!piece) {
+        setStatus("Primero elegí una pieza del banco.", "hint");
+        return;
+      }
+      if (slot.dataset.filled === "true") {
+        setStatus("Esa parte ya está firme. Probá con otra ranura.", "hint");
         return;
       }
 
-      const correct = groups.filter((group) => {
-        const picked = group.querySelector<HTMLInputElement>("input:checked");
-        return picked?.value === group.dataset.correct;
-      }).length;
-
-      result.hidden = false;
-      if (correct === groups.length) {
-        result.dataset.state = "success";
-        result.innerHTML = "<strong>¡Prompt listo!</strong> Tiene objetivo, contexto, formato y una forma concreta de revisar el resultado.";
-      } else {
-        result.dataset.state = "retry";
-        result.innerHTML = `<strong>Encontraste ${correct} de ${groups.length} piezas.</strong> Buscá opciones observables: evitá palabras como “perfecto”, “bueno” o “lo que te parezca”.`;
+      slots.forEach((item) => item.classList.remove("is-over", "is-wrong"));
+      const samePart = piece.dataset.part === slot.dataset.slot;
+      const isCorrect = piece.dataset.correct === "true";
+      if (!samePart || !isCorrect) {
+        slot.classList.add("is-wrong");
+        window.setTimeout(() => slot.classList.remove("is-wrong"), 520);
+        if (!samePart) {
+          const target = game.querySelector<HTMLElement>(`[data-prompt-part="${piece.dataset.part}"] strong`)?.textContent ?? "otra parte";
+          setStatus(`Esa pieza pertenece a ${target}. Buscá su ranura.`, "retry");
+        } else {
+          setStatus("Suena posible, pero todavía es impreciso. Buscá una pieza que se pueda observar o comprobar.", "retry");
+        }
+        return;
       }
-      result.focus({ preventScroll: true });
+
+      const text = pieceText(piece);
+      const part = slot.closest<HTMLElement>("[data-prompt-part]");
+      const groupPieces = part ? [...part.querySelectorAll<HTMLButtonElement>("[data-piece]")] : [];
+      slot.dataset.filled = "true";
+      slot.dataset.state = "correct";
+      slot.disabled = true;
+      slot.setAttribute("aria-label", `${slot.dataset.emptyLabel}: ${text}. Pieza correcta.`);
+      slot.querySelector<HTMLElement>(".slot-plus")!.textContent = "✓";
+      const copy = slot.querySelector<HTMLElement>(".slot-copy");
+      if (copy) {
+        const title = copy.querySelector<HTMLElement>("strong");
+        const detail = copy.querySelector<HTMLElement>("small");
+        if (title) title.textContent = text;
+        if (detail) detail.textContent = slot.dataset.emptyLabel ?? "Parte lista";
+      }
+      groupPieces.forEach((item) => {
+        item.disabled = true;
+        item.setAttribute("aria-pressed", "false");
+        item.draggable = false;
+      });
+      if (part) part.dataset.complete = "true";
+      selected = null;
+
+      const completed = slots.filter((item) => item.dataset.filled === "true").length;
+      progress.forEach((mark, index) => mark.dataset.done = String(index < completed));
+      setStatus(`¡Encajó! La parte ${slot.dataset.emptyLabel ?? "elegida"} ya quedó clara.`, "ok");
+      if (completed === slots.length) finish();
+      else requestAnimationFrame(() => pieces.find((item) => !item.disabled)?.focus({ preventScroll: true }));
+    };
+
+    pieces.forEach((piece) => {
+      piece.addEventListener("click", () => selectPiece(piece));
+      piece.addEventListener("dragstart", (event) => {
+        if (piece.disabled) return event.preventDefault();
+        selected = piece;
+        pieces.forEach((item) => item.setAttribute("aria-pressed", String(item === piece)));
+        event.dataTransfer?.setData("text/plain", piece.dataset.piece ?? "");
+        event.dataTransfer?.setDragImage(piece, 30, 20);
+        game.dataset.dragging = "true";
+        setStatus(`${pieceText(piece)}: buscá la ranura correcta.`, "picked");
+      });
+      piece.addEventListener("dragend", () => {
+        delete game.dataset.dragging;
+        slots.forEach((item) => item.classList.remove("is-over"));
+      });
     });
 
-    form.addEventListener("reset", () => {
-      result.hidden = true;
-      result.textContent = "";
+    slots.forEach((slot) => {
+      slot.addEventListener("click", () => place(selected, slot));
+      slot.addEventListener("dragover", (event) => {
+        if (slot.dataset.filled === "true") return;
+        event.preventDefault();
+        slot.classList.add("is-over");
+      });
+      slot.addEventListener("dragleave", () => slot.classList.remove("is-over"));
+      slot.addEventListener("drop", (event) => {
+        event.preventDefault();
+        slot.classList.remove("is-over");
+        const id = event.dataTransfer?.getData("text/plain");
+        const dragged = pieces.find((item) => item.dataset.piece === id);
+        if (!dragged) return;
+        place(dragged, slot);
+      });
+    });
+
+    reset?.addEventListener("click", () => {
+      selected = null;
+      delete game.dataset.complete;
+      delete game.dataset.dragging;
+      pieces.forEach((piece) => {
+        piece.disabled = false;
+        piece.draggable = true;
+        piece.setAttribute("aria-pressed", "false");
+      });
+      slots.forEach((slot) => {
+        slot.disabled = false;
+        delete slot.dataset.filled;
+        delete slot.dataset.state;
+        slot.classList.remove("is-over", "is-wrong");
+        const label = slot.dataset.emptyLabel ?? "Parte";
+        const hint = slot.dataset.emptyHint ?? "";
+        slot.setAttribute("aria-label", `Ranura ${label}: ${hint}. Vacía.`);
+        const plus = slot.querySelector<HTMLElement>(".slot-plus");
+        const copy = slot.querySelector<HTMLElement>(".slot-copy");
+        if (plus) plus.textContent = "＋";
+        if (copy) {
+          const title = copy.querySelector<HTMLElement>("strong");
+          const detail = copy.querySelector<HTMLElement>("small");
+          if (title) title.textContent = "Soltá acá";
+          if (detail) detail.textContent = label;
+        }
+      });
+      game.querySelectorAll<HTMLElement>("[data-prompt-part]").forEach((part) => delete part.dataset.complete);
+      progress.forEach((mark) => mark.dataset.done = "false");
+      game.querySelectorAll(".builder-spark").forEach((spark) => spark.remove());
+      if (result) result.hidden = true;
+      setStatus("Taller despejado. Elegí una pieza para empezar.");
+      pieces[0]?.focus();
     });
   });
 </script>
 
 <style>
   .prompt-builder {
+    position: relative;
+    overflow: hidden;
     padding: clamp(1rem, 3vw, 2rem);
-    border: 2px solid color-mix(in srgb, var(--amber, #d99a1e) 42%, transparent);
-    border-radius: 1.75rem;
-    background: linear-gradient(145deg, #fffaf0, #fff 70%);
-    box-shadow: 0 18px 50px rgb(43 50 40 / 10%);
+    border: 2px solid color-mix(in srgb, var(--amber, #d99a1e) 46%, transparent);
+    border-radius: 1.9rem;
+    background: radial-gradient(circle at 88% 4%, rgb(105 65 165 / 13%), transparent 15rem), linear-gradient(145deg, #fff7df, #fff 68%, #eef8f3);
+    box-shadow: 0 22px 55px rgb(43 50 40 / 11%);
   }
-  .game-heading { display: flex; gap: .9rem; align-items: center; }
-  .game-heading > span { font-size: 2.4rem; }
-  .game-heading p { margin: 0; color: #795307; font-weight: 850; text-transform: uppercase; letter-spacing: .08em; font-size: .75rem; }
-  .game-heading h3 { margin: .1rem 0 0; font-size: clamp(1.5rem, 4vw, 2.35rem); }
-  .intro { max-width: 58ch; color: var(--muted, #526159); }
-  .choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-  fieldset { min-width: 0; margin: 0; padding: 1rem; border: 1px solid #dfd6bf; border-radius: 1.1rem; }
-  legend { padding: 0 .4rem; font-weight: 900; }
-  label { display: flex; align-items: flex-start; gap: .65rem; min-height: 44px; margin-top: .55rem; padding: .65rem; border-radius: .8rem; background: #fff; cursor: pointer; }
-  label:hover { background: #fff4d3; }
-  input { margin-top: .25rem; accent-color: #8a5f08; }
-  input:focus-visible + span { outline: 3px solid #2f7196; outline-offset: 4px; border-radius: .2rem; }
-  .actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.2rem; }
-  button { min-height: 44px; padding: .75rem 1rem; border: 0; border-radius: 999px; background: #795307; color: white; font: inherit; font-weight: 850; cursor: pointer; }
-  button.secondary { background: #eee5d2; color: #293a33; }
-  button:focus-visible { outline: 3px solid #2f7196; outline-offset: 3px; }
-  .result { margin-top: 1rem; padding: 1rem 1.1rem; border-radius: 1rem; background: #edf7f1; color: #174c38; }
-  .result[data-state="retry"], .result[data-state="hint"] { background: #fff0e5; color: #77361f; }
-  @media (max-width: 700px) { .choice-grid { grid-template-columns: 1fr; } }
+  .prompt-builder::before { position: absolute; inset: auto -60px -80px auto; width: 240px; aspect-ratio: 1; border: 22px solid rgb(217 154 30 / 8%); border-radius: 50%; content: ""; pointer-events: none; }
+  .game-heading { position: relative; display: grid; grid-template-columns: 1fr 150px; gap: 1rem; align-items: center; }
+  .heading-copy > p:first-child { margin: 0; color: #795307; font-size: .74rem; font-weight: 950; letter-spacing: .1em; text-transform: uppercase; }
+  h3 { max-width: 14ch; margin: .15rem 0 0; font-size: clamp(1.7rem, 4vw, 2.75rem); line-height: 1; letter-spacing: -.035em; }
+  .intro { max-width: 58ch; margin: .65rem 0 0; color: var(--muted, #526159); }
+  .builder-guide { position: relative; align-self: end; }
+  .guide-success { position: absolute; inset: 0; opacity: 0; transform: scale(.7); }
+  [data-complete="true"] .guide-neutral { opacity: 0; transform: scale(.75); }
+  [data-complete="true"] .guide-success { opacity: 1; transform: scale(1); }
+  .guide-neutral, .guide-success { transition: opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1.2); }
+  .build-progress { display: flex; gap: .48rem; margin: .35rem 0 1.1rem; color: #dfd3bb; }
+  .build-progress span { transition: color .25s, transform .25s; }
+  .build-progress span[data-done="true"] { color: #3e8966; transform: scale(1.25); }
+  .prompt-workbench { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; }
+  .prompt-part { min-width: 0; padding: .85rem; border: 1px solid #dfd3ba; border-radius: 1.2rem; background: rgb(255 255 255 / 80%); box-shadow: 0 8px 20px rgb(64 55 36 / 6%); transition: border-color .2s, background .2s; }
+  .prompt-part[data-complete="true"] { border-color: #83b49a; background: #f1faf4; }
+  .prompt-part > header { display: flex; gap: .65rem; align-items: center; margin-bottom: .7rem; }
+  .part-icon { display: grid; flex: 0 0 40px; width: 40px; height: 40px; place-items: center; border-radius: 13px; background: #fff0c7; font-size: 1.25rem; }
+  .prompt-part header strong, .prompt-part header small { display: block; }
+  .prompt-part header small { margin-top: .12rem; color: #65716b; font-size: .7rem; }
+  .piece-rack { display: grid; gap: .45rem; }
+  .prompt-piece { min-width: 0; min-height: 48px; display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: center; padding: .55rem .65rem; border: 1px solid #ddd2ba; border-radius: .8rem; background: white; color: #20302b; text-align: left; box-shadow: 0 3px 0 #e6dcc7; cursor: grab; transition: transform .16s, border-color .16s, box-shadow .16s, opacity .2s; touch-action: manipulation; }
+  .prompt-piece > span:first-child { color: #aa9166; font-size: .8rem; letter-spacing: -.18em; }
+  .prompt-piece:hover:not(:disabled) { border-color: #6941a5; transform: translateX(3px); }
+  .prompt-piece:active { cursor: grabbing; }
+  .prompt-piece[aria-pressed="true"] { border-color: #6941a5; background: #f5f0fd; box-shadow: 0 0 0 3px rgb(105 65 165 / 14%), 0 3px 0 #cdbde3; transform: translateX(4px); }
+  .prompt-piece:disabled { opacity: .33; cursor: default; }
+  .prompt-slot { width: 100%; min-height: 75px; display: grid; grid-template-columns: 36px 1fr; gap: .55rem; align-items: center; margin-top: .75rem; padding: .65rem .75rem; border: 2px dashed #c7a85f; border-radius: .95rem; background: #fff8e7; color: #4e3e1e; text-align: left; cursor: pointer; transition: transform .18s, border-color .18s, background .18s, box-shadow .18s; touch-action: manipulation; }
+  .prompt-slot:hover:not(:disabled), .prompt-slot.is-over { border-color: #795307; background: #fff1c8; box-shadow: 0 10px 22px rgb(121 83 7 / 11%); transform: translateY(-2px); }
+  .prompt-slot.is-wrong { border-color: #c9573f; background: #fff0e9; animation: builder-shake .42s ease; }
+  .prompt-slot[data-state="correct"] { border-style: solid; border-color: #3e8966; background: #e4f4ea; cursor: default; animation: piece-lock .42s cubic-bezier(.2,.8,.2,1.2); }
+  .prompt-slot:disabled { color: #174c38; opacity: 1; }
+  .slot-plus { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 11px; background: #ffe6a4; font-size: 1.1rem; font-weight: 950; }
+  [data-state="correct"] .slot-plus { background: #bfe2cd; color: #176b55; }
+  .slot-copy { min-width: 0; }
+  .slot-copy strong, .slot-copy small { display: block; }
+  .slot-copy strong { overflow-wrap: anywhere; font-size: .82rem; }
+  .slot-copy small { margin-top: .12rem; color: #776b51; font-size: .65rem; text-transform: uppercase; letter-spacing: .05em; }
+  .builder-footer { position: relative; display: flex; gap: 1rem; align-items: center; justify-content: space-between; margin-top: 1rem; }
+  .status { min-height: 1.5em; margin: 0; color: #526159; font-weight: 750; }
+  .status[data-state="ok"] { color: #176b55; }
+  .status[data-state="retry"], .status[data-state="hint"] { color: #8a3d27; }
+  .reset { flex: 0 0 auto; min-height: 44px; padding: .7rem 1rem; border: 1px solid #cab787; border-radius: 999px; background: white; color: #6d4d0d; font: inherit; font-weight: 850; cursor: pointer; }
+  .prompt-piece:focus-visible, .prompt-slot:focus-visible, .reset:focus-visible { outline: 3px solid #2f7196; outline-offset: 3px; }
+  .result { position: relative; display: grid; grid-template-columns: auto 1fr; gap: .75rem; align-items: start; margin-top: 1rem; padding: 1rem; border: 1px solid #72a98d; border-radius: 1rem; background: #e3f5ea; color: #174c38; animation: result-in .42s cubic-bezier(.2,.8,.2,1.2); }
+  .result[hidden] { display: none; }
+  .result-badge { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 12px; background: #3e8966; color: white; font-weight: 950; }
+  .result p { margin: .25rem 0 0; line-height: 1.45; }
+  :global(.builder-spark) { position: absolute; z-index: 5; top: 42%; left: var(--x); width: 8px; height: 12px; border-radius: 2px; background: var(--color); pointer-events: none; animation: builder-spark 1.35s var(--delay) ease-out forwards; }
+  @keyframes builder-shake { 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
+  @keyframes piece-lock { 0% { transform: scale(.8) rotate(-2deg); } 70% { transform: scale(1.035) rotate(.5deg); } }
+  @keyframes result-in { from { opacity: 0; transform: translateY(10px) scale(.97); } }
+  @keyframes builder-spark { to { opacity: 0; transform: translate3d(0, -170px, 0) rotate(260deg); } }
+  @media (max-width: 740px) {
+    .game-heading { grid-template-columns: 1fr 105px; }
+    .prompt-workbench { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .game-heading { grid-template-columns: 1fr 82px; }
+    h3 { font-size: 1.72rem; }
+    .prompt-part { padding: .75rem; }
+    .builder-footer { align-items: stretch; flex-direction: column; }
+    .reset { align-self: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .prompt-part, .prompt-piece, .prompt-slot, .guide-neutral, .guide-success, .build-progress span, .result, :global(.builder-spark) { animation: none !important; transition: none !important; }
+  }
 </style>

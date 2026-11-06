@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import DinoAvatar from "../../components/DinoAvatar.astro";
+import TriviaTrail from "../../components/TriviaTrail.astro";
 import PromptBuilder from "../../components/PromptBuilder.astro";
 import RiskSorter from "../../components/RiskSorter.astro";
 import EcosystemGame from "../../components/EcosystemGame.astro";
@@ -8,63 +9,150 @@ import HorizonGame from "../../components/HorizonGame.astro";
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+
+const stations = [
+  { id: "trivia", number: "01", label: "Huellas rápidas", dino: "bruna" },
+  { id: "museo", number: "02", label: "Museo de IA", dino: "paco" },
+  { id: "mision", number: "03", label: "Taller de prompts", dino: "cera" },
+  { id: "semaforo", number: "04", label: "Protegé el nido", dino: "vera" },
+  { id: "radar", number: "05", label: "Calibrá el radar", dino: "roco" }
+] as const;
 ---
 
-<BaseLayout title="Campamento de juegos · Expedición IA" description="Juegos breves para practicar lo visto en la Parte 1 de la guía.">
+<BaseLayout
+  title="Campamento jurásico · Expedición IA"
+  description="Cinco juegos interactivos con dinosaurios para practicar lo aprendido en la Parte 1."
+  current="juegos"
+  presentation={false}
+>
   <main id="contenido" class="games-page">
-    <section class="games-hero">
-      <div>
-        <p class="eyebrow">Campamento de práctica</p>
-        <h1>Jugá con lo que aprendiste</h1>
-        <p>No hay ranking ni examen. Probá, mirá el feedback y volvé a intentar.</p>
+    <section class="camp-hero" aria-labelledby="camp-title">
+      <span class="ambient-orb orb-one" aria-hidden="true"></span>
+      <span class="ambient-orb orb-two" aria-hidden="true"></span>
+      <div class="hero-copy">
+        <p class="eyebrow">Campamento de desafíos</p>
+        <h1 id="camp-title">Jugá, probá<br /><span>y descubrí.</span></h1>
+        <p class="hero-intro">Cinco misiones cortas para usar lo aprendido. Sin puntos, sin ranking y sin presión.</p>
+        <button class="start-button" type="button" data-game-start>
+          Empezar la aventura <span aria-hidden="true">→</span>
+        </button>
+        <ul class="camp-rules" aria-label="Cómo funciona">
+          <li><span aria-hidden="true">✦</span> Una misión por vez</li>
+          <li><span aria-hidden="true">↺</span> Podés volver a intentar</li>
+          <li><span aria-hidden="true">🦴</span> Cada respuesta deja una pista</li>
+        </ul>
       </div>
-      <DinoAvatar name="vera" mood="celebrating" size="large" />
+      <div class="hero-dino" aria-hidden="true">
+        <span class="speech-bubble">¿Seguimos las huellas?</span>
+        <DinoAvatar name="bruna" mood="celebrating" size="large" />
+        <span class="ground-shadow"></span>
+      </div>
     </section>
 
-    <nav class="game-map" aria-label="Elegir un juego">
-      <a href="#museo"><span>01</span><strong>Museo de IA</strong></a>
-      <a href="#mision"><span>02</span><strong>Practicá el prompt</strong></a>
-      <a href="#semaforo"><span>03</span><strong>Semáforo</strong></a>
-      <a href="#radar"><span>04</span><strong>Calibrá el radar</strong></a>
-      <a href="#expedicion"><span>★</span><strong>Expedición grupal</strong></a>
+    <nav class="station-rail" aria-label="Misiones del campamento">
+      {stations.map((station, index) => (
+        <button
+          type="button"
+          class="station-tab"
+          id={`tab-${station.id}`}
+          aria-controls={station.id}
+          aria-current={index === 0 ? "step" : undefined}
+          tabindex={index === 0 ? 0 : -1}
+          data-game-target={station.id}
+          data-dino={station.dino}
+        >
+          <span class="station-mark" aria-hidden="true"><i>◉</i><b>{station.number}</b></span>
+          <span><small>Misión {station.number}</small><strong>{station.label}</strong></span>
+          <span class="station-done" aria-hidden="true">✓</span>
+        </button>
+      ))}
     </nav>
 
-    <section id="museo" class="game-stop" aria-labelledby="museo-title">
-      <div class="stop-label"><span>01</span><div><p>Nivel 1</p><h2 id="museo-title">Ordená el ecosistema</h2></div></div>
+    <p class="route-status" data-route-status aria-live="polite">Misión 1 de 5 · Huellas rápidas</p>
+
+    <section id="trivia" class="game-stop is-active" aria-labelledby="trivia-title" data-game-stage="trivia">
+      <div class="stop-label">
+        <span>01</span>
+        <div><p>Entrada en calor</p><h2 id="trivia-title">Seguí las huellas correctas</h2></div>
+        <DinoAvatar name="bruna" mood="thinking" size="small" />
+      </div>
+      <TriviaTrail />
+      <div class="station-actions"><button type="button" class="next-mission" data-game-next="museo">Siguiente misión <span aria-hidden="true">→</span></button></div>
+    </section>
+
+    <section id="museo" class="game-stop" aria-labelledby="museo-title" data-game-stage="museo" hidden>
+      <div class="stop-label">
+        <span>02</span>
+        <div><p>Nivel 1</p><h2 id="museo-title">Ordená el ecosistema</h2></div>
+        <DinoAvatar name="paco" mood="thinking" size="small" />
+      </div>
       <EcosystemGame />
+      <div class="station-actions split">
+        <button type="button" class="previous-mission" data-game-previous="trivia"><span aria-hidden="true">←</span> Anterior</button>
+        <button type="button" class="next-mission" data-game-next="mision">Siguiente misión <span aria-hidden="true">→</span></button>
+      </div>
     </section>
 
-    <section id="mision" class="game-stop" aria-labelledby="mision-title">
-      <div class="stop-label"><span>02</span><div><p>Nivel 2</p><h2 id="mision-title">Construí un prompt útil</h2></div></div>
+    <section id="mision" class="game-stop" aria-labelledby="mision-title" data-game-stage="mision" hidden>
+      <div class="stop-label">
+        <span>03</span>
+        <div><p>Nivel 2</p><h2 id="mision-title">Construí un prompt útil</h2></div>
+        <DinoAvatar name="cera" mood="thinking" size="small" />
+      </div>
       <PromptBuilder />
+      <div class="station-actions split">
+        <button type="button" class="previous-mission" data-game-previous="museo"><span aria-hidden="true">←</span> Anterior</button>
+        <button type="button" class="next-mission" data-game-next="semaforo">Siguiente misión <span aria-hidden="true">→</span></button>
+      </div>
     </section>
 
-    <section id="semaforo" class="game-stop" aria-labelledby="semaforo-title">
-      <div class="stop-label"><span>03</span><div><p>Nivel 3</p><h2 id="semaforo-title">Protegé el nido</h2></div></div>
+    <section id="semaforo" class="game-stop" aria-labelledby="semaforo-title" data-game-stage="semaforo" hidden>
+      <div class="stop-label">
+        <span>04</span>
+        <div><p>Nivel 3</p><h2 id="semaforo-title">Protegé el nido</h2></div>
+        <DinoAvatar name="vera" mood="alert" size="small" />
+      </div>
       <RiskSorter />
+      <div class="station-actions split">
+        <button type="button" class="previous-mission" data-game-previous="mision"><span aria-hidden="true">←</span> Anterior</button>
+        <button type="button" class="next-mission" data-game-next="radar">Última misión <span aria-hidden="true">→</span></button>
+      </div>
     </section>
 
-    <section id="radar" class="game-stop" aria-labelledby="radar-title">
-      <div class="stop-label"><span>04</span><div><p>Nivel 4</p><h2 id="radar-title">Ubicá cada capacidad</h2></div></div>
+    <section id="radar" class="game-stop" aria-labelledby="radar-title" data-game-stage="radar" hidden>
+      <div class="stop-label">
+        <span>05</span>
+        <div><p>Nivel 4</p><h2 id="radar-title">Ubicá cada capacidad</h2></div>
+        <DinoAvatar name="roco" mood="thinking" size="small" />
+      </div>
       <HorizonGame />
-    </section>
-
-    <section id="expedicion" class="group-game">
-      <div class="group-copy">
-        <p class="eyebrow">Juego separado · para grupos</p>
-        <h2>¿Quieren una expedición más grande?</h2>
-        <p>IAventuras suma participantes, ruleta y preguntas para jugar en equipo. Vive en su propio repositorio y abre en otra pestaña.</p>
-        <a href="https://oyhamburo.github.io/iaventuras/" target="_blank" rel="noreferrer">Abrir IAventuras <span aria-hidden="true">↗</span></a>
-      </div>
-      <div class="group-dinos" aria-hidden="true">
-        <DinoAvatar name="bruna" mood="celebrating" size="medium" />
-        <DinoAvatar name="paco" mood="celebrating" size="medium" />
-        <DinoAvatar name="anky" mood="celebrating" size="medium" />
-        <DinoAvatar name="roco" mood="celebrating" size="medium" />
+      <div class="station-actions split">
+        <button type="button" class="previous-mission" data-game-previous="semaforo"><span aria-hidden="true">←</span> Anterior</button>
+        <button type="button" class="finish-mission" data-game-next="cierre">Cerrar el recorrido <span aria-hidden="true">★</span></button>
       </div>
     </section>
 
-    <nav class="next-route" aria-label="Continuar la guía">
+    <section id="cierre" class="game-stop finish-camp" data-game-stage="cierre" hidden aria-labelledby="finish-title">
+      <div class="finish-copy">
+        <p class="eyebrow">Campamento completado</p>
+        <h2 id="finish-title">No juntaste puntos.<br />Juntaste criterio.</h2>
+        <p>Volvé a cualquier misión para probar otro camino o seguí hacia la parte técnica.</p>
+        <div class="finish-actions">
+          <button type="button" data-game-next="trivia">Volver a las misiones</button>
+          <a href={href("#mapa")}>Mapa de la expedición</a>
+          <a class="primary" href={href("parte-2/nivel-1/")}>Entrar al laboratorio →</a>
+        </div>
+      </div>
+      <div class="finish-dinos" aria-hidden="true">
+        <DinoAvatar name="bruna" mood="celebrating" size="small" />
+        <DinoAvatar name="paco" mood="celebrating" size="small" />
+        <DinoAvatar name="cera" mood="celebrating" size="small" />
+        <DinoAvatar name="vera" mood="celebrating" size="small" />
+        <DinoAvatar name="roco" mood="celebrating" size="small" />
+      </div>
+    </section>
+
+    <nav class="next-route" aria-label="Continuar la guía" data-presentation-ignore>
       <a href={href("parte-1/nivel-4/")}>← Volver al Nivel 4</a>
       <a class="map-link" href={href("#mapa")}>Mapa de la expedición</a>
       <a class="primary" href={href("parte-2/nivel-1/")}>Entrar al laboratorio técnico →</a>
@@ -72,37 +160,193 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   </main>
 </BaseLayout>
 
-<style>
-  .games-page { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
-  .games-hero { display: grid; grid-template-columns: 1.2fr .8fr; align-items: center; gap: 1rem; min-height: 430px; padding: clamp(1.5rem, 5vw, 3.5rem); border-radius: 2.2rem; background: radial-gradient(circle at 80% 20%, #e7dcf6, transparent 35%), linear-gradient(145deg, #f8f0d7, #eef8fd); }
-  .eyebrow { margin: 0 0 .6rem; color: #6941a5; font-size: .78rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
-  h1 { max-width: 10ch; margin: 0; font-size: clamp(3rem, 8vw, 5.8rem); line-height: .92; letter-spacing: -.055em; }
-  .games-hero p:last-child { max-width: 42ch; color: #526159; font-size: 1.1rem; }
-  .game-map { position: sticky; top: 76px; z-index: 5; display: flex; gap: .6rem; overflow-x: auto; margin: 1rem 0 4rem; padding: .7rem; border: 1px solid #d9d2c2; border-radius: 1rem; background: rgb(247 243 232 / 94%); backdrop-filter: blur(12px); }
-  .game-map a { min-height: 44px; display: inline-flex; flex: 1 0 auto; align-items: center; gap: .5rem; padding: .55rem .7rem; border-radius: .75rem; color: inherit; text-decoration: none; }
-  .game-map a:hover { background: white; }
-  .game-map a:focus-visible { outline: 3px solid #6941a5; }
-  .game-map span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: #20302b; color: white; font-size: .75rem; font-weight: 900; }
-  .game-stop { scroll-margin-top: 160px; margin: 5rem 0; }
-  .stop-label { display: flex; gap: .8rem; align-items: center; margin-bottom: 1rem; }
-  .stop-label > span { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: #20302b; color: white; font-weight: 900; }
-  .stop-label p { margin: 0; color: #6941a5; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
-  .stop-label h2 { margin: .1rem 0 0; font-size: clamp(1.6rem, 4vw, 2.5rem); }
-  .group-game { overflow: hidden; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 1rem; margin-top: 5rem; padding: clamp(1.4rem, 5vw, 3rem); border-radius: 2rem; background: #efe8f8; }
-  .group-copy h2 { margin: .2rem 0 .7rem; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1; }
-  .group-copy p { color: #526159; }
-  .group-copy a, .next-route a { min-height: 44px; display: inline-flex; align-items: center; padding: .75rem 1rem; border-radius: 999px; background: #6941a5; color: white; font-weight: 850; text-decoration: none; }
-  .group-copy a:focus-visible, .next-route a:focus-visible { outline: 3px solid #2f7196; outline-offset: 3px; }
-  .group-dinos { display: grid; grid-template-columns: repeat(4, 1fr); align-items: end; }
-  .next-route { display: flex; justify-content: space-between; gap: .8rem; margin-top: 2rem; }
-  .next-route a { background: white; color: #20302b; border: 1px solid #b8c3bd; }
-  .next-route .map-link { margin-inline: auto; border-color: transparent; background: transparent; }
-  .next-route a.primary { background: #176b55; color: white; border: 0; }
-  @media (max-width: 720px) {
-    .game-map { position: static; }
-    .games-hero, .group-game { grid-template-columns: 1fr; }
-    .group-dinos { max-height: 230px; overflow: hidden; }
-    .next-route { flex-direction: column; align-items: stretch; }
-    .next-route a { justify-content: center; }
+<script>
+  const gamePage = document.querySelector<HTMLElement>(".games-page");
+
+  if (gamePage) {
+    const tabs = [...gamePage.querySelectorAll<HTMLButtonElement>("[data-game-target]")];
+    const stages = [...gamePage.querySelectorAll<HTMLElement>("[data-game-stage]")];
+    const routeStatus = gamePage.querySelector<HTMLElement>("[data-route-status]");
+    const stationIds = tabs.map((tab) => tab.dataset.gameTarget || "").filter(Boolean);
+    const storageKey = "expedicion-ia:campamento-completo";
+    let completed = new Set<string>();
+
+    try { completed = new Set(JSON.parse(sessionStorage.getItem(storageKey) || "[]")); }
+    catch { completed = new Set(); }
+
+    const refreshCompleted = () => {
+      tabs.forEach((tab) => {
+        const isComplete = completed.has(tab.dataset.gameTarget || "");
+        tab.classList.toggle("is-complete", isComplete);
+        const label = tab.querySelector("strong")?.textContent || "Misión";
+        tab.setAttribute("aria-label", isComplete ? `${label} · misión completada` : label);
+      });
+    };
+
+    const showStage = (id: string, focus = true) => {
+      const target = stages.find((stage) => stage.dataset.gameStage === id);
+      if (!target) return;
+      stages.forEach((stage) => {
+        const active = stage === target;
+        stage.hidden = !active;
+        stage.classList.toggle("is-active", active);
+      });
+      const focusId = id === "cierre" ? "radar" : id;
+      tabs.forEach((tab) => {
+        const active = tab.dataset.gameTarget === id;
+        if (active) tab.setAttribute("aria-current", "step");
+        else tab.removeAttribute("aria-current");
+        tab.tabIndex = tab.dataset.gameTarget === focusId ? 0 : -1;
+      });
+      const tab = tabs.find((item) => item.dataset.gameTarget === id);
+      const index = stationIds.indexOf(id);
+      if (routeStatus) {
+        routeStatus.hidden = id === "cierre";
+        routeStatus.textContent = id === "cierre" ? "Recorrido completado" : `Misión ${index + 1} de ${stationIds.length} · ${tab?.querySelector("strong")?.textContent || "Desafío"}`;
+      }
+      history.replaceState(null, "", id === "trivia" ? `${location.pathname}${location.search}` : `#${id}`);
+      if (focus) {
+        const heading = target.querySelector<HTMLElement>("h2, h3");
+        heading?.setAttribute("tabindex", "-1");
+        requestAnimationFrame(() => heading?.focus({ preventScroll: true }));
+      }
+      if (focus) {
+        target.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+      }
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => showStage(tab.dataset.gameTarget || "trivia"));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+        const nextTab = tabs[nextIndex];
+        nextTab?.focus();
+        showStage(nextTab?.dataset.gameTarget || "trivia", false);
+      });
+    });
+
+    gamePage.querySelector("[data-game-start]")?.addEventListener("click", () => showStage("trivia"));
+    gamePage.querySelectorAll<HTMLButtonElement>("[data-game-next], [data-game-previous]").forEach((button) => {
+      button.addEventListener("click", () => showStage(button.dataset.gameNext || button.dataset.gamePrevious || "trivia"));
+    });
+
+    gamePage.addEventListener("game:complete", (event) => {
+      const source = event.target instanceof Element ? event.target : null;
+      const stage = source?.closest<HTMLElement>("[data-game-stage]");
+      const id = stage?.dataset.gameStage;
+      if (!id || !stationIds.includes(id) || completed.has(id)) return;
+      completed.add(id);
+      try { sessionStorage.setItem(storageKey, JSON.stringify([...completed])); } catch { /* storage can be unavailable */ }
+      refreshCompleted();
+      const tab = tabs.find((item) => item.dataset.gameTarget === id);
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        tab?.animate([{ transform: "scale(1)" }, { transform: "scale(1.04) rotate(-1deg)" }, { transform: "scale(1)" }], { duration: 420, easing: "ease-out" });
+      }
+    });
+
+    refreshCompleted();
+    const requested = location.hash.replace("#", "").replace(/^stage-/, "");
+    showStage(stages.some((stage) => stage.dataset.gameStage === requested) ? requested : "trivia", false);
+    addEventListener("hashchange", () => {
+      const id = location.hash.replace("#", "").replace(/^stage-/, "");
+      if (stages.some((stage) => stage.dataset.gameStage === id)) showStage(id, false);
+    });
   }
+</script>
+
+<style>
+  .games-page { width: min(1180px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
+  .camp-hero { position: relative; isolation: isolate; overflow: hidden; display: grid; min-height: 540px; grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr); align-items: center; gap: 1.5rem; padding: clamp(1.5rem, 5vw, 4.2rem); border: 1px solid rgb(255 255 255 / 16%); border-radius: 2.2rem; background: radial-gradient(circle at 76% 20%, rgb(105 65 165 / 45%), transparent 24rem), radial-gradient(circle at 15% 100%, rgb(23 107 85 / 40%), transparent 25rem), linear-gradient(145deg, #172c3a, #2e245b 78%, #3d2a69); box-shadow: 0 28px 70px rgb(23 44 58 / 25%); color: white; }
+  .camp-hero::before { position: absolute; inset: 0; z-index: -1; background-image: radial-gradient(rgb(255 255 255 / 22%) .8px, transparent .8px); background-size: 21px 21px; content: ""; mask-image: linear-gradient(to bottom, black, transparent 78%); }
+  .ambient-orb { position: absolute; z-index: -1; width: 300px; height: 300px; border-radius: 43% 57% 62% 38%; opacity: .22; filter: blur(2px); animation: orb-drift 12s ease-in-out infinite alternate; }
+  .orb-one { top: -190px; right: 4%; background: #f5bd43; }
+  .orb-two { bottom: -210px; left: 25%; background: #74dfb0; animation-delay: -5s; }
+  .hero-copy { position: relative; z-index: 1; }
+  .eyebrow { margin: 0 0 .65rem; color: #83e5bb; font-size: .78rem; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
+  h1 { max-width: 10ch; margin: 0; font-size: clamp(3.5rem, 8vw, 6.7rem); line-height: .86; letter-spacing: -.07em; }
+  h1 span { color: #f5bd43; }
+  .hero-intro { max-width: 50ch; margin: 1.3rem 0; color: #e3e8e6; font-size: clamp(1rem, 2vw, 1.18rem); }
+  .start-button, .station-actions button, .finish-actions button, .finish-actions a { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: .55rem; padding: .78rem 1.1rem; border: 0; border-radius: 999px; color: #172c3a; background: #f5bd43; box-shadow: 3px 4px 0 rgb(0 0 0 / 34%); font: inherit; font-weight: 900; text-decoration: none; cursor: pointer; transition: translate 160ms ease, box-shadow 160ms ease, filter 160ms ease; }
+  .start-button:hover, .station-actions button:hover, .finish-actions :is(button, a):hover { translate: 1px 1px; box-shadow: 2px 3px 0 rgb(0 0 0 / 34%); filter: brightness(1.04); }
+  .camp-rules { display: flex; flex-wrap: wrap; gap: .55rem 1rem; margin: 1.35rem 0 0; padding: 0; color: #cfdad6; font-size: .78rem; list-style: none; }
+  .camp-rules li { display: inline-flex; align-items: center; gap: .35rem; }
+  .camp-rules span { color: #f5bd43; }
+  .hero-dino { position: relative; display: grid; place-items: center; align-self: end; }
+  .hero-dino :global(.dino-avatar) { position: relative; z-index: 2; filter: drop-shadow(0 20px 20px rgb(0 0 0 / 28%)); animation: dino-float 4.2s ease-in-out infinite; }
+  .speech-bubble { position: absolute; top: -1rem; right: 0; z-index: 3; padding: .7rem .9rem; border: 2px solid #172c3a; border-radius: 1rem 1rem .25rem 1rem; background: #fffdf7; color: #20302b; box-shadow: 4px 5px 0 #172c3a; font-weight: 850; rotate: 2deg; }
+  .ground-shadow { width: 75%; height: 22px; margin-top: -1.8rem; border-radius: 50%; background: rgb(0 0 0 / 26%); filter: blur(4px); }
+  .station-rail { position: sticky; top: 76px; z-index: 12; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .55rem; margin: 1rem 0 0; padding: .65rem; border: 1px solid #d3c8ae; border-radius: 1.25rem; background: rgb(247 243 232 / 92%); box-shadow: 0 12px 34px rgb(32 48 43 / 12%); backdrop-filter: blur(14px); }
+  .station-tab { position: relative; display: grid; min-width: 0; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .5rem; min-height: 64px; padding: .55rem; border: 1px solid transparent; border-radius: .9rem; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+  .station-tab:hover { background: white; }
+  .station-tab[aria-current="step"] { border-color: #6941a5; background: #f0e8fb; box-shadow: inset 0 0 0 1px #6941a5; }
+  .station-mark { position: relative; display: grid; width: 36px; height: 36px; place-items: center; }
+  .station-mark i { position: absolute; color: #d8cdae; font-size: 2.35rem; line-height: 1; font-style: normal; rotate: -18deg; }
+  .station-mark b { position: relative; color: #20302b; font-size: .66rem; }
+  .station-tab small, .station-tab strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .station-tab small { color: #6941a5; font-size: .6rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+  .station-tab strong { font-size: .76rem; line-height: 1.2; }
+  .station-done { display: none; width: 24px; height: 24px; place-items: center; border-radius: 50%; background: #176b55; color: white; font-size: .72rem; font-weight: 900; }
+  .station-tab.is-complete .station-done { display: grid; }
+  .station-tab.is-complete .station-mark i { color: #83c6a5; }
+  .route-status { width: fit-content; margin: .8rem auto 0; padding: .35rem .75rem; border-radius: 999px; background: #20302b; color: white; font-size: .72rem; font-weight: 850; }
+  .route-status[hidden] { display: none; }
+  .game-stop { position: relative; min-height: 620px; margin: 1rem 0 0; padding: clamp(1rem, 3vw, 2rem); scroll-margin-top: 88px; border: 1px solid #d6cdb9; border-radius: 2rem; background: radial-gradient(circle at 100% 0, rgb(105 65 165 / 9%), transparent 24rem), rgb(255 253 247 / 94%); box-shadow: 0 22px 55px rgb(32 48 43 / 12%); }
+  .game-stop[hidden] { display: none; }
+  .game-stop.is-active { animation: stage-arrive 240ms ease-out; }
+  .stop-label { display: grid; grid-template-columns: auto minmax(0, 1fr) 92px; gap: .8rem; align-items: center; margin-bottom: 1rem; }
+  .stop-label > span { display: grid; width: 46px; height: 46px; place-items: center; border-radius: 15px; background: #20302b; color: white; font-weight: 900; }
+  .stop-label p { margin: 0; color: #6941a5; font-size: .7rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+  .stop-label h2 { margin: .1rem 0 0; font-size: clamp(1.55rem, 4vw, 2.5rem); }
+  .stop-label :global(.dino-avatar) { justify-self: end; max-height: 76px; overflow: visible; }
+  .station-actions { display: flex; justify-content: flex-end; gap: .7rem; margin-top: 1rem; }
+  .station-actions.split { justify-content: space-between; }
+  .station-actions .previous-mission { border: 1px solid #b8c3bd; background: white; box-shadow: none; color: #20302b; }
+  .station-actions .finish-mission { background: #6941a5; color: white; }
+  .finish-camp { min-height: 600px; display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 1rem; background: linear-gradient(145deg, #1b3544, #37275f); color: white; }
+  .finish-camp[hidden] { display: none; }
+  .finish-copy { padding: clamp(.5rem, 3vw, 2rem); }
+  .finish-copy h2 { margin: .25rem 0 1rem; color: #fff; font-size: clamp(2.5rem, 6vw, 4.8rem); line-height: .94; }
+  .finish-copy > p:not(.eyebrow) { max-width: 46ch; color: #dbe4e0; }
+  .finish-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+  .finish-actions a, .finish-actions button { box-shadow: none; background: white; color: #20302b; }
+  .finish-actions a.primary { background: #f5bd43; }
+  .finish-dinos { display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; }
+  .finish-dinos :global(.dino-avatar:nth-child(even)) { translate: 0 20px; }
+  .next-route { display: flex; justify-content: space-between; gap: .8rem; margin-top: 2rem; }
+  .next-route a { min-height: 44px; display: inline-flex; align-items: center; padding: .75rem 1rem; border: 1px solid #b8c3bd; border-radius: 999px; background: white; color: #20302b; font-weight: 850; text-decoration: none; }
+  .next-route .map-link { margin-inline: auto; border-color: transparent; background: transparent; }
+  .next-route a.primary { border: 0; background: #176b55; color: white; }
+  @keyframes orb-drift { to { translate: 30px -28px; rotate: 18deg; } }
+  @keyframes dino-float { 50% { translate: 0 -10px; rotate: -1deg; } }
+  @keyframes stage-arrive { from { opacity: 0; translate: 22px 0; } }
+  @media (max-width: 900px) {
+    .station-rail { grid-template-columns: repeat(5, minmax(74px, 1fr)); overflow-x: auto; }
+    .station-tab { grid-template-columns: 36px 1fr; }
+    .station-done { position: absolute; top: .3rem; right: .3rem; }
+    .camp-hero { min-height: 500px; }
+  }
+  @media (max-width: 720px) {
+    .games-page { width: min(100% - 1rem, 1180px); padding-top: .5rem; }
+    .camp-hero { min-height: 0; grid-template-columns: 1fr; padding: 1.35rem; border-radius: 1.5rem; }
+    h1 { font-size: clamp(3.2rem, 17vw, 5rem); }
+    .hero-dino { max-height: 250px; }
+    .hero-dino :global(.dino-avatar) { max-width: 250px; }
+    .speech-bubble { top: 0; right: 4%; font-size: .8rem; }
+    .station-rail { position: static; grid-template-columns: repeat(5, minmax(132px, 1fr)); border-radius: 1rem; }
+    .game-stop { min-height: 0; padding: .8rem; border-radius: 1.35rem; }
+    .stop-label { grid-template-columns: auto 1fr 64px; }
+    .stop-label :global(.dino-avatar) { max-height: 56px; }
+    .station-actions.split, .next-route { flex-direction: column; }
+    .station-actions button, .next-route a { width: 100%; }
+    .next-route a { justify-content: center; }
+    .finish-camp { grid-template-columns: 1fr; }
+    .finish-dinos { max-height: 220px; overflow: hidden; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-orb, .hero-dino :global(.dino-avatar), .game-stop.is-active { animation: none; }
+  }
+  :global(body.is-presenting) .station-rail, :global(body.is-presenting) .route-status { display: none !important; }
+  :global(body.is-presenting) .game-stop { padding: 1rem; }
 </style>

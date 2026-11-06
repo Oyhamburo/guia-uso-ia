@@ -1,191 +1,333 @@
 ---
+import DinoAvatar from "./DinoAvatar.astro";
+
 const horizons = [
-  { value: "today", label: "Hoy", icon: "✓" },
-  { value: "supervised", label: "Con supervisión", icon: "👀" },
-  { value: "emerging", label: "En desarrollo", icon: "🧪" }
+  { value: "today", label: "Hoy", icon: "✓", help: "Ya es cotidiano" },
+  { value: "supervised", label: "Con supervisión", icon: "👀", help: "Necesita control" },
+  { value: "emerging", label: "En desarrollo", icon: "🧪", help: "Todavía está madurando" }
 ] as const;
 
 const cases = [
-  {
-    icon: "📄",
-    title: "Resumir un PDF",
-    answer: "today",
-    why: "Ya es cotidiano. Igual conviene revisar cifras, citas y partes omitidas."
-  },
-  {
-    icon: "🎨",
-    title: "Crear una imagen",
-    answer: "today",
-    why: "Ya está disponible en muchas herramientas. Cuidá identidad, derechos y procedencia."
-  },
-  {
-    icon: "🔎",
-    title: "Investigar muchas fuentes",
-    answer: "supervised",
-    why: "Puede buscar y sintetizar, pero una persona debe abrir y comprobar las fuentes."
-  },
-  {
-    icon: "📊",
-    title: "Actualizar una planilla",
-    answer: "supervised",
-    why: "Puede actuar con herramientas, permisos y límites. Revisá antes de guardar o compartir."
-  },
-  {
-    icon: "🤖",
-    title: "Robot que hace cualquier tarea del hogar",
-    answer: "emerging",
-    why: "Hay demostraciones y pruebas, pero no es una capacidad general y confiable de uso cotidiano."
-  },
-  {
-    icon: "🧫",
-    title: "Laboratorio que propone y prueba solo",
-    answer: "emerging",
-    why: "Ya existen entornos controlados, pero siguen siendo sistemas especializados y experimentales."
-  }
+  { icon: "📄", title: "Resumir un PDF", answer: "today", why: "Ya es cotidiano. Igual conviene revisar cifras, citas y partes omitidas." },
+  { icon: "🎨", title: "Crear una imagen", answer: "today", why: "Ya está disponible en muchas herramientas. Cuidá identidad, derechos y procedencia." },
+  { icon: "🔎", title: "Investigar muchas fuentes", answer: "supervised", why: "Puede buscar y sintetizar, pero una persona debe abrir y comprobar las fuentes." },
+  { icon: "📊", title: "Actualizar una planilla", answer: "supervised", why: "Puede actuar con herramientas, permisos y límites. Revisá antes de guardar o compartir." },
+  { icon: "🤖", title: "Robot que hace cualquier tarea del hogar", answer: "emerging", why: "Hay demostraciones y pruebas, pero no es una capacidad general y confiable de uso cotidiano." },
+  { icon: "🧫", title: "Laboratorio que propone y prueba solo", answer: "emerging", why: "Ya existen entornos controlados, pero siguen siendo sistemas especializados y experimentales." }
 ] as const;
 ---
 
 <section class="horizon-game" data-horizon-game aria-labelledby="horizon-game-title">
   <header class="game-heading">
-    <span class="compass" aria-hidden="true">⌖</span>
+    <div class="guide-dino" data-guide-dino aria-hidden="true"><DinoAvatar name="roco" mood="thinking" size="small" /></div>
     <div>
       <p>Radar de capacidades</p>
-      <h3 id="horizon-game-title">¿En qué zona está cada caso?</h3>
+      <h3 id="horizon-game-title">Calibrá el radar</h3>
+      <span>Separá lo cotidiano de lo que necesita compañía o todavía está creciendo.</span>
     </div>
   </header>
 
-  <div class="legend" aria-label="Zonas del radar">
-    {horizons.map((horizon) => (
-      <span class={`legend-${horizon.value}`}><b aria-hidden="true">{horizon.icon}</b>{horizon.label}</span>
+  <div class="trail-progress" aria-label="Avance del juego">
+    {cases.map((_, index) => (
+      <span data-progress-dot data-state={index === 0 ? "active" : "waiting"}>
+        <span class="sr-only">{index === 0 ? "Capacidad actual" : "Capacidad pendiente"}</span>
+      </span>
     ))}
   </div>
 
-  <form>
-    <div class="case-grid">
+  <p id="horizon-instructions" class="instructions">
+    Arrastrá la capacidad a una zona. También podés <strong>seleccionarla</strong> y tocar un horizonte.
+  </p>
+
+  <div class="play-area" data-play-area>
+    <div class="case-deck" aria-live="polite">
       {cases.map((item, index) => (
-        <fieldset data-answer={item.answer} data-why={item.why}>
-          <legend><span aria-hidden="true">{item.icon}</span><strong>{item.title}</strong></legend>
-          <div class="choices">
-            {horizons.map((horizon) => (
-              <label>
-                <input type="radio" name={`horizon-${index}`} value={horizon.value} />
-                <span><b aria-hidden="true">{horizon.icon}</b>{horizon.label}</span>
-              </label>
-            ))}
-          </div>
-          <p class="explanation" hidden aria-live="polite"></p>
-        </fieldset>
+        <button
+          type="button"
+          class="case-card"
+          data-horizon-card
+          data-index={index}
+          data-answer={item.answer}
+          data-why={item.why}
+          aria-pressed="false"
+          aria-describedby="horizon-instructions"
+          draggable="true"
+          hidden={index !== 0}
+        >
+          <span class="grab" aria-hidden="true">⠿</span>
+          <span class="case-icon" aria-hidden="true">{item.icon}</span>
+          <strong>{item.title}</strong>
+          <small>Moveme al radar</small>
+        </button>
       ))}
     </div>
 
-    <div class="actions">
-      <button type="submit">Revisar el radar</button>
-      <button type="reset" class="secondary">Volver a intentar</button>
+    <div class="radar-board" aria-label="Horizontes del radar">
+      <span class="scan-line" aria-hidden="true"></span>
+      {horizons.map((horizon) => (
+        <button
+          type="button"
+          class={`radar-zone zone-${horizon.value}`}
+          data-horizon-target={horizon.value}
+          aria-label={`Ubicar en ${horizon.label}: ${horizon.help}`}
+        >
+          <span class="zone-icon" aria-hidden="true">{horizon.icon}</span>
+          <strong>{horizon.label}</strong>
+          <small>{horizon.help}</small>
+        </button>
+      ))}
     </div>
-  </form>
 
-  <p class="result" data-result hidden aria-live="polite" tabindex="-1"></p>
+    <div class="feedback" data-feedback hidden role="status" aria-live="polite" tabindex="-1"></div>
+    <button type="button" class="next-card" data-next-card hidden>Siguiente capacidad <span aria-hidden="true">→</span></button>
+  </div>
+
+  <div class="finish-panel" data-finish-panel hidden tabindex="-1">
+    <div class="finish-radar" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
+    <div class="finish-dino" aria-hidden="true"><DinoAvatar name="roco" mood="celebrating" size="medium" /></div>
+    <div class="finish-copy">
+      <p>¡Radar calibrado!</p>
+      <h4>Ya distinguís capacidad de promesa.</h4>
+      <button type="button" data-restart>Calibrar de nuevo</button>
+    </div>
+  </div>
 </section>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-horizon-game]").forEach((game) => {
-    const form = game.querySelector<HTMLFormElement>("form");
-    const result = game.querySelector<HTMLElement>("[data-result]");
-    if (!form || !result) return;
+    const cards = [...game.querySelectorAll<HTMLButtonElement>("[data-horizon-card]")];
+    const targets = [...game.querySelectorAll<HTMLButtonElement>("[data-horizon-target]")];
+    const dots = [...game.querySelectorAll<HTMLElement>("[data-progress-dot]")];
+    const playArea = game.querySelector<HTMLElement>("[data-play-area]");
+    const feedback = game.querySelector<HTMLElement>("[data-feedback]");
+    const nextButton = game.querySelector<HTMLButtonElement>("[data-next-card]");
+    const finish = game.querySelector<HTMLElement>("[data-finish-panel]");
+    const restart = game.querySelector<HTMLButtonElement>("[data-restart]");
+    const guide = game.querySelector<HTMLElement>("[data-guide-dino]");
+    if (!cards.length || !targets.length || !playArea || !feedback || !nextButton || !finish || !restart) return;
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const cards = [...game.querySelectorAll<HTMLElement>("fieldset[data-answer]")];
-      const unanswered = cards.filter((card) => !card.querySelector("input:checked")).length;
+    let current = 0;
+    let chosen = false;
+    let locked = false;
+    let completionEmitted = false;
+    const activeCard = () => cards[current];
 
-      if (unanswered) {
-        result.hidden = false;
-        result.dataset.state = "hint";
-        result.innerHTML = `<strong>Faltan ${unanswered} casos.</strong> Marcá una zona en cada tarjeta.`;
-        result.focus({ preventScroll: true });
+    const clearTargets = () => targets.forEach((target) => {
+      target.classList.remove("is-over");
+      delete target.dataset.state;
+    });
+
+    const selectCard = (card: HTMLButtonElement | undefined) => {
+      if (!card || locked || card !== activeCard()) return;
+      chosen = true;
+      card.setAttribute("aria-pressed", "true");
+      card.dataset.state = "selected";
+      guide?.setAttribute("data-state", "thinking");
+    };
+
+    const announceHint = () => {
+      feedback.hidden = false;
+      feedback.dataset.state = "hint";
+      feedback.innerHTML = "<strong>Primero elegí la capacidad.</strong> Después tocá una zona del radar.";
+      activeCard()?.focus();
+    };
+
+    const tryTarget = (target: HTMLButtonElement) => {
+      const card = activeCard();
+      if (!card || locked) return;
+      if (!chosen) return announceHint();
+
+      clearTargets();
+      const correct = target.dataset.horizonTarget === card.dataset.answer;
+      target.dataset.state = correct ? "ok" : "retry";
+      feedback.hidden = false;
+      feedback.dataset.state = correct ? "ok" : "retry";
+      feedback.innerHTML = `<strong>${correct ? "¡Bien ubicado!" : "Ese horizonte no encaja todavía."}</strong> ${card.dataset.why || ""}`;
+
+      if (!correct) {
+        delete card.dataset.state;
+        void card.offsetWidth;
+        card.dataset.state = "retry";
+        guide?.setAttribute("data-state", "retry");
+        chosen = true;
+        card.setAttribute("aria-pressed", "true");
+        requestAnimationFrame(() => card.focus({ preventScroll: true }));
         return;
       }
 
-      let correct = 0;
-      cards.forEach((card) => {
-        const picked = card.querySelector<HTMLInputElement>("input:checked");
-        const explanation = card.querySelector<HTMLElement>(".explanation");
-        if (!picked || !explanation) return;
-        const isCorrect = picked.value === card.dataset.answer;
-        if (isCorrect) correct += 1;
-        card.dataset.state = isCorrect ? "ok" : "review";
-        explanation.hidden = false;
-        explanation.textContent = `${isCorrect ? "Bien. " : "Mirá el matiz. "}${card.dataset.why}`;
-      });
+      locked = true;
+      card.dataset.state = "ok";
+      card.setAttribute("aria-pressed", "false");
+      guide?.setAttribute("data-state", "celebrate");
+      dots[current]?.setAttribute("data-state", "done");
+      nextButton.hidden = false;
+      nextButton.textContent = current === cards.length - 1 ? "Ver resultado" : "Siguiente capacidad →";
+      requestAnimationFrame(() => nextButton.focus({ preventScroll: true }));
+    };
 
-      result.hidden = false;
-      result.dataset.state = correct === cards.length ? "success" : "retry";
-      result.innerHTML = correct === cards.length
-        ? "<strong>¡Radar calibrado!</strong> Diferenciaste lo cotidiano de lo que requiere control o todavía está madurando."
-        : `<strong>Ubicaste ${correct} de ${cards.length}.</strong> Leé las pistas: una demo no siempre es un producto listo para usar.`;
-      result.focus({ preventScroll: true });
+    const showCard = (index: number) => {
+      current = index;
+      chosen = false;
+      locked = false;
+      feedback.hidden = true;
+      feedback.textContent = "";
+      delete feedback.dataset.state;
+      nextButton.hidden = true;
+      clearTargets();
+      guide?.removeAttribute("data-state");
+      cards.forEach((card, cardIndex) => {
+        card.hidden = cardIndex !== current;
+        card.setAttribute("aria-pressed", "false");
+        delete card.dataset.state;
+      });
+      dots.forEach((dot, dotIndex) => {
+        const state = dotIndex < current ? "done" : dotIndex === current ? "active" : "waiting";
+        dot.dataset.state = state;
+        const label = dot.querySelector<HTMLElement>(".sr-only");
+        if (label) label.textContent = state === "done" ? "Capacidad completada" : state === "active" ? "Capacidad actual" : "Capacidad pendiente";
+        if (state === "active") dot.setAttribute("aria-current", "step");
+        else dot.removeAttribute("aria-current");
+      });
+      activeCard()?.focus({ preventScroll: true });
+    };
+
+    const complete = () => {
+      playArea.hidden = true;
+      finish.hidden = false;
+      if (!completionEmitted) {
+        completionEmitted = true;
+        game.dispatchEvent(new CustomEvent("game:complete", { bubbles: true }));
+      }
+      finish.focus({ preventScroll: true });
+    };
+
+    cards.forEach((card) => {
+      card.addEventListener("click", () => selectCard(card));
+      card.addEventListener("dragstart", (event) => {
+        if (card !== activeCard() || locked) return event.preventDefault();
+        selectCard(card);
+        card.dataset.state = "dragging";
+        event.dataTransfer?.setData("text/plain", card.dataset.index || "");
+        if (event.dataTransfer) event.dataTransfer.effectAllowed = "move";
+      });
+      card.addEventListener("dragend", () => {
+        if (!locked && card.dataset.state === "dragging") card.dataset.state = chosen ? "selected" : "";
+        targets.forEach((target) => target.classList.remove("is-over"));
+      });
     });
 
-    form.addEventListener("reset", () => {
-      game.querySelectorAll<HTMLElement>("fieldset[data-state]").forEach((card) => delete card.dataset.state);
-      game.querySelectorAll<HTMLElement>(".explanation").forEach((explanation) => {
-        explanation.hidden = true;
-        explanation.textContent = "";
+    targets.forEach((target) => {
+      target.addEventListener("click", () => tryTarget(target));
+      target.addEventListener("dragenter", (event) => { event.preventDefault(); target.classList.add("is-over"); });
+      target.addEventListener("dragover", (event) => { event.preventDefault(); if (event.dataTransfer) event.dataTransfer.dropEffect = "move"; });
+      target.addEventListener("dragleave", () => target.classList.remove("is-over"));
+      target.addEventListener("drop", (event) => {
+        event.preventDefault();
+        target.classList.remove("is-over");
+        const card = activeCard();
+        const draggedIndex = event.dataTransfer?.getData("text/plain");
+        if (!card || draggedIndex !== card.dataset.index) return;
+        selectCard(card);
+        tryTarget(target);
       });
-      result.hidden = true;
-      result.textContent = "";
-      delete result.dataset.state;
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (!locked) return;
+      if (current === cards.length - 1) complete();
+      else showCard(current + 1);
+    });
+
+    restart.addEventListener("click", () => {
+      completionEmitted = false;
+      finish.hidden = true;
+      playArea.hidden = false;
+      showCard(0);
     });
   });
 </script>
 
 <style>
-  .horizon-game {
-    padding: clamp(1rem, 3vw, 2rem);
-    border: 2px solid #a9c8d8;
-    border-radius: 1.75rem;
-    background: linear-gradient(145deg, #edf7fb, #fffdf7 64%);
-    box-shadow: 0 18px 50px rgb(32 48 43 / 10%);
+  .horizon-game { position: relative; overflow: hidden; padding: clamp(1rem, 3vw, 2rem); border: 2px solid #a9c8d8; border-radius: 1.75rem; background: radial-gradient(circle at 88% 2%, rgb(105 65 165 / 14%), transparent 14rem), linear-gradient(145deg, #edf7fb, #fffdf7 64%); box-shadow: 0 18px 50px rgb(32 48 43 / 10%); }
+  .game-heading { display: grid; grid-template-columns: 104px 1fr; align-items: center; gap: .8rem; }
+  .guide-dino { width: 104px; transform-origin: 50% 90%; }
+  .guide-dino[data-state="thinking"] { animation: dino-look .65s ease-in-out; }
+  .guide-dino[data-state="retry"] { animation: dino-shake .45s ease-in-out; }
+  .guide-dino[data-state="celebrate"] { animation: dino-hop .7s ease-in-out; }
+  .game-heading p { margin: 0; color: #245c7a; font-size: .72rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+  .game-heading h3 { margin: .08rem 0 .25rem; font-size: clamp(1.65rem, 4vw, 2.45rem); }
+  .game-heading span { color: #526159; font-size: .92rem; }
+  .trail-progress { display: flex; gap: .38rem; justify-content: center; margin: .65rem 0; }
+  .trail-progress > span { width: 28px; height: 8px; border-radius: 999px; background: #d7e0e4; transition: width 180ms ease, background 180ms ease; }
+  .trail-progress > span[data-state="active"] { width: 48px; background: #2f7196; }
+  .trail-progress > span[data-state="done"] { background: #176b55; }
+  .instructions { margin: .35rem auto .8rem; color: #526159; font-size: .88rem; text-align: center; }
+  .play-area { display: grid; gap: .8rem; }
+  .case-deck { display: grid; min-height: 142px; place-items: center; perspective: 900px; }
+  .case-card { position: relative; width: min(620px, 100%); min-height: 128px; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: .7rem; padding: 1rem 2.4rem 1rem 1rem; border: 2px solid #172c3a; border-radius: 1.25rem; background: #fffdf7; box-shadow: 5px 7px 0 #172c3a; color: #20302b; cursor: grab; font: inherit; text-align: left; animation: card-arrive .35s ease-out, card-float 3.2s ease-in-out .4s infinite; transition: box-shadow 150ms ease, translate 150ms ease, rotate 150ms ease; }
+  .case-card:hover, .case-card[data-state="selected"] { translate: 0 -4px; box-shadow: 7px 10px 0 #172c3a; }
+  .case-card[hidden] { display: none !important; }
+  .case-card[data-state="selected"] { outline: 4px solid #f5bd43; outline-offset: 3px; }
+  .case-card[data-state="dragging"] { opacity: .68; rotate: 2deg; cursor: grabbing; }
+  .case-card[data-state="retry"] { animation: card-shake .38s ease-in-out; }
+  .case-card[data-state="ok"] { border-color: #176b55; background: #e8f5ed; box-shadow: 5px 7px 0 #176b55; animation: card-land .42s ease-out; }
+  .case-card .grab { position: absolute; top: .6rem; right: .75rem; color: #82929a; font-size: 1.3rem; }
+  .case-icon { grid-row: 1 / 3; display: grid; width: 58px; height: 58px; place-items: center; border-radius: 50%; background: #e5f1f6; font-size: 2rem; box-shadow: inset 0 0 0 6px rgb(47 113 150 / 10%); }
+  .case-card strong { align-self: end; font-size: 1.05rem; }
+  .case-card small { align-self: start; color: #68766f; font-size: .72rem; font-weight: 750; }
+  .radar-board { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; padding: .5rem; border: 1px solid #c3d6df; border-radius: 1.35rem; background: repeating-radial-gradient(circle at 50% 115%, transparent 0 52px, rgb(47 113 150 / 10%) 53px 55px); }
+  .scan-line { position: absolute; bottom: 0; left: 50%; width: 48%; height: 2px; background: linear-gradient(90deg, #2f7196, transparent); transform-origin: left; animation: radar-scan 4s linear infinite; pointer-events: none; }
+  .radar-zone { position: relative; min-height: 112px; display: grid; place-items: center; align-content: center; gap: .05rem; padding: .75rem; border: 2px dashed currentColor; border-radius: 1.1rem; background: rgb(255 255 255 / 82%); color: #20302b; cursor: pointer; font: inherit; transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease; }
+  .radar-zone:hover, .radar-zone.is-over { transform: translateY(-4px) scale(1.02); box-shadow: 0 11px 20px rgb(32 48 43 / 15%); }
+  .radar-zone.is-over { background: #fff1bd; }
+  .zone-icon { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: currentColor; color: white; font-size: 1rem; transition: transform 150ms ease; }
+  .radar-zone:hover .zone-icon, .radar-zone.is-over .zone-icon { transform: scale(1.14) rotate(-4deg); }
+  .radar-zone strong { font-size: .96rem; }
+  .radar-zone small { color: #5c6a63; font-size: .7rem; }
+  .zone-today { color: #176b55; }
+  .zone-supervised { color: #9b6906; }
+  .zone-emerging { color: #6941a5; }
+  .radar-zone[data-state="ok"] { border-style: solid; background: #e3f3e8; animation: target-pop .45s ease-out; }
+  .radar-zone[data-state="retry"] { background: #fff0e5; animation: card-shake .38s ease-in-out; }
+  .feedback { padding: .72rem .9rem; border-left: 5px solid #176b55; border-radius: .7rem; background: #e8f5ed; color: #174c38; font-size: .9rem; }
+  .feedback[data-state="retry"], .feedback[data-state="hint"] { border-color: #c9573f; background: #fff0e5; color: #77361f; }
+  .next-card, .finish-panel button { min-height: 44px; justify-self: end; padding: .7rem 1rem; border: 2px solid #172c3a; border-radius: 999px; background: #245c7a; box-shadow: 3px 4px 0 #172c3a; color: white; cursor: pointer; font: inherit; font-weight: 850; }
+  .finish-panel { position: relative; min-height: 330px; display: grid; grid-template-columns: .8fr .8fr 1.4fr; place-items: center; gap: .5rem; padding: 1.2rem; border-radius: 1.4rem; background: radial-gradient(circle at 25% 50%, #d8edf6, transparent 35%), linear-gradient(145deg, #f2ecfa, #fff9dc); text-align: center; }
+  .finish-panel[hidden], .play-area[hidden] { display: none; }
+  .finish-dino { width: min(220px, 100%); }
+  .finish-copy p { margin: 0; color: #245c7a; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .finish-copy h4 { margin: .3rem 0 1rem; font-size: clamp(1.5rem, 4vw, 2.45rem); }
+  .finish-radar { position: relative; width: 150px; aspect-ratio: 1; display: grid; place-items: center; }
+  .finish-radar span { position: absolute; border: 2px solid rgb(47 113 150 / 35%); border-radius: 50%; }
+  .finish-radar span:nth-child(1) { inset: 5%; }
+  .finish-radar span:nth-child(2) { inset: 24%; }
+  .finish-radar span:nth-child(3) { inset: 41%; background: #2f7196; }
+  .finish-radar i { position: absolute; bottom: 50%; left: 50%; width: 46%; height: 3px; background: linear-gradient(90deg, #2f7196, transparent); transform-origin: left; animation: radar-scan 2.4s linear infinite; }
+  @keyframes card-arrive { from { opacity: 0; transform: translateY(20px) scale(.96); } }
+  @keyframes card-float { 50% { transform: translateY(-2px); } }
+  @keyframes card-shake { 25% { transform: translateX(-7px) rotate(-1deg); } 75% { transform: translateX(7px) rotate(1deg); } }
+  @keyframes card-land { 50% { transform: scale(1.035); } }
+  @keyframes target-pop { 50% { transform: scale(1.05); } }
+  @keyframes dino-look { 50% { transform: rotate(-3deg) translateY(2px); } }
+  @keyframes dino-shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  @keyframes dino-hop { 50% { transform: translateY(-9px) rotate(2deg); } }
+  @keyframes radar-scan { to { transform: rotate(360deg); } }
+  :global(body.is-presenting) .horizon-game { padding: .75rem 1rem; }
+  :global(body.is-presenting) .game-heading { grid-template-columns: 76px 1fr; }
+  :global(body.is-presenting) .guide-dino { width: 76px; }
+  :global(body.is-presenting) .case-card { min-height: 105px; }
+  :global(body.is-presenting) .radar-zone { min-height: 84px; }
+  @media (max-width: 640px) {
+    .game-heading { grid-template-columns: 78px 1fr; }
+    .guide-dino { width: 78px; }
+    .radar-board { grid-template-columns: 1fr; background: rgb(255 255 255 / 35%); }
+    .scan-line { display: none; }
+    .radar-zone { min-height: 74px; grid-template-columns: auto 1fr; justify-items: start; column-gap: .55rem; text-align: left; }
+    .zone-icon { grid-row: 1 / 3; }
+    .finish-panel { grid-template-columns: 1fr 1fr; }
+    .finish-copy { grid-column: 1 / -1; }
+    .finish-dino { width: 150px; }
+    .finish-radar { width: 120px; }
   }
-
-  .game-heading { display: flex; gap: .9rem; align-items: center; }
-  .game-heading > .compass { display: grid; flex: 0 0 48px; width: 48px; height: 48px; place-items: center; border-radius: 50%; background: #245c7a; color: white; font-size: 1.7rem; box-shadow: 0 0 0 5px #d9edf5; }
-  .game-heading p { margin: 0; color: #245c7a; font-size: .75rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
-  h3 { margin: .1rem 0 0; font-size: clamp(1.5rem, 4vw, 2.35rem); }
-
-  .legend { display: flex; flex-wrap: wrap; gap: .55rem; margin: 1rem 0; }
-  .legend > span { display: inline-flex; min-height: 36px; align-items: center; gap: .4rem; padding: .35rem .65rem; border: 1px solid currentColor; border-radius: 999px; background: white; font-size: .8rem; font-weight: 850; }
-  .legend-today { color: #176b55; }
-  .legend-supervised { color: #8a5f08; }
-  .legend-emerging { color: #6941a5; }
-
-  .case-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
-  fieldset { min-width: 0; margin: 0; padding: 1rem; border: 1px solid #c8d9df; border-radius: 1.1rem; background: rgb(255 255 255 / 86%); transition: border-color 160ms ease, box-shadow 160ms ease; }
-  fieldset[data-state="ok"] { border-color: #4d9870; box-shadow: inset 0 0 0 1px #4d9870; }
-  fieldset[data-state="review"] { border-color: #d27b4a; box-shadow: inset 0 0 0 1px #d27b4a; }
-  legend { max-width: calc(100% - .8rem); padding: 0 .4rem; }
-  legend span { margin-right: .4rem; font-size: 1.35rem; }
-
-  .choices { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .35rem; }
-  label { min-height: 44px; display: inline-flex; align-items: center; cursor: pointer; }
-  input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
-  label > span { display: inline-flex; min-height: 38px; align-items: center; gap: .35rem; padding: .45rem .6rem; border: 1px solid #c9d4d7; border-radius: 999px; background: #f5f2e8; font-size: .78rem; font-weight: 800; }
-  label:hover > span { background: #eaf4f8; }
-  input:checked + span { border-color: #245c7a; background: #d9edf5; color: #183f55; box-shadow: inset 0 0 0 1px #245c7a; }
-  input:focus-visible + span { outline: 3px solid #f5bd43; outline-offset: 3px; }
-
-  .explanation { margin: .75rem 0 0; padding: .65rem .75rem; border-radius: .75rem; background: #e8f5ed; color: #17503a; font-size: .86rem; line-height: 1.4; }
-  fieldset[data-state="review"] .explanation { background: #fff0e5; color: #77361f; }
-
-  .actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.15rem; }
-  button { min-height: 44px; padding: .75rem 1rem; border: 0; border-radius: 999px; background: #245c7a; color: white; font: inherit; font-weight: 850; cursor: pointer; }
-  button.secondary { background: #e5ecee; color: #20302b; }
-  button:hover { filter: brightness(.95); }
-  button:focus-visible { outline: 3px solid #f5bd43; outline-offset: 3px; }
-  .result { margin: 1rem 0 0; padding: .9rem 1rem; border-left: 5px solid #176b55; border-radius: .7rem; background: #e8f5ed; color: #174c38; }
-  .result[data-state="retry"], .result[data-state="hint"] { border-color: #c9573f; background: #fff0e5; color: #77361f; }
-
-  @media (max-width: 720px) {
-    .case-grid { grid-template-columns: 1fr; }
-  }
+  @media (prefers-reduced-motion: reduce) { .case-card, .guide-dino, .radar-zone, .scan-line, .finish-radar i { animation: none !important; transition: none !important; } }
 </style>

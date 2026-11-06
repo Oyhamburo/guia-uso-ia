@@ -10,6 +10,7 @@ interface Props {
   current?: "home" | "parte-1" | "juegos" | "parte-2" | "parte-3";
   theme?: "field" | "technical";
   hideChrome?: boolean;
+  presentation?: boolean;
 }
 
 const {
@@ -17,7 +18,8 @@ const {
   description = "Una expedición visual para aprender a usar inteligencia artificial con criterio.",
   current: currentProp,
   theme = "field",
-  hideChrome = false
+  hideChrome = false,
+  presentation = true
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -47,9 +49,9 @@ const current = currentProp ?? (
   </head>
   <body data-theme={theme}>
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
-    {!hideChrome && <SiteHeader current={current} />}
+    {!hideChrome && <SiteHeader current={current} showPresentation={presentation} />}
     <slot />
     {!hideChrome && <SiteFooter />}
-    {!hideChrome && <PresentationMode />}
+    {!hideChrome && presentation && <PresentationMode />}
   </body>
 </html>

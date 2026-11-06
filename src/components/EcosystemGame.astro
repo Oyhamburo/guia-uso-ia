@@ -1,85 +1,330 @@
 ---
-const items = [
-  { label: "ChatGPT", answer: "producto" },
-  { label: "OpenAI", answer: "proveedor" },
-  { label: "GPT-6 Astra", answer: "modelo" },
-  { label: "Imagen", answer: "modalidad" }
+import DinoAvatar from "./DinoAvatar.astro";
+
+const fossils = [
+  { id: "chatgpt", label: "ChatGPT", answer: "producto", icon: "💬" },
+  { id: "openai", label: "OpenAI", answer: "proveedor", icon: "🏢" },
+  { id: "astra", label: "GPT-6 Astra", answer: "modelo", icon: "⚙️" },
+  { id: "imagen", label: "Imagen", answer: "modalidad", icon: "🖼️" }
 ];
-const options = [
-  ["", "Elegí una capa"],
-  ["modelo", "Modelo · motor"],
-  ["proveedor", "Proveedor · acceso"],
-  ["producto", "Producto · experiencia"],
-  ["modalidad", "Tipo de contenido"]
+
+const showcases = [
+  { id: "modelo", label: "Modelo", hint: "El motor que genera", icon: "🧠" },
+  { id: "producto", label: "Producto", hint: "La aplicación que usás", icon: "📱" },
+  { id: "proveedor", label: "Proveedor", hint: "La empresa que lo ofrece", icon: "🏕️" },
+  { id: "modalidad", label: "Modalidad", hint: "El tipo de contenido", icon: "🎨" }
 ];
 ---
 
 <section class="ecosystem-game" data-ecosystem-game aria-labelledby="ecosystem-game-title">
-  <div class="game-heading">
-    <span aria-hidden="true">🏛️</span>
-    <div>
+  <header class="game-heading">
+    <div class="heading-copy">
       <p>Museo de IA</p>
       <h3 id="ecosystem-game-title">Poné cada fósil en su vitrina</h3>
+      <p class="intro">Arrastrá una pieza o tocala y después elegí su vitrina.</p>
     </div>
+    <div class="museum-guide" aria-hidden="true">
+      <div class="guide-neutral"><DinoAvatar name="anky" mood="thinking" size="small" /></div>
+      <div class="guide-success"><DinoAvatar name="anky" mood="celebrating" size="small" /></div>
+    </div>
+  </header>
+
+  <div class="museum-progress" aria-label="Progreso del museo">
+    {fossils.map(() => <span aria-hidden="true">◆</span>)}
   </div>
-  <p class="intro">Modelo, proveedor, producto y tipo de contenido no son lo mismo.</p>
-  <form>
-    <div class="items">
-      {items.map((item, index) => (
-        <label data-answer={item.answer}>
-          <strong>{item.label}</strong>
-          <select name={`ecosystem-${index}`} aria-label={`Clasificar ${item.label}`}>
-            {options.map(([value, label]) => <option value={value}>{label}</option>)}
-          </select>
-          <span class="item-feedback" aria-live="polite"></span>
-        </label>
+
+  <div class="museum-board">
+    <div class="fossil-tray" aria-labelledby="fossil-tray-title">
+      <div class="tray-label">
+        <span aria-hidden="true">⛏️</span>
+        <div><small>Mesa de hallazgos</small><strong id="fossil-tray-title">Fósiles por clasificar</strong></div>
+      </div>
+      <div class="fossils">
+        {fossils.map((fossil) => (
+          <button
+            class="fossil"
+            type="button"
+            draggable="true"
+            data-fossil={fossil.id}
+            data-answer={fossil.answer}
+            aria-pressed="false"
+            aria-label={`${fossil.label}. Seleccionar para clasificar.`}
+          >
+            <span class="fossil-icon" aria-hidden="true">{fossil.icon}</span>
+            <strong>{fossil.label}</strong>
+            <small>Arrastrar o tocar</small>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="showcases" aria-label="Vitrinas del museo">
+      {showcases.map((showcase) => (
+        <button
+          class="showcase"
+          type="button"
+          data-showcase={showcase.id}
+          data-empty-label={showcase.label}
+          data-empty-hint={showcase.hint}
+          aria-label={`${showcase.label}: ${showcase.hint}. Destino vacío.`}
+        >
+          <span class="showcase-icon" aria-hidden="true">{showcase.icon}</span>
+          <span class="showcase-copy">
+            <strong>{showcase.label}</strong>
+            <small>{showcase.hint}</small>
+          </span>
+          <span class="showcase-empty" aria-hidden="true">Soltá acá</span>
+        </button>
       ))}
     </div>
-    <button type="submit">Revisar vitrinas</button>
-  </form>
-  <div class="result" data-result hidden aria-live="polite"></div>
+  </div>
+
+  <div class="game-footer">
+    <p class="status" data-status role="status" aria-live="polite">Elegí el primer fósil.</p>
+    <button class="reset" type="button" data-reset>Reordenar el museo</button>
+  </div>
+
+  <div class="result" data-result hidden tabindex="-1" aria-live="polite">
+    <span aria-hidden="true">✨</span>
+    <div><strong>¡Museo ordenado!</strong><p>Modelo, proveedor, producto y modalidad ocupan capas diferentes.</p></div>
+  </div>
 </section>
 
 <script>
   document.querySelectorAll<HTMLElement>("[data-ecosystem-game]").forEach((game) => {
-    const form = game.querySelector("form");
+    const fossils = [...game.querySelectorAll<HTMLButtonElement>("[data-fossil]")];
+    const showcases = [...game.querySelectorAll<HTMLButtonElement>("[data-showcase]")];
+    const progress = [...game.querySelectorAll<HTMLElement>(".museum-progress span")];
+    const status = game.querySelector<HTMLElement>("[data-status]");
     const result = game.querySelector<HTMLElement>("[data-result]");
-    if (!form || !result) return;
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const rows = [...game.querySelectorAll<HTMLElement>("label[data-answer]")];
-      let correct = 0;
-      rows.forEach((row) => {
-        const select = row.querySelector("select");
-        const feedback = row.querySelector<HTMLElement>(".item-feedback");
-        if (!select || !feedback) return;
-        const ok = select.value === row.dataset.answer;
-        if (ok) correct += 1;
-        feedback.textContent = ok ? "✓ Bien" : select.value ? "Probá otra capa" : "Elegí una opción";
-        feedback.dataset.state = ok ? "ok" : "retry";
+    const reset = game.querySelector<HTMLButtonElement>("[data-reset]");
+    let selected: HTMLButtonElement | null = null;
+
+    const setStatus = (message: string, state = "") => {
+      if (!status) return;
+      status.textContent = message;
+      status.dataset.state = state;
+    };
+
+    const selectFossil = (fossil: HTMLButtonElement) => {
+      if (fossil.hidden || fossil.dataset.locked === "true") return;
+      const wasSelected = selected === fossil;
+      fossils.forEach((item) => item.setAttribute("aria-pressed", "false"));
+      selected = wasSelected ? null : fossil;
+      if (selected) {
+        selected.setAttribute("aria-pressed", "true");
+        setStatus(`${selected.querySelector("strong")?.textContent ?? "Pieza"} está listo. Elegí una vitrina.`, "picked");
+      } else {
+        setStatus("Selección cancelada. Elegí otro fósil.");
+      }
+    };
+
+    const celebrate = () => {
+      if (game.dataset.complete === "true") return;
+      game.dataset.complete = "true";
+      game.dispatchEvent(new CustomEvent("game:complete", { bubbles: true }));
+      result?.removeAttribute("hidden");
+      result?.focus({ preventScroll: true });
+      for (let index = 0; index < 16; index += 1) {
+        const spark = document.createElement("i");
+        spark.className = "museum-spark";
+        spark.style.setProperty("--spark-x", `${8 + Math.random() * 84}%`);
+        spark.style.setProperty("--spark-delay", `${Math.random() * .45}s`);
+        game.append(spark);
+        window.setTimeout(() => spark.remove(), 1800);
+      }
+    };
+
+    const place = (fossil: HTMLButtonElement | null, showcase: HTMLButtonElement) => {
+      if (!fossil) {
+        setStatus("Primero elegí un fósil de la mesa.", "hint");
+        return;
+      }
+      if (showcase.dataset.filled === "true") {
+        setStatus("Esa vitrina ya está completa. Elegí otra.", "hint");
+        return;
+      }
+
+      showcases.forEach((item) => item.classList.remove("is-over", "is-wrong"));
+      if (fossil.dataset.answer !== showcase.dataset.showcase) {
+        showcase.classList.add("is-wrong");
+        window.setTimeout(() => showcase.classList.remove("is-wrong"), 520);
+        setStatus(`Todavía no. Pensá si ${fossil.querySelector("strong")?.textContent ?? "esa pieza"} es un motor, una empresa, una aplicación o un tipo de contenido.`, "retry");
+        return;
+      }
+
+      const label = fossil.querySelector("strong")?.textContent ?? "Pieza";
+      const slotLabel = showcase.dataset.emptyLabel ?? "Vitrina";
+      showcase.dataset.filled = "true";
+      showcase.dataset.state = "correct";
+      showcase.disabled = true;
+      showcase.setAttribute("aria-label", `${slotLabel}: ${label}. Clasificación correcta.`);
+      const filledLabel = showcase.querySelector<HTMLElement>(".showcase-empty");
+      if (filledLabel) {
+        filledLabel.textContent = label;
+        filledLabel.dataset.filled = "true";
+      }
+      fossil.hidden = true;
+      fossil.dataset.locked = "true";
+      fossil.setAttribute("aria-pressed", "false");
+      selected = null;
+
+      const completed = showcases.filter((item) => item.dataset.filled === "true").length;
+      progress.forEach((mark, index) => mark.dataset.done = String(index < completed));
+      setStatus(`¡Bien! ${label} encontró su vitrina: ${slotLabel}.`, "ok");
+      if (completed === showcases.length) celebrate();
+      else requestAnimationFrame(() => fossils.find((item) => !item.hidden && item.dataset.locked !== "true")?.focus({ preventScroll: true }));
+    };
+
+    fossils.forEach((fossil) => {
+      fossil.addEventListener("click", () => selectFossil(fossil));
+      fossil.addEventListener("dragstart", (event) => {
+        if (fossil.hidden) return event.preventDefault();
+        selected = fossil;
+        fossils.forEach((item) => item.setAttribute("aria-pressed", String(item === fossil)));
+        event.dataTransfer?.setData("text/plain", fossil.dataset.fossil ?? "");
+        event.dataTransfer?.setDragImage(fossil, 30, 25);
+        game.dataset.dragging = "true";
+        setStatus(`${fossil.querySelector("strong")?.textContent ?? "Pieza"}: buscá su vitrina.`, "picked");
       });
-      result.hidden = false;
-      result.innerHTML = correct === rows.length
-        ? "<strong>¡Museo ordenado!</strong> Ya podés describir mejor qué IA estás usando."
-        : `<strong>${correct} de ${rows.length} vitrinas correctas.</strong> Pensá: motor, empresa, aplicación o contenido.`;
+      fossil.addEventListener("dragend", () => {
+        delete game.dataset.dragging;
+        showcases.forEach((item) => item.classList.remove("is-over"));
+      });
+    });
+
+    showcases.forEach((showcase) => {
+      showcase.addEventListener("click", () => place(selected, showcase));
+      showcase.addEventListener("dragover", (event) => {
+        if (showcase.dataset.filled === "true") return;
+        event.preventDefault();
+        showcase.classList.add("is-over");
+      });
+      showcase.addEventListener("dragleave", () => showcase.classList.remove("is-over"));
+      showcase.addEventListener("drop", (event) => {
+        event.preventDefault();
+        showcase.classList.remove("is-over");
+        const fossilId = event.dataTransfer?.getData("text/plain");
+        const dragged = fossils.find((item) => item.dataset.fossil === fossilId);
+        if (!dragged) return;
+        place(dragged, showcase);
+      });
+    });
+
+    reset?.addEventListener("click", () => {
+      selected = null;
+      delete game.dataset.complete;
+      delete game.dataset.dragging;
+      fossils.forEach((fossil) => {
+        fossil.hidden = false;
+        fossil.dataset.locked = "false";
+        fossil.setAttribute("aria-pressed", "false");
+      });
+      showcases.forEach((showcase) => {
+        showcase.disabled = false;
+        delete showcase.dataset.filled;
+        delete showcase.dataset.state;
+        showcase.classList.remove("is-over", "is-wrong");
+        const label = showcase.dataset.emptyLabel ?? "Vitrina";
+        const hint = showcase.dataset.emptyHint ?? "";
+        showcase.setAttribute("aria-label", `${label}: ${hint}. Destino vacío.`);
+        const empty = showcase.querySelector<HTMLElement>(".showcase-empty");
+        if (empty) {
+          empty.textContent = "Soltá acá";
+          delete empty.dataset.filled;
+        }
+      });
+      progress.forEach((mark) => mark.dataset.done = "false");
+      game.querySelectorAll(".museum-spark").forEach((spark) => spark.remove());
+      if (result) result.hidden = true;
+      setStatus("Museo listo de nuevo. Elegí el primer fósil.");
+      fossils[0]?.focus();
     });
   });
 </script>
 
 <style>
-  .ecosystem-game { padding: clamp(1rem, 3vw, 2rem); border-radius: 1.75rem; border: 2px solid #9fc7dd; background: linear-gradient(145deg, #eef8fd, white); }
-  .game-heading { display: flex; gap: 1rem; align-items: center; }
-  .game-heading > span { font-size: 2.4rem; }
-  .game-heading p { margin: 0; color: #245c7a; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
-  h3 { margin: .1rem 0 0; font-size: clamp(1.5rem, 4vw, 2.35rem); }
-  .intro { color: var(--muted, #526159); }
-  .items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin-bottom: 1rem; }
-  label { display: grid; gap: .55rem; padding: 1rem; border: 1px solid #c7dce8; border-radius: 1rem; background: white; }
-  select { min-height: 44px; width: 100%; border: 1px solid #8eaab9; border-radius: .7rem; padding: .55rem; background: white; color: #20302b; font: inherit; }
-  select:focus-visible, button:focus-visible { outline: 3px solid #6941a5; outline-offset: 3px; }
-  .item-feedback { min-height: 1.4em; color: #8a3d27; font-size: .9rem; font-weight: 750; }
-  .item-feedback[data-state="ok"] { color: #176b55; }
-  button { min-height: 44px; padding: .75rem 1rem; border: 0; border-radius: 999px; background: #245c7a; color: white; font: inherit; font-weight: 850; cursor: pointer; }
-  .result { margin-top: 1rem; padding: .9rem 1rem; border-radius: .9rem; background: white; }
-  @media (max-width: 640px) { .items { grid-template-columns: 1fr; } }
+  .ecosystem-game {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(1rem, 3vw, 2rem);
+    border: 2px solid #9fc7dd;
+    border-radius: 1.9rem;
+    background: radial-gradient(circle at 92% 8%, rgb(105 65 165 / 12%), transparent 15rem), linear-gradient(145deg, #eaf7fd, #fffaf0 72%);
+    box-shadow: 0 22px 55px rgb(32 48 43 / 11%);
+  }
+  .ecosystem-game::before { position: absolute; inset: 0; background-image: radial-gradient(circle, rgb(47 113 150 / 13%) 1.2px, transparent 1.2px); background-size: 24px 24px; content: ""; mask-image: linear-gradient(to bottom, black, transparent 34%); pointer-events: none; }
+  .game-heading { position: relative; display: grid; grid-template-columns: 1fr 150px; gap: 1rem; align-items: center; }
+  .heading-copy > p:first-child { margin: 0; color: #245c7a; font-size: .74rem; font-weight: 950; letter-spacing: .1em; text-transform: uppercase; }
+  h3 { max-width: 15ch; margin: .15rem 0 0; font-size: clamp(1.7rem, 4vw, 2.75rem); line-height: 1; letter-spacing: -.035em; }
+  .intro { margin: .65rem 0 0; color: var(--muted, #526159); }
+  .museum-guide { position: relative; align-self: end; }
+  .guide-success { position: absolute; inset: 0; opacity: 0; transform: scale(.7); }
+  [data-complete="true"] .guide-neutral { opacity: 0; transform: scale(.75); }
+  [data-complete="true"] .guide-success { opacity: 1; transform: scale(1); }
+  .guide-neutral, .guide-success { transition: opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1.2); }
+  .museum-progress { position: relative; display: flex; gap: .45rem; margin: .4rem 0 1rem; color: #c5d7df; }
+  .museum-progress span { transition: color .25s, transform .25s; }
+  .museum-progress span[data-done="true"] { color: #d99a1e; transform: rotate(45deg) scale(1.15); }
+  .museum-board { position: relative; display: grid; grid-template-columns: minmax(230px, .72fr) minmax(0, 1.28fr); gap: 1rem; }
+  .fossil-tray { padding: 1rem; border: 1px solid #d2c7ab; border-radius: 1.25rem; background: rgb(255 250 236 / 84%); box-shadow: inset 0 -8px 18px rgb(138 87 16 / 7%); }
+  .tray-label { display: flex; gap: .65rem; align-items: center; margin-bottom: .8rem; }
+  .tray-label > span { display: grid; width: 40px; height: 40px; place-items: center; border-radius: 13px; background: #ffe8aa; }
+  .tray-label small, .tray-label strong { display: block; }
+  .tray-label small { color: #795307; font-size: .65rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+  .fossils { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .fossil { min-width: 0; min-height: 112px; display: grid; place-items: center; align-content: center; gap: .22rem; padding: .7rem .45rem; border: 1px solid #d7c79f; border-radius: 1rem; background: white; color: #20302b; box-shadow: 0 7px 0 #e0d3b4; cursor: grab; transition: transform .18s, border-color .18s, box-shadow .18s, opacity .18s; touch-action: manipulation; }
+  .fossil[hidden] { display: none !important; }
+  .fossil:hover { transform: translateY(-3px) rotate(-1deg); border-color: #6941a5; }
+  .fossil:active { cursor: grabbing; }
+  .fossil[aria-pressed="true"] { border-color: #6941a5; box-shadow: 0 0 0 3px rgb(105 65 165 / 17%), 0 7px 0 #cbbbe2; transform: translateY(-3px) rotate(1deg); }
+  .fossil-icon { font-size: 1.6rem; }
+  .fossil strong { overflow-wrap: anywhere; text-align: center; }
+  .fossil small { color: #66736d; font-size: .65rem; }
+  .showcases { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+  .showcase { min-width: 0; min-height: 138px; display: grid; grid-template-columns: 44px 1fr; grid-template-rows: 1fr auto; gap: .55rem .65rem; align-items: center; padding: .85rem; border: 2px dashed #aac6d5; border-radius: 1.15rem; background: rgb(255 255 255 / 79%); color: #20302b; text-align: left; cursor: pointer; transition: transform .18s, border-color .18s, background .18s, box-shadow .18s; touch-action: manipulation; }
+  .showcase:hover:not(:disabled), .showcase.is-over { border-color: #2f7196; background: white; box-shadow: 0 12px 24px rgb(47 113 150 / 12%); transform: translateY(-2px); }
+  .showcase.is-wrong { border-color: #c9573f; background: #fff0ea; animation: museum-shake .42s ease; }
+  .showcase[data-state="correct"] { border-style: solid; border-color: #3e8966; background: #edf8f1; cursor: default; }
+  .showcase:disabled { color: #20302b; opacity: 1; }
+  .showcase-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; background: #e5f1f7; font-size: 1.35rem; }
+  .showcase-copy { min-width: 0; }
+  .showcase-copy strong, .showcase-copy small { display: block; }
+  .showcase-copy small { margin-top: .18rem; color: #66736d; font-size: .72rem; }
+  .showcase-empty { grid-column: 1 / -1; display: grid; min-height: 37px; place-items: center; border-radius: .7rem; background: #edf4f7; color: #527082; font-size: .74rem; font-weight: 900; }
+  .showcase-empty[data-filled="true"] { background: #d6eddf; color: #176b55; animation: fossil-settle .42s cubic-bezier(.2,.8,.2,1.2); }
+  .game-footer { position: relative; display: flex; gap: 1rem; align-items: center; justify-content: space-between; margin-top: 1rem; }
+  .status { min-height: 1.5em; margin: 0; color: #526159; font-weight: 750; }
+  .status[data-state="ok"] { color: #176b55; }
+  .status[data-state="retry"], .status[data-state="hint"] { color: #8a3d27; }
+  .reset { flex: 0 0 auto; min-height: 44px; padding: .7rem 1rem; border: 1px solid #9ab5c2; border-radius: 999px; background: white; color: #245c7a; font: inherit; font-weight: 850; cursor: pointer; }
+  .fossil:focus-visible, .showcase:focus-visible, .reset:focus-visible { outline: 3px solid #6941a5; outline-offset: 3px; }
+  .result { position: relative; display: grid; grid-template-columns: auto 1fr; gap: .75rem; align-items: center; margin-top: 1rem; padding: 1rem; border: 1px solid #72a98d; border-radius: 1rem; background: #e3f5ea; color: #174c38; animation: result-in .42s cubic-bezier(.2,.8,.2,1.2); }
+  .result[hidden] { display: none; }
+  .result > span { font-size: 1.8rem; }
+  .result p { margin: .15rem 0 0; }
+  :global(.museum-spark) { position: absolute; z-index: 5; top: 45%; left: var(--spark-x); width: 8px; height: 8px; border-radius: 2px; background: #d99a1e; pointer-events: none; animation: museum-spark 1.3s var(--spark-delay) ease-out forwards; }
+  @keyframes museum-shake { 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
+  @keyframes fossil-settle { 0% { transform: scale(.78) rotate(-3deg); } 70% { transform: scale(1.06) rotate(1deg); } }
+  @keyframes result-in { from { opacity: 0; transform: translateY(10px) scale(.97); } }
+  @keyframes museum-spark { to { opacity: 0; transform: translate3d(0, -170px, 0) rotate(240deg); } }
+  @media (max-width: 760px) {
+    .game-heading { grid-template-columns: 1fr 105px; }
+    .museum-board { grid-template-columns: 1fr; }
+    .fossils { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .fossil { min-height: 95px; }
+  }
+  @media (max-width: 560px) {
+    .game-heading { grid-template-columns: 1fr 82px; }
+    h3 { font-size: 1.72rem; }
+    .fossils, .showcases { grid-template-columns: 1fr 1fr; }
+    .fossil { min-height: 98px; }
+    .showcase { min-height: 130px; grid-template-columns: 36px 1fr; padding: .7rem; }
+    .showcase-icon { width: 36px; height: 36px; }
+    .game-footer { align-items: stretch; flex-direction: column; }
+    .reset { align-self: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fossil, .showcase, .guide-neutral, .guide-success, .museum-progress span, .showcase-empty, .result, :global(.museum-spark) { animation: none !important; transition: none !important; }
+  }
 </style>

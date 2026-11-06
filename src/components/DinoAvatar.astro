@@ -127,4 +127,8 @@ const eyeY = mood === "thinking" ? 76 : 74;
   @keyframes dino-hop {
     50% { transform: translateY(-7px) rotate(-1deg); }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dino-body { animation: none; }
+  }
 </style>
