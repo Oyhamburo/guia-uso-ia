@@ -11,8 +11,8 @@ export type InitialLevel = {
   kicker: string;
   title: string;
   promise: string;
-  dino: "bruna" | "paco" | "anky";
-  color: "sky" | "amber" | "fern";
+  dino: "bruna" | "paco" | "anky" | "roco";
+  color: "sky" | "amber" | "fern" | "coral";
   concepts: VisualConcept[];
   takeaways: string[];
 };
@@ -114,6 +114,37 @@ export const initialLevels: InitialLevel[] = [
       "Para ideas reversibles alcanza un control liviano.",
       "Salud, dinero, legal, seguridad y producción necesitan fuentes y personas calificadas.",
       "«Local», «gratis» y «pesos abiertos» no significan automáticamente «privado»."
+    ]
+  },
+  {
+    number: 4,
+    slug: "nivel-4",
+    kicker: "Cuarta parada · Roco mira el horizonte",
+    title: "¿Qué puede hacer la IA hoy?",
+    promise: "Ya crea, transforma, analiza y usa herramientas. Algunas capacidades son cotidianas; otras necesitan supervisión o siguen en prueba.",
+    dino: "roco",
+    color: "coral",
+    concepts: [
+      {
+        icon: "✓",
+        title: "Disponible hoy",
+        text: "Crear, resumir, traducir, transcribir y analizar."
+      },
+      {
+        icon: "👀",
+        title: "Con supervisión",
+        text: "Investigar, usar herramientas y encadenar tareas."
+      },
+      {
+        icon: "🧪",
+        title: "En desarrollo",
+        text: "Robots, laboratorios autónomos y agentes más persistentes."
+      }
+    ],
+    takeaways: [
+      "Crear → revisar: una salida convincente todavía puede estar equivocada.",
+      "Recomendar → comprobar: las fuentes y el contexto siguen importando.",
+      "Actuar → supervisar: más autonomía necesita permisos, límites y control."
     ]
   }
 ];

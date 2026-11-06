@@ -5,15 +5,16 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
 
 const stops = [
-  { marker: "01", part: "Parte 1", title: "¿Qué es la IA?", path: "parte-1/nivel-1/", x: 13, y: 84, mx: 25, my: 9 },
-  { marker: "02", part: "Parte 1", title: "¿Cómo la uso?", path: "parte-1/nivel-2/", x: 28, y: 70, mx: 72, my: 19 },
-  { marker: "03", part: "Parte 1", title: "Usala con criterio", path: "parte-1/nivel-3/", x: 46, y: 78, mx: 27, my: 29 },
-  { marker: "★", part: "Cierre · Parte 1", title: "Juegos", path: "parte-1/juegos/", x: 52, y: 56, mx: 70, my: 39, finale: true },
-  { marker: "T1", part: "Parte 2", title: "Anatomía del agente", path: "parte-2/nivel-1/", x: 68, y: 67, mx: 28, my: 49 },
-  { marker: "T2", part: "Parte 2", title: "Mochila de contexto", path: "parte-2/nivel-2/", x: 77, y: 47, mx: 70, my: 59 },
-  { marker: "T3", part: "Parte 2", title: "Trabajo confiable", path: "parte-2/nivel-3/", x: 89, y: 55, mx: 28, my: 69 },
-  { marker: "★", part: "Cierre · Parte 2", title: "Preguntas", path: "parte-2/preguntas/", x: 84, y: 30, mx: 70, my: 79, finale: true },
-  { marker: "?", part: "Parte 3", title: "Próxima excavación", path: "parte-3/", x: 91, y: 13, mx: 45, my: 91, future: true }
+  { marker: "01", part: "Parte 1", title: "¿Qué es la IA?", path: "parte-1/nivel-1/", x: 13, y: 84, mx: 25, my: 8 },
+  { marker: "02", part: "Parte 1", title: "¿Cómo la uso?", path: "parte-1/nivel-2/", x: 28, y: 70, mx: 72, my: 17 },
+  { marker: "03", part: "Parte 1", title: "Usala con criterio", path: "parte-1/nivel-3/", x: 46, y: 78, mx: 27, my: 26 },
+  { marker: "04", part: "Parte 1", title: "¿Qué puede hacer hoy?", path: "parte-1/nivel-4/", x: 52, y: 56, mx: 70, my: 35 },
+  { marker: "★", part: "Cierre · Parte 1", title: "Juegos", path: "parte-1/juegos/", x: 68, y: 67, mx: 28, my: 44, finale: true },
+  { marker: "T1", part: "Parte 2", title: "Anatomía del agente", path: "parte-2/nivel-1/", x: 77, y: 47, mx: 70, my: 53 },
+  { marker: "T2", part: "Parte 2", title: "Mochila de contexto", path: "parte-2/nivel-2/", x: 89, y: 55, mx: 28, my: 62 },
+  { marker: "T3", part: "Parte 2", title: "Trabajo confiable", path: "parte-2/nivel-3/", x: 84, y: 30, mx: 70, my: 71 },
+  { marker: "★", part: "Cierre · Parte 2", title: "Preguntas", path: "parte-2/preguntas/", x: 91, y: 13, mx: 28, my: 80, finale: true },
+  { marker: "?", part: "Parte 3", title: "Próxima excavación", path: "parte-3/", x: 74, y: 13, mx: 45, my: 91, future: true }
 ] as const;
 ---
 
@@ -92,8 +93,8 @@ const stops = [
         <path d="M-34-13v26m17-26v26M0-13v26m17-26v26m17-26v26" stroke="#d7ad63" stroke-width="5" />
       </g>
 
-      <path d="M156 672C224 658 264 583 336 560s130 57 216 64c62 5 45-140 72-176s128 45 192 88c65-5 62-118 108-160s106 13 156 64c38-54-11-153-72-200 12-65 73-111 84-136" fill="none" stroke="#85452f" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M156 672C224 658 264 583 336 560s130 57 216 64c62 5 45-140 72-176s128 45 192 88c65-5 62-118 108-160s106 13 156 64c38-54-11-153-72-200 12-65 73-111 84-136" fill="none" stroke="#e36f42" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M156 672C224 658 264 583 336 560s130 57 216 64c62 5 45-140 72-176s128 45 192 88c65-5 62-118 108-160s106 13 156 64c38-54-11-153-72-200 12-65 73-111 84-136C1040 104 956 104 888 104" fill="none" stroke="#85452f" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M156 672C224 658 264 583 336 560s130 57 216 64c62 5 45-140 72-176s128 45 192 88c65-5 62-118 108-160s106 13 156 64c38-54-11-153-72-200 12-65 73-111 84-136C1040 104 956 104 888 104" fill="none" stroke="#e36f42" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
 
     <svg class="map-art map-art-mobile" viewBox="0 0 360 1700" preserveAspectRatio="none" aria-hidden="true">

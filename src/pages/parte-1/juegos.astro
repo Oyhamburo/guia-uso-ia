@@ -4,12 +4,13 @@ import DinoAvatar from "../../components/DinoAvatar.astro";
 import PromptBuilder from "../../components/PromptBuilder.astro";
 import RiskSorter from "../../components/RiskSorter.astro";
 import EcosystemGame from "../../components/EcosystemGame.astro";
+import HorizonGame from "../../components/HorizonGame.astro";
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
 ---
 
-<BaseLayout title="Campamento de juegos · Expedición IA" description="Juegos breves para practicar los tres primeros niveles de la guía.">
+<BaseLayout title="Campamento de juegos · Expedición IA" description="Juegos breves para practicar lo visto en la Parte 1 de la guía.">
   <main id="contenido" class="games-page">
     <section class="games-hero">
       <div>
@@ -24,6 +25,7 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
       <a href="#museo"><span>01</span><strong>Museo de IA</strong></a>
       <a href="#mision"><span>02</span><strong>Practicá el prompt</strong></a>
       <a href="#semaforo"><span>03</span><strong>Semáforo</strong></a>
+      <a href="#radar"><span>04</span><strong>Calibrá el radar</strong></a>
       <a href="#expedicion"><span>★</span><strong>Expedición grupal</strong></a>
     </nav>
 
@@ -42,6 +44,11 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
       <RiskSorter />
     </section>
 
+    <section id="radar" class="game-stop" aria-labelledby="radar-title">
+      <div class="stop-label"><span>04</span><div><p>Nivel 4</p><h2 id="radar-title">Ubicá cada capacidad</h2></div></div>
+      <HorizonGame />
+    </section>
+
     <section id="expedicion" class="group-game">
       <div class="group-copy">
         <p class="eyebrow">Juego separado · para grupos</p>
@@ -53,11 +60,12 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
         <DinoAvatar name="bruna" mood="celebrating" size="medium" />
         <DinoAvatar name="paco" mood="celebrating" size="medium" />
         <DinoAvatar name="anky" mood="celebrating" size="medium" />
+        <DinoAvatar name="roco" mood="celebrating" size="medium" />
       </div>
     </section>
 
     <nav class="next-route" aria-label="Continuar la guía">
-      <a href={href("parte-1/nivel-3/")}>← Volver al Nivel 3</a>
+      <a href={href("parte-1/nivel-4/")}>← Volver al Nivel 4</a>
       <a class="map-link" href={href("#mapa")}>Mapa de la expedición</a>
       <a class="primary" href={href("parte-2/nivel-1/")}>Entrar al laboratorio técnico →</a>
     </nav>
@@ -85,7 +93,7 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   .group-copy p { color: #526159; }
   .group-copy a, .next-route a { min-height: 44px; display: inline-flex; align-items: center; padding: .75rem 1rem; border-radius: 999px; background: #6941a5; color: white; font-weight: 850; text-decoration: none; }
   .group-copy a:focus-visible, .next-route a:focus-visible { outline: 3px solid #2f7196; outline-offset: 3px; }
-  .group-dinos { display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; }
+  .group-dinos { display: grid; grid-template-columns: repeat(4, 1fr); align-items: end; }
   .next-route { display: flex; justify-content: space-between; gap: .8rem; margin-top: 2rem; }
   .next-route a { background: white; color: #20302b; border: 1px solid #b8c3bd; }
   .next-route .map-link { margin-inline: auto; border-color: transparent; background: transparent; }

@@ -10,7 +10,7 @@ El botón **Presentar** del navbar transforma la ruta actual en diapositivas a p
 
 ## Recorridos
 
-- **Parte 1 · Primeras huellas:** tres niveles para personas sin conocimientos técnicos y un campamento con tres juegos.
+- **Parte 1 · Primeras huellas:** cuatro niveles para personas sin conocimientos técnicos y un campamento con cuatro juegos.
 - **Parte 2 · Territorio técnico:** agentes, contexto y trabajo confiable, con una evaluación final.
 - **Parte 3 · Próxima expedición:** anticipo del futuro nivel avanzado.
 

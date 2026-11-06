@@ -1,0 +1,220 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LevelHero from "../../components/LevelHero.astro";
+import CapabilityRadar from "../../components/CapabilityRadar.astro";
+import FieldNote from "../../components/FieldNote.astro";
+import TrailSummary from "../../components/TrailSummary.astro";
+import { initialLevels } from "../../data/part1";
+
+const level = initialLevels[3];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+---
+
+<BaseLayout title={`${level.title} · Expedición IA`} description={level.promise}>
+  <main id="contenido" class="level-page">
+    <LevelHero
+      level="Nivel 4"
+      eyebrow={level.kicker}
+      title={level.title}
+      intro={level.promise}
+      dino={level.dino}
+      dinoLabel="Roco"
+      guide="Miremos qué ya funciona, qué requiere compañía y qué todavía está cruzando la frontera."
+      tone={level.color}
+    />
+
+    <section class="visual-block radar" aria-label="Radar de capacidades actuales">
+      <CapabilityRadar />
+    </section>
+
+    <section class="visual-block workshop" aria-labelledby="workshop-title">
+      <div class="block-heading">
+        <span class="step">02</span>
+        <div><p>Ya es cotidiano</p><h2 id="workshop-title">Crear y transformar</h2></div>
+      </div>
+      <div class="transform-lanes">
+        <article>
+          <span class="input-chip">💡 Una idea</span>
+          <b aria-hidden="true">→</b>
+          <div class="output-chips" aria-label="Resultados posibles">
+            <span>📝 Texto</span><span>🖼️ Imagen</span><span>🎙️ Audio</span><span>🎬 Video</span>
+          </div>
+        </article>
+        <article>
+          <span class="input-chip">📎 Algo que ya tenés</span>
+          <b aria-hidden="true">→</b>
+          <div class="output-chips" aria-label="Transformaciones posibles">
+            <span>Resumen</span><span>Traducción</span><span>Adaptación</span><span>Edición</span>
+          </div>
+        </article>
+      </div>
+      <p class="rule"><span aria-hidden="true">✓</span> Puede empezar desde cero o trabajar sobre tu material.</p>
+    </section>
+
+    <section class="visual-block senses" aria-labelledby="senses-title">
+      <div class="block-heading">
+        <span class="step">03</span>
+        <div><p>Leer, escuchar y mirar</p><h2 id="senses-title">También puede analizar</h2></div>
+      </div>
+      <div class="sense-grid">
+        <article><span aria-hidden="true">📄</span><h3>Documentos</h3><p>Resumir, comparar y encontrar datos.</p></article>
+        <article><span aria-hidden="true">🎙️</span><h3>Reuniones</h3><p>Transcribir y extraer pendientes.</p></article>
+        <article><span aria-hidden="true">📊</span><h3>Tablas</h3><p>Ordenar, calcular y visualizar.</p></article>
+        <article><span aria-hidden="true">🖼️</span><h3>Imágenes</h3><p>Describir, clasificar y detectar patrones.</p></article>
+      </div>
+      <p class="rule"><span aria-hidden="true">🧭</span> <strong>La IA encuentra patrones;</strong> vos decidís qué significan.</p>
+    </section>
+
+    <section class="visual-block actions" aria-labelledby="actions-title">
+      <div class="block-heading">
+        <span class="step">04</span>
+        <div><p>Con herramientas</p><h2 id="actions-title">De responder a actuar</h2></div>
+      </div>
+      <ol class="action-flow">
+        <li><span>🎯</span><strong>Recibe un objetivo</strong></li>
+        <li><span>🗺️</span><strong>Arma un plan</strong></li>
+        <li><span>🧰</span><strong>Usa herramientas</strong></li>
+        <li><span>🙋</span><strong>Pide permiso o entrega</strong></li>
+      </ol>
+      <div class="task-chips" aria-label="Ejemplos de tareas">
+        <span>Buscar fuentes</span><span>Preparar borradores</span><span>Actualizar una planilla</span><span>Organizar tareas</span>
+      </div>
+      <p class="guardrail"><span aria-hidden="true">🔐</span><strong>Dar acceso también da riesgo.</strong> Limitá permisos y revisá las acciones.</p>
+    </section>
+
+    <section class="visual-block uses" aria-labelledby="uses-title">
+      <div class="block-heading">
+        <span class="step">05</span>
+        <div><p>Ya se está usando</p><h2 id="uses-title">Mismas capacidades, lugares distintos</h2></div>
+      </div>
+      <div class="uses-grid">
+        <article><span>🎓</span><div><h3>Aprender</h3><p>Explicar y practicar.</p></div></article>
+        <article><span>♿</span><div><h3>Dar acceso</h3><p>Subtitular, describir y usar voz.</p></div></article>
+        <article><span>🎨</span><div><h3>Diseñar</h3><p>Explorar y prototipar.</p></div></article>
+        <article><span>🔬</span><div><h3>Investigar</h3><p>Leer y analizar evidencia.</p></div></article>
+        <article><span>💻</span><div><h3>Construir</h3><p>Programar, probar y documentar.</p></div></article>
+        <article><span>🚕</span><div><h3>Moverse</h3><p>Vehículos autónomos en zonas habilitadas.</p></div></article>
+      </div>
+      <p class="rule"><span aria-hidden="true">🦴</span> No cambia todo el trabajo: cambia una parte de la tarea.</p>
+    </section>
+
+    <section class="visual-block frontier" aria-labelledby="frontier-title">
+      <div class="block-heading">
+        <span class="step">06</span>
+        <div><p>El borde de la expedición</p><h2 id="frontier-title">Lo que todavía está madurando</h2></div>
+      </div>
+      <div class="frontier-grid">
+        <article>
+          <span class="frontier-icon" aria-hidden="true">🤖</span>
+          <span class="maturity">Acceso limitado</span>
+          <h3>Robots que siguen instrucciones</h3>
+          <p>Manipulan objetos y completan tareas en entornos preparados.</p>
+        </article>
+        <article>
+          <span class="frontier-icon" aria-hidden="true">🧪</span>
+          <span class="maturity">Entorno controlado</span>
+          <h3>Laboratorios autónomos</h3>
+          <p>Proponen, ejecutan y ajustan algunos experimentos.</p>
+        </article>
+        <article>
+          <span class="frontier-icon" aria-hidden="true">🧭</span>
+          <span class="maturity">Con supervisión</span>
+          <h3>Agentes más persistentes</h3>
+          <p>Encadenan tareas largas y vuelven con un resultado.</p>
+        </article>
+      </div>
+      <p class="demo-warning"><strong>Una demo sorprendente</strong> no siempre es un producto disponible, confiable o económico.</p>
+    </section>
+
+    <FieldNote summary="Excavar más · Ejemplos reales del radar">
+      <div class="source-grid">
+        <a href="https://openai.com/index/introducing-deep-research/" rel="noreferrer"><strong>Investigar</strong><span>Deep research ↗</span></a>
+        <a href="https://helpx.adobe.com/firefly/web/unified-generation-and-editing-experience/generate-and-edit-content.html" rel="noreferrer"><strong>Crear y editar</strong><span>Adobe Firefly ↗</span></a>
+        <a href="https://alphafold.ebi.ac.uk/about" rel="noreferrer"><strong>Hacer ciencia</strong><span>AlphaFold ↗</span></a>
+        <a href="https://deepmind.google/models/gemini-robotics/" rel="noreferrer"><strong>Mover robots</strong><span>Gemini Robotics ↗</span></a>
+        <a href="https://waymo.com/faq/" rel="noreferrer"><strong>Conducir</strong><span>Waymo ↗</span></a>
+        <a href="https://www.nature.com/articles/s41586-023-06734-w" rel="noreferrer"><strong>Experimentar</strong><span>A-Lab ↗</span></a>
+      </div>
+      <p>Son ejemplos, no una lista completa. La disponibilidad cambia según el producto, el país, el plan y los permisos.</p>
+    </FieldNote>
+
+    <TrailSummary
+      title="Tres reglas para el presente"
+      items={level.takeaways}
+      dino="roco"
+      previousHref={href("parte-1/nivel-3/")}
+      previousLabel="Criterio y seguridad"
+      mapHref={href("#mapa")}
+      nextHref={href("parte-1/juegos/")}
+      nextLabel="Completar la parte con juegos"
+    />
+  </main>
+</BaseLayout>
+
+<style>
+  .level-page { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
+  .visual-block { margin: 3rem 0; padding: clamp(1.2rem, 4vw, 2.4rem); border-radius: 1.8rem; background: white; box-shadow: 0 18px 50px rgb(32 48 43 / 9%); }
+  .radar { background: linear-gradient(145deg, #eef7fb, #f8f1fd); }
+  .workshop { background: #fff7e7; }
+  .senses { background: #eef7fb; }
+  .actions { background: #f0f8f2; }
+  .uses { background: #f6f0fa; }
+  .frontier { background: #fff1eb; }
+  .block-heading { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.4rem; }
+  .step { display: grid; flex: 0 0 48px; width: 48px; height: 48px; place-items: center; border-radius: 16px; background: #20302b; color: white; font-weight: 900; }
+  .block-heading p { margin: 0; color: #a34834; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+  h2 { margin: .1rem 0 0; font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1; }
+  h3 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
+  .transform-lanes { display: grid; gap: .8rem; }
+  .transform-lanes article { display: grid; grid-template-columns: minmax(150px, .55fr) auto 1.45fr; gap: .8rem; align-items: center; padding: 1rem; border: 1px solid #e3cf9d; border-radius: 1.15rem; background: rgb(255 255 255 / 80%); }
+  .input-chip { font-weight: 900; }
+  .transform-lanes article > b { color: #b56e13; font-size: 1.5rem; }
+  .output-chips, .task-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .output-chips span, .task-chips span { padding: .45rem .65rem; border-radius: 999px; background: white; box-shadow: 0 2px 0 rgb(32 48 43 / 15%); font-size: .9rem; font-weight: 800; }
+  .rule, .guardrail, .demo-warning { display: flex; gap: .65rem; align-items: center; margin: 1rem 0 0; padding: .8rem 1rem; border-radius: .9rem; background: rgb(255 255 255 / 70%); }
+  .rule > span, .guardrail > span { font-size: 1.35rem; }
+  .sense-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; }
+  .sense-grid article { min-height: 170px; display: grid; align-content: center; padding: 1rem; border-radius: 1rem; background: rgb(255 255 255 / 82%); }
+  .sense-grid article > span { font-size: 2rem; }
+  .sense-grid h3, .sense-grid p { margin: .55rem 0 0; }
+  .sense-grid p { color: #526159; }
+  .action-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+  .action-flow li { position: relative; min-height: 130px; display: grid; place-items: center; align-content: center; gap: .5rem; padding: .9rem; border-radius: 1rem; background: white; text-align: center; }
+  .action-flow li:not(:last-child)::after { position: absolute; right: -1.25rem; color: #176b55; content: "→"; font-size: 1.4rem; font-weight: 900; }
+  .action-flow span { font-size: 2rem; }
+  .task-chips { justify-content: center; }
+  .guardrail { border: 1px solid #d8a692; background: #fff7f2; }
+  .uses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+  .uses-grid article { display: grid; grid-template-columns: 48px 1fr; gap: .7rem; align-items: center; padding: .85rem; border-radius: 1rem; background: rgb(255 255 255 / 78%); }
+  .uses-grid article > span { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 15px; background: #eee3f7; font-size: 1.45rem; }
+  .uses-grid h3, .uses-grid p { margin: 0; }
+  .uses-grid p { color: #526159; font-size: .9rem; }
+  .frontier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+  .frontier-grid article { padding: 1rem; border: 1px dashed #ca8b77; border-radius: 1.1rem; background: rgb(255 255 255 / 74%); }
+  .frontier-icon { display: block; margin-bottom: .7rem; font-size: 2.2rem; }
+  .maturity { display: inline-flex; padding: .25rem .5rem; border-radius: 999px; background: #f3d7cd; color: #7e3728; font-size: .7rem; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+  .frontier-grid h3 { margin: .65rem 0 .35rem; }
+  .frontier-grid p { margin: 0; color: #526159; }
+  .demo-warning { justify-content: center; border: 1px solid #c9826e; text-align: center; }
+  .source-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .55rem; margin-bottom: .9rem; }
+  .source-grid a { display: grid; padding: .7rem; border: 1px solid #cdd9d2; border-radius: .75rem; background: white; color: #20302b; text-decoration: none; }
+  .source-grid a:hover { border-color: #176b55; }
+  .source-grid span { color: #176b55; font-size: .85rem; }
+  :global(body.is-presenting) .level-page > :global(.level-hero) { padding-block: 1.6rem; }
+  :global(body.is-presenting) .radar { padding: 1rem; }
+  :global(body.is-presenting) .radar :global(.radar-disc) { width: min(100%, 350px); }
+  @media (max-width: 800px) {
+    .sense-grid, .action-flow { grid-template-columns: 1fr 1fr; }
+    .action-flow li:nth-child(2)::after { display: none; }
+    .uses-grid, .source-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 620px) {
+    .block-heading { align-items: flex-start; }
+    .transform-lanes article { grid-template-columns: 1fr; }
+    .transform-lanes article > b { rotate: 90deg; justify-self: center; }
+    .sense-grid, .action-flow, .uses-grid, .frontier-grid, .source-grid { grid-template-columns: 1fr; }
+    .sense-grid article { min-height: 0; }
+    .action-flow li:not(:last-child)::after { right: 50%; bottom: -1.4rem; display: block; rotate: 90deg; translate: 50% 0; }
+  }
+</style>

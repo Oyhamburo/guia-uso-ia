@@ -1,0 +1,191 @@
+---
+const horizons = [
+  { value: "today", label: "Hoy", icon: "✓" },
+  { value: "supervised", label: "Con supervisión", icon: "👀" },
+  { value: "emerging", label: "En desarrollo", icon: "🧪" }
+] as const;
+
+const cases = [
+  {
+    icon: "📄",
+    title: "Resumir un PDF",
+    answer: "today",
+    why: "Ya es cotidiano. Igual conviene revisar cifras, citas y partes omitidas."
+  },
+  {
+    icon: "🎨",
+    title: "Crear una imagen",
+    answer: "today",
+    why: "Ya está disponible en muchas herramientas. Cuidá identidad, derechos y procedencia."
+  },
+  {
+    icon: "🔎",
+    title: "Investigar muchas fuentes",
+    answer: "supervised",
+    why: "Puede buscar y sintetizar, pero una persona debe abrir y comprobar las fuentes."
+  },
+  {
+    icon: "📊",
+    title: "Actualizar una planilla",
+    answer: "supervised",
+    why: "Puede actuar con herramientas, permisos y límites. Revisá antes de guardar o compartir."
+  },
+  {
+    icon: "🤖",
+    title: "Robot que hace cualquier tarea del hogar",
+    answer: "emerging",
+    why: "Hay demostraciones y pruebas, pero no es una capacidad general y confiable de uso cotidiano."
+  },
+  {
+    icon: "🧫",
+    title: "Laboratorio que propone y prueba solo",
+    answer: "emerging",
+    why: "Ya existen entornos controlados, pero siguen siendo sistemas especializados y experimentales."
+  }
+] as const;
+---
+
+<section class="horizon-game" data-horizon-game aria-labelledby="horizon-game-title">
+  <header class="game-heading">
+    <span class="compass" aria-hidden="true">⌖</span>
+    <div>
+      <p>Radar de capacidades</p>
+      <h3 id="horizon-game-title">¿En qué zona está cada caso?</h3>
+    </div>
+  </header>
+
+  <div class="legend" aria-label="Zonas del radar">
+    {horizons.map((horizon) => (
+      <span class={`legend-${horizon.value}`}><b aria-hidden="true">{horizon.icon}</b>{horizon.label}</span>
+    ))}
+  </div>
+
+  <form>
+    <div class="case-grid">
+      {cases.map((item, index) => (
+        <fieldset data-answer={item.answer} data-why={item.why}>
+          <legend><span aria-hidden="true">{item.icon}</span><strong>{item.title}</strong></legend>
+          <div class="choices">
+            {horizons.map((horizon) => (
+              <label>
+                <input type="radio" name={`horizon-${index}`} value={horizon.value} />
+                <span><b aria-hidden="true">{horizon.icon}</b>{horizon.label}</span>
+              </label>
+            ))}
+          </div>
+          <p class="explanation" hidden aria-live="polite"></p>
+        </fieldset>
+      ))}
+    </div>
+
+    <div class="actions">
+      <button type="submit">Revisar el radar</button>
+      <button type="reset" class="secondary">Volver a intentar</button>
+    </div>
+  </form>
+
+  <p class="result" data-result hidden aria-live="polite" tabindex="-1"></p>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-horizon-game]").forEach((game) => {
+    const form = game.querySelector<HTMLFormElement>("form");
+    const result = game.querySelector<HTMLElement>("[data-result]");
+    if (!form || !result) return;
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const cards = [...game.querySelectorAll<HTMLElement>("fieldset[data-answer]")];
+      const unanswered = cards.filter((card) => !card.querySelector("input:checked")).length;
+
+      if (unanswered) {
+        result.hidden = false;
+        result.dataset.state = "hint";
+        result.innerHTML = `<strong>Faltan ${unanswered} casos.</strong> Marcá una zona en cada tarjeta.`;
+        result.focus({ preventScroll: true });
+        return;
+      }
+
+      let correct = 0;
+      cards.forEach((card) => {
+        const picked = card.querySelector<HTMLInputElement>("input:checked");
+        const explanation = card.querySelector<HTMLElement>(".explanation");
+        if (!picked || !explanation) return;
+        const isCorrect = picked.value === card.dataset.answer;
+        if (isCorrect) correct += 1;
+        card.dataset.state = isCorrect ? "ok" : "review";
+        explanation.hidden = false;
+        explanation.textContent = `${isCorrect ? "Bien. " : "Mirá el matiz. "}${card.dataset.why}`;
+      });
+
+      result.hidden = false;
+      result.dataset.state = correct === cards.length ? "success" : "retry";
+      result.innerHTML = correct === cards.length
+        ? "<strong>¡Radar calibrado!</strong> Diferenciaste lo cotidiano de lo que requiere control o todavía está madurando."
+        : `<strong>Ubicaste ${correct} de ${cards.length}.</strong> Leé las pistas: una demo no siempre es un producto listo para usar.`;
+      result.focus({ preventScroll: true });
+    });
+
+    form.addEventListener("reset", () => {
+      game.querySelectorAll<HTMLElement>("fieldset[data-state]").forEach((card) => delete card.dataset.state);
+      game.querySelectorAll<HTMLElement>(".explanation").forEach((explanation) => {
+        explanation.hidden = true;
+        explanation.textContent = "";
+      });
+      result.hidden = true;
+      result.textContent = "";
+      delete result.dataset.state;
+    });
+  });
+</script>
+
+<style>
+  .horizon-game {
+    padding: clamp(1rem, 3vw, 2rem);
+    border: 2px solid #a9c8d8;
+    border-radius: 1.75rem;
+    background: linear-gradient(145deg, #edf7fb, #fffdf7 64%);
+    box-shadow: 0 18px 50px rgb(32 48 43 / 10%);
+  }
+
+  .game-heading { display: flex; gap: .9rem; align-items: center; }
+  .game-heading > .compass { display: grid; flex: 0 0 48px; width: 48px; height: 48px; place-items: center; border-radius: 50%; background: #245c7a; color: white; font-size: 1.7rem; box-shadow: 0 0 0 5px #d9edf5; }
+  .game-heading p { margin: 0; color: #245c7a; font-size: .75rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  h3 { margin: .1rem 0 0; font-size: clamp(1.5rem, 4vw, 2.35rem); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: .55rem; margin: 1rem 0; }
+  .legend > span { display: inline-flex; min-height: 36px; align-items: center; gap: .4rem; padding: .35rem .65rem; border: 1px solid currentColor; border-radius: 999px; background: white; font-size: .8rem; font-weight: 850; }
+  .legend-today { color: #176b55; }
+  .legend-supervised { color: #8a5f08; }
+  .legend-emerging { color: #6941a5; }
+
+  .case-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+  fieldset { min-width: 0; margin: 0; padding: 1rem; border: 1px solid #c8d9df; border-radius: 1.1rem; background: rgb(255 255 255 / 86%); transition: border-color 160ms ease, box-shadow 160ms ease; }
+  fieldset[data-state="ok"] { border-color: #4d9870; box-shadow: inset 0 0 0 1px #4d9870; }
+  fieldset[data-state="review"] { border-color: #d27b4a; box-shadow: inset 0 0 0 1px #d27b4a; }
+  legend { max-width: calc(100% - .8rem); padding: 0 .4rem; }
+  legend span { margin-right: .4rem; font-size: 1.35rem; }
+
+  .choices { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .35rem; }
+  label { min-height: 44px; display: inline-flex; align-items: center; cursor: pointer; }
+  input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
+  label > span { display: inline-flex; min-height: 38px; align-items: center; gap: .35rem; padding: .45rem .6rem; border: 1px solid #c9d4d7; border-radius: 999px; background: #f5f2e8; font-size: .78rem; font-weight: 800; }
+  label:hover > span { background: #eaf4f8; }
+  input:checked + span { border-color: #245c7a; background: #d9edf5; color: #183f55; box-shadow: inset 0 0 0 1px #245c7a; }
+  input:focus-visible + span { outline: 3px solid #f5bd43; outline-offset: 3px; }
+
+  .explanation { margin: .75rem 0 0; padding: .65rem .75rem; border-radius: .75rem; background: #e8f5ed; color: #17503a; font-size: .86rem; line-height: 1.4; }
+  fieldset[data-state="review"] .explanation { background: #fff0e5; color: #77361f; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.15rem; }
+  button { min-height: 44px; padding: .75rem 1rem; border: 0; border-radius: 999px; background: #245c7a; color: white; font: inherit; font-weight: 850; cursor: pointer; }
+  button.secondary { background: #e5ecee; color: #20302b; }
+  button:hover { filter: brightness(.95); }
+  button:focus-visible { outline: 3px solid #f5bd43; outline-offset: 3px; }
+  .result { margin: 1rem 0 0; padding: .9rem 1rem; border-left: 5px solid #176b55; border-radius: .7rem; background: #e8f5ed; color: #174c38; }
+  .result[data-state="retry"], .result[data-state="hint"] { border-color: #c9573f; background: #fff0e5; color: #77361f; }
+
+  @media (max-width: 720px) {
+    .case-grid { grid-template-columns: 1fr; }
+  }
+</style>
