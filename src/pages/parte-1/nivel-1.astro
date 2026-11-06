@@ -1,0 +1,123 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LevelHero from "../../components/LevelHero.astro";
+import ConceptCard from "../../components/ConceptCard.astro";
+import FieldNote from "../../components/FieldNote.astro";
+import TrailSummary from "../../components/TrailSummary.astro";
+import EcosystemGame from "../../components/EcosystemGame.astro";
+import { initialLevels } from "../../data/part1";
+
+const level = initialLevels[0];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+---
+
+<BaseLayout title={`${level.title} · Expedición IA`} description={level.promise}>
+  <main id="contenido" class="level-page">
+    <LevelHero
+      level="Nivel 1"
+      eyebrow={level.kicker}
+      title={level.title}
+      intro={level.promise}
+      dino={level.dino}
+      tone={level.color}
+    />
+
+    <section class="concept-grid" aria-label="Ideas principales">
+      {level.concepts.map((concept) => (
+        <ConceptCard icon={concept.icon} title={concept.title}>{concept.text}</ConceptCard>
+      ))}
+    </section>
+
+    <section class="visual-block family" aria-labelledby="family-title">
+      <div class="block-heading">
+        <span class="step">01</span>
+        <div><p>La familia</p><h2 id="family-title">No toda IA hace lo mismo</h2></div>
+      </div>
+      <div class="modality-row">
+        <article><span aria-hidden="true">Aa</span><strong>Texto y código</strong><small>Explica, resume, traduce o programa.</small></article>
+        <article><span aria-hidden="true">▧</span><strong>Imagen</strong><small>Crea o transforma piezas visuales.</small></article>
+        <article><span aria-hidden="true">♫</span><strong>Audio y voz</strong><small>Transcribe, habla o genera música.</small></article>
+        <article><span aria-hidden="true">▶</span><strong>Video</strong><small>Genera o edita secuencias.</small></article>
+      </div>
+      <p class="tiny-note">Una aplicación puede combinar varios modelos por detrás.</p>
+    </section>
+
+    <section class="visual-block layers" aria-labelledby="layers-title">
+      <div class="block-heading">
+        <span class="step">02</span>
+        <div><p>Las capas</p><h2 id="layers-title">Motor, acceso y experiencia</h2></div>
+      </div>
+      <div class="layer-flow" role="list">
+        <div role="listitem"><span>⚙️</span><strong>Modelo</strong><small>El motor que genera.</small></div>
+        <b aria-hidden="true">→</b>
+        <div role="listitem"><span>🏢</span><strong>Proveedor</strong><small>Quien lo ofrece o ejecuta.</small></div>
+        <b aria-hidden="true">→</b>
+        <div role="listitem"><span>🖥️</span><strong>Producto</strong><small>La experiencia que usás.</small></div>
+      </div>
+      <aside class="same-engine"><strong>El mismo motor puede sentirse distinto.</strong> Un chat, un editor y una aplicación propia le dan contexto y herramientas diferentes.</aside>
+    </section>
+
+    <section class="visual-block pay" aria-labelledby="pay-title">
+      <div class="block-heading">
+        <span class="step">03</span>
+        <div><p>El acceso</p><h2 id="pay-title">¿Qué estás pagando?</h2></div>
+      </div>
+      <div class="compare-grid">
+        <article><span class="tag">Aplicación</span><h3>Suscripción</h3><p>Pagás una experiencia terminada: interfaz, historial, archivos y funciones.</p></article>
+        <article><span class="tag">Construcción</span><h3>API</h3><p>Un software consume un modelo y normalmente paga según el uso.</p></article>
+        <article><span class="tag">Varias opciones</span><h3>Agregador</h3><p>Una misma conexión ofrece modelos de diferentes proveedores.</p></article>
+      </div>
+      <div class="truth"><span aria-hidden="true">💡</span><strong>Pagar una app no suele incluir crédito para su API.</strong></div>
+    </section>
+
+    <FieldNote summary="Excavar más · Generar, editar y elegir acceso">
+      <p><strong>Generar</strong> crea una pieza nueva. <strong>Editar</strong> transforma material existente. Un <strong>producto</strong> puede combinar ambas funciones y usar varios modelos.</p>
+      <p>“Gratis”, “local” y “pesos abiertos” describen cosas diferentes. La licencia, el hardware y la política de datos siguen importando.</p>
+      <p><strong>Ejemplos para ubicarte:</strong> OpenRouter agrega accesos; Cursor suma IA a un editor; OpenCode trabaja desde terminal; Ollama ayuda a ejecutar modelos en tu equipo. Qwen, Llama, Mistral y DeepSeek son familias de modelos, no experiencias equivalentes.</p>
+      <p>Algunos productos ofrecen controles llamados <em>thinking</em> o <em>reasoning effort</em>. Dar más profundidad puede ayudar en tareas complejas, pero suele requerir más tiempo y consumo; no garantiza una respuesta mejor.</p>
+    </FieldNote>
+
+    <EcosystemGame />
+
+    <TrailSummary
+      title="Tres huellas para llevarte"
+      items={level.takeaways}
+      nextHref={href("parte-1/nivel-2/")}
+      nextLabel="Seguir al Nivel 2"
+    />
+  </main>
+</BaseLayout>
+
+<style>
+  .level-page { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
+  .concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0 4rem; }
+  .visual-block { margin: 3rem 0; padding: clamp(1.2rem, 4vw, 2.4rem); border-radius: 1.8rem; background: white; box-shadow: 0 18px 50px rgb(32 48 43 / 9%); }
+  .family { background: #f6fbfd; }
+  .layers { background: #f4faf6; }
+  .pay { background: #fff9ea; }
+  .block-heading { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.4rem; }
+  .step { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 16px; background: #20302b; color: white; font-weight: 900; }
+  .block-heading p { margin: 0; color: #2f7196; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+  h2 { margin: .1rem 0 0; font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1; }
+  .modality-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; }
+  .modality-row article, .compare-grid article { padding: 1rem; border: 1px solid #d6ddd8; border-radius: 1rem; background: rgb(255 255 255 / 75%); }
+  .modality-row article > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; background: #dceef7; color: #245c7a; font-weight: 900; }
+  .modality-row strong, .modality-row small { display: block; }
+  .modality-row strong { margin: .7rem 0 .25rem; }
+  .modality-row small, .tiny-note { color: #526159; }
+  .layer-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: .7rem; align-items: center; }
+  .layer-flow div { min-height: 140px; display: grid; place-items: center; align-content: center; gap: .25rem; padding: 1rem; border-radius: 1rem; background: white; text-align: center; }
+  .layer-flow div span { font-size: 2rem; }
+  .layer-flow small { color: #526159; }
+  .same-engine, .truth { display: flex; gap: .7rem; align-items: center; margin-top: 1rem; padding: .9rem 1rem; border-radius: .9rem; background: #e4f2e9; }
+  .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+  .compare-grid h3 { margin: .65rem 0 .25rem; }
+  .compare-grid p { margin: 0; color: #526159; }
+  .tag { display: inline-block; padding: .3rem .55rem; border-radius: 999px; background: #f2e4b8; color: #684a0b; font-size: .75rem; font-weight: 850; }
+  @media (max-width: 740px) {
+    .concept-grid, .modality-row, .compare-grid { grid-template-columns: 1fr; }
+    .layer-flow { grid-template-columns: 1fr; }
+    .layer-flow > b { transform: rotate(90deg); text-align: center; }
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+const items = [
+  { label: "ChatGPT", answer: "producto" },
+  { label: "OpenAI", answer: "proveedor" },
+  { label: "GPT-6 Astra", answer: "modelo" },
+  { label: "Imagen", answer: "modalidad" }
+];
+const options = [
+  ["", "Elegí una capa"],
+  ["modelo", "Modelo · motor"],
+  ["proveedor", "Proveedor · acceso"],
+  ["producto", "Producto · experiencia"],
+  ["modalidad", "Tipo de contenido"]
+];
+---
+
+<section class="ecosystem-game" data-ecosystem-game aria-labelledby="ecosystem-game-title">
+  <div class="game-heading">
+    <span aria-hidden="true">🏛️</span>
+    <div>
+      <p>Museo de IA</p>
+      <h3 id="ecosystem-game-title">Poné cada fósil en su vitrina</h3>
+    </div>
+  </div>
+  <p class="intro">Modelo, proveedor, producto y tipo de contenido no son lo mismo.</p>
+  <form>
+    <div class="items">
+      {items.map((item, index) => (
+        <label data-answer={item.answer}>
+          <strong>{item.label}</strong>
+          <select name={`ecosystem-${index}`} aria-label={`Clasificar ${item.label}`}>
+            {options.map(([value, label]) => <option value={value}>{label}</option>)}
+          </select>
+          <span class="item-feedback" aria-live="polite"></span>
+        </label>
+      ))}
+    </div>
+    <button type="submit">Revisar vitrinas</button>
+  </form>
+  <div class="result" data-result hidden aria-live="polite"></div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-ecosystem-game]").forEach((game) => {
+    const form = game.querySelector("form");
+    const result = game.querySelector<HTMLElement>("[data-result]");
+    if (!form || !result) return;
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const rows = [...game.querySelectorAll<HTMLElement>("label[data-answer]")];
+      let correct = 0;
+      rows.forEach((row) => {
+        const select = row.querySelector("select");
+        const feedback = row.querySelector<HTMLElement>(".item-feedback");
+        if (!select || !feedback) return;
+        const ok = select.value === row.dataset.answer;
+        if (ok) correct += 1;
+        feedback.textContent = ok ? "✓ Bien" : select.value ? "Probá otra capa" : "Elegí una opción";
+        feedback.dataset.state = ok ? "ok" : "retry";
+      });
+      result.hidden = false;
+      result.innerHTML = correct === rows.length
+        ? "<strong>¡Museo ordenado!</strong> Ya podés describir mejor qué IA estás usando."
+        : `<strong>${correct} de ${rows.length} vitrinas correctas.</strong> Pensá: motor, empresa, aplicación o contenido.`;
+    });
+  });
+</script>
+
+<style>
+  .ecosystem-game { padding: clamp(1rem, 3vw, 2rem); border-radius: 1.75rem; border: 2px solid #9fc7dd; background: linear-gradient(145deg, #eef8fd, white); }
+  .game-heading { display: flex; gap: 1rem; align-items: center; }
+  .game-heading > span { font-size: 2.4rem; }
+  .game-heading p { margin: 0; color: #245c7a; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+  h3 { margin: .1rem 0 0; font-size: clamp(1.5rem, 4vw, 2.35rem); }
+  .intro { color: var(--muted, #526159); }
+  .items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin-bottom: 1rem; }
+  label { display: grid; gap: .55rem; padding: 1rem; border: 1px solid #c7dce8; border-radius: 1rem; background: white; }
+  select { min-height: 44px; width: 100%; border: 1px solid #8eaab9; border-radius: .7rem; padding: .55rem; background: white; color: #20302b; font: inherit; }
+  select:focus-visible, button:focus-visible { outline: 3px solid #6941a5; outline-offset: 3px; }
+  .item-feedback { min-height: 1.4em; color: #8a3d27; font-size: .9rem; font-weight: 750; }
+  .item-feedback[data-state="ok"] { color: #176b55; }
+  button { min-height: 44px; padding: .75rem 1rem; border: 0; border-radius: 999px; background: #245c7a; color: white; font: inherit; font-weight: 850; cursor: pointer; }
+  .result { margin-top: 1rem; padding: .9rem 1rem; border-radius: .9rem; background: white; }
+  @media (max-width: 640px) { .items { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,151 @@
+---
+const choices = [
+  {
+    key: "objetivo",
+    label: "Objetivo",
+    icon: "🎯",
+    options: [
+      "Preparar una invitación clara",
+      "Hablar sobre un evento",
+      "Escribir algo lindo"
+    ],
+    correct: 0
+  },
+  {
+    key: "contexto",
+    label: "Contexto",
+    icon: "🗺️",
+    options: [
+      "Para familias que no conocen la actividad",
+      "Es importante",
+      "Usá toda la información posible"
+    ],
+    correct: 0
+  },
+  {
+    key: "formato",
+    label: "Formato",
+    icon: "📦",
+    options: [
+      "Un mensaje de WhatsApp de hasta 80 palabras",
+      "Un buen formato",
+      "Lo que te parezca"
+    ],
+    correct: 0
+  },
+  {
+    key: "calidad",
+    label: "Calidad",
+    icon: "🔎",
+    options: [
+      "Debe incluir fecha, lugar y qué llevar",
+      "Que quede perfecto",
+      "Que suene inteligente"
+    ],
+    correct: 0
+  }
+];
+---
+
+<section class="prompt-builder" data-prompt-builder aria-labelledby="prompt-builder-title">
+  <div class="game-heading">
+    <span aria-hidden="true">🦕</span>
+    <div>
+      <p>Mini desafío</p>
+      <h3 id="prompt-builder-title">Armá una misión útil</h3>
+    </div>
+  </div>
+  <p class="intro">Elegí la pieza más concreta de cada fila. No hay que arrastrar nada.</p>
+
+  <form>
+    <div class="choice-grid">
+      {choices.map((choice) => (
+        <fieldset data-group={choice.key} data-correct={choice.correct}>
+          <legend><span aria-hidden="true">{choice.icon}</span> {choice.label}</legend>
+          {choice.options.map((option, index) => (
+            <label>
+              <input type="radio" name={`prompt-${choice.key}`} value={index} />
+              <span>{option}</span>
+            </label>
+          ))}
+        </fieldset>
+      ))}
+    </div>
+    <div class="actions">
+      <button type="submit">Probar la misión</button>
+      <button type="reset" class="secondary">Empezar de nuevo</button>
+    </div>
+  </form>
+
+  <div class="result" data-result hidden aria-live="polite" tabindex="-1"></div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-prompt-builder]").forEach((game) => {
+    const form = game.querySelector("form");
+    const result = game.querySelector<HTMLElement>("[data-result]");
+    if (!form || !result) return;
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const groups = [...game.querySelectorAll<HTMLElement>("fieldset[data-correct]")];
+      const unanswered = groups.some((group) => !group.querySelector("input:checked"));
+
+      if (unanswered) {
+        result.hidden = false;
+        result.dataset.state = "hint";
+        result.innerHTML = "<strong>Falta una huella.</strong> Elegí una opción en cada fila.";
+        return;
+      }
+
+      const correct = groups.filter((group) => {
+        const picked = group.querySelector<HTMLInputElement>("input:checked");
+        return picked?.value === group.dataset.correct;
+      }).length;
+
+      result.hidden = false;
+      if (correct === groups.length) {
+        result.dataset.state = "success";
+        result.innerHTML = "<strong>¡Misión lista!</strong> Tiene objetivo, contexto, formato y una forma concreta de revisar el resultado.";
+      } else {
+        result.dataset.state = "retry";
+        result.innerHTML = `<strong>Encontraste ${correct} de ${groups.length} piezas.</strong> Buscá opciones observables: evitá palabras como “perfecto”, “bueno” o “lo que te parezca”.`;
+      }
+      result.focus({ preventScroll: true });
+    });
+
+    form.addEventListener("reset", () => {
+      result.hidden = true;
+      result.textContent = "";
+    });
+  });
+</script>
+
+<style>
+  .prompt-builder {
+    padding: clamp(1rem, 3vw, 2rem);
+    border: 2px solid color-mix(in srgb, var(--amber, #d99a1e) 42%, transparent);
+    border-radius: 1.75rem;
+    background: linear-gradient(145deg, #fffaf0, #fff 70%);
+    box-shadow: 0 18px 50px rgb(43 50 40 / 10%);
+  }
+  .game-heading { display: flex; gap: .9rem; align-items: center; }
+  .game-heading > span { font-size: 2.4rem; }
+  .game-heading p { margin: 0; color: #795307; font-weight: 850; text-transform: uppercase; letter-spacing: .08em; font-size: .75rem; }
+  .game-heading h3 { margin: .1rem 0 0; font-size: clamp(1.5rem, 4vw, 2.35rem); }
+  .intro { max-width: 58ch; color: var(--muted, #526159); }
+  .choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  fieldset { min-width: 0; margin: 0; padding: 1rem; border: 1px solid #dfd6bf; border-radius: 1.1rem; }
+  legend { padding: 0 .4rem; font-weight: 900; }
+  label { display: flex; align-items: flex-start; gap: .65rem; min-height: 44px; margin-top: .55rem; padding: .65rem; border-radius: .8rem; background: #fff; cursor: pointer; }
+  label:hover { background: #fff4d3; }
+  input { margin-top: .25rem; accent-color: #8a5f08; }
+  input:focus-visible + span { outline: 3px solid #2f7196; outline-offset: 4px; border-radius: .2rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.2rem; }
+  button { min-height: 44px; padding: .75rem 1rem; border: 0; border-radius: 999px; background: #795307; color: white; font: inherit; font-weight: 850; cursor: pointer; }
+  button.secondary { background: #eee5d2; color: #293a33; }
+  button:focus-visible { outline: 3px solid #2f7196; outline-offset: 3px; }
+  .result { margin-top: 1rem; padding: 1rem 1.1rem; border-radius: 1rem; background: #edf7f1; color: #174c38; }
+  .result[data-state="retry"], .result[data-state="hint"] { background: #fff0e5; color: #77361f; }
+  @media (max-width: 700px) { .choice-grid { grid-template-columns: 1fr; } }
+</style>

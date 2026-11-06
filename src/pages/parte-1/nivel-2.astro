@@ -1,0 +1,129 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LevelHero from "../../components/LevelHero.astro";
+import ConceptCard from "../../components/ConceptCard.astro";
+import FieldNote from "../../components/FieldNote.astro";
+import TrailSummary from "../../components/TrailSummary.astro";
+import PromptBuilder from "../../components/PromptBuilder.astro";
+import { initialLevels } from "../../data/part1";
+
+const level = initialLevels[1];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+const formula = ["Objetivo", "Contexto", "Límites", "Formato", "Calidad"];
+---
+
+<BaseLayout title={`${level.title} · Expedición IA`} description={level.promise}>
+  <main id="contenido" class="level-page">
+    <LevelHero
+      level="Nivel 2"
+      eyebrow={level.kicker}
+      title={level.title}
+      intro={level.promise}
+      dino={level.dino}
+      tone={level.color}
+    />
+
+    <section class="concept-grid" aria-label="Piezas de una misión clara">
+      {level.concepts.map((concept) => (
+        <ConceptCard icon={concept.icon} title={concept.title}>{concept.text}</ConceptCard>
+      ))}
+    </section>
+
+    <section class="formula" aria-labelledby="formula-title">
+      <div class="heading"><p>La receta</p><h2 id="formula-title">Cinco piezas, no un prompt mágico</h2></div>
+      <div class="formula-track" role="list">
+        {formula.map((item, index) => (
+          <>
+            <div role="listitem"><span>{index + 1}</span><strong>{item}</strong></div>
+            {index < formula.length - 1 && <b aria-hidden="true">+</b>}
+          </>
+        ))}
+      </div>
+    </section>
+
+    <section class="before-after" aria-labelledby="compare-title">
+      <div class="heading"><p>Antes y después</p><h2 id="compare-title">La diferencia está en lo observable</h2></div>
+      <div class="compare">
+        <article class="weak"><span>Pedido borroso</span><blockquote>“Haceme un mensaje lindo para el evento.”</blockquote><small>¿Para quién? ¿Qué evento? ¿Cuánto debe medir? ¿Qué dato no puede faltar?</small></article>
+        <div class="upgrade" aria-hidden="true">→</div>
+        <article class="strong"><span>Misión clara</span><blockquote>“Escribí un mensaje de WhatsApp de hasta 80 palabras para invitar a familias que no conocen la actividad. Incluí fecha, lugar y qué llevar. Tono cálido y directo.”</blockquote><small>Ahora el resultado se puede revisar.</small></article>
+      </div>
+    </section>
+
+    <section class="depth" aria-labelledby="depth-title">
+      <div class="heading"><p>Esfuerzo</p><h2 id="depth-title">No todo necesita la misma profundidad</h2></div>
+      <div class="depth-scale">
+        <article><span class="leaf" aria-hidden="true">🌱</span><strong>Rápido</strong><p>Reformular una frase o listar ideas.</p></article>
+        <article><span class="leaf" aria-hidden="true">🌿</span><strong>Intermedio</strong><p>Comparar alternativas con criterios.</p></article>
+        <article><span class="leaf" aria-hidden="true">🌳</span><strong>Profundo</strong><p>Planificar algo complejo o de alto impacto.</p></article>
+      </div>
+      <p class="caveat"><strong>Más esfuerzo no garantiza una mejor respuesta.</strong> Depende de la tarea, el modelo y la información disponible.</p>
+    </section>
+
+    <section class="iteration" aria-labelledby="iteration-title">
+      <div class="heading"><p>Iterar</p><h2 id="iteration-title">Corregí una dimensión por vez</h2></div>
+      <ol>
+        <li><span>1</span><div><strong>Primer borrador</strong><small>Pedí una versión breve.</small></div></li>
+        <li><span>2</span><div><strong>Revisá</strong><small>Detectá qué falta o sobra.</small></div></li>
+        <li><span>3</span><div><strong>Ajustá</strong><small>Tono, longitud, datos o formato.</small></div></li>
+        <li><span>4</span><div><strong>Verificá</strong><small>Contrastá el resultado final.</small></div></li>
+      </ol>
+    </section>
+
+    <FieldNote summary="Excavar más · ¿Hace falta asignarle un rol?">
+      <p>“Actuá como…” puede ayudar cuando necesitás una perspectiva concreta, pero no es obligatorio. Un objetivo claro, contexto relevante y criterio de calidad suelen aportar más.</p>
+      <p>Podés cerrar con: <strong>“Si falta información que cambiaría mucho el resultado, preguntame. Si no, declará tus supuestos y avanzá.”</strong></p>
+    </FieldNote>
+
+    <PromptBuilder />
+
+    <TrailSummary
+      title="Tres huellas para llevarte"
+      items={level.takeaways}
+      nextHref={href("parte-1/nivel-3/")}
+      nextLabel="Seguir al Nivel 3"
+    />
+  </main>
+</BaseLayout>
+
+<style>
+  .level-page { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
+  .concept-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 2rem 0 4rem; }
+  .formula, .before-after, .depth, .iteration { margin: 3rem 0; padding: clamp(1.2rem, 4vw, 2.4rem); border-radius: 1.8rem; background: white; box-shadow: 0 18px 50px rgb(32 48 43 / 9%); }
+  .formula { background: #fff8e7; }
+  .depth { background: #f1f8f3; }
+  .iteration { background: #eef7fb; }
+  .heading p { margin: 0; color: #795307; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+  h2 { margin: .15rem 0 1.3rem; font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1; }
+  .formula-track { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto 1fr; gap: .55rem; align-items: center; }
+  .formula-track div { min-height: 110px; display: grid; place-items: center; align-content: center; gap: .35rem; padding: .8rem; border: 1px solid #e4c979; border-radius: 1rem; background: white; text-align: center; }
+  .formula-track span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #795307; color: white; font-weight: 900; }
+  .formula-track > b { color: #795307; font-size: 1.4rem; }
+  .compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; }
+  .compare article { min-height: 250px; padding: 1.25rem; border-radius: 1.2rem; }
+  .compare article > span { display: inline-block; padding: .3rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 900; text-transform: uppercase; }
+  .weak { background: #fff1eb; }
+  .weak > span { background: #f1c0ad; color: #6a2d18; }
+  .strong { background: #e8f5ed; }
+  .strong > span { background: #bde3ca; color: #174c38; }
+  blockquote { margin: 1rem 0; font-size: 1.12rem; font-weight: 750; }
+  .compare small { color: #526159; }
+  .upgrade { font-size: 2rem; }
+  .depth-scale { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+  .depth-scale article { min-height: 160px; padding: 1rem; border-radius: 1rem; background: white; }
+  .depth-scale .leaf { display: block; margin-bottom: .6rem; font-size: 2rem; }
+  .depth-scale p { color: #526159; }
+  .caveat { padding: .8rem 1rem; border-left: 4px solid #176b55; background: #e2f0e7; }
+  .iteration ol { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; padding: 0; list-style: none; }
+  .iteration li { display: flex; gap: .65rem; align-items: center; padding: .9rem; border-radius: 1rem; background: white; }
+  .iteration li > span { display: grid; flex: 0 0 36px; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #245c7a; color: white; font-weight: 900; }
+  .iteration strong, .iteration small { display: block; }
+  .iteration small { color: #526159; }
+  @media (max-width: 780px) {
+    .concept-grid, .depth-scale, .iteration ol { grid-template-columns: 1fr 1fr; }
+    .formula-track, .compare { grid-template-columns: 1fr; }
+    .formula-track > b, .upgrade { transform: rotate(90deg); text-align: center; }
+  }
+  @media (max-width: 520px) { .concept-grid, .depth-scale, .iteration ol { grid-template-columns: 1fr; } }
+</style>

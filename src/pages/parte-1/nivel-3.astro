@@ -1,0 +1,148 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LevelHero from "../../components/LevelHero.astro";
+import ConceptCard from "../../components/ConceptCard.astro";
+import FieldNote from "../../components/FieldNote.astro";
+import TrailSummary from "../../components/TrailSummary.astro";
+import RiskSorter from "../../components/RiskSorter.astro";
+import { initialLevels, riskGuide, safeCycle } from "../../data/part1";
+
+const level = initialLevels[2];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+---
+
+<BaseLayout title={`${level.title} · Expedición IA`} description={level.promise}>
+  <main id="contenido" class="level-page">
+    <LevelHero
+      level="Nivel 3"
+      eyebrow={level.kicker}
+      title={level.title}
+      intro={level.promise}
+      dino={level.dino}
+      tone={level.color}
+    />
+
+    <section class="concept-grid" aria-label="Criterio y seguridad">
+      {level.concepts.map((concept) => (
+        <ConceptCard icon={concept.icon} title={concept.title}>{concept.text}</ConceptCard>
+      ))}
+    </section>
+
+    <section class="visual-block confidence" aria-labelledby="confidence-title">
+      <div class="heading"><p>Primera regla</p><h2 id="confidence-title">Seguridad en el tono ≠ verdad</h2></div>
+      <div class="confidence-demo">
+        <div class="speech"><span aria-hidden="true">“</span><p>La respuesta puede sonar impecable, ordenada y segura…</p></div>
+        <div class="not-equal" aria-hidden="true">≠</div>
+        <div class="evidence"><span aria-hidden="true">🔬</span><p>…pero sólo merece confianza cuando tiene evidencia adecuada.</p></div>
+      </div>
+    </section>
+
+    <section class="visual-block evidence-ladder" aria-labelledby="evidence-title">
+      <div class="heading"><p>La escalera</p><h2 id="evidence-title">Cinco preguntas antes de decidir</h2></div>
+      <ol>
+        <li><span>1</span><strong>Fuente</strong><small>¿De dónde sale?</small></li>
+        <li><span>2</span><strong>Evidencia</strong><small>¿Qué la sostiene?</small></li>
+        <li><span>3</span><strong>Contraejemplo</strong><small>¿Cuándo sería falso?</small></li>
+        <li><span>4</span><strong>Riesgo</strong><small>¿Qué pasa si está mal?</small></li>
+        <li><span>5</span><strong>Decisión</strong><small>¿Quién se hace cargo?</small></li>
+      </ol>
+    </section>
+
+    <section class="visual-block traffic" aria-labelledby="traffic-title">
+      <div class="heading"><p>El semáforo</p><h2 id="traffic-title">La verificación crece con el riesgo</h2></div>
+      <div class="traffic-grid">
+        {riskGuide.map((risk) => (
+          <article class={`risk risk--${risk.tone}`}>
+            <span class="light" aria-hidden="true"></span>
+            <h3>{risk.label}</h3>
+            <p>{risk.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="visual-block privacy" aria-labelledby="privacy-title">
+      <div class="heading"><p>Cuidá el nido</p><h2 id="privacy-title">Antes de pegar información, frená</h2></div>
+      <div class="nest-grid">
+        <article class="share"><span aria-hidden="true">🌤️</span><h3>Generalmente compartible</h3><ul><li>Preguntas públicas</li><li>Ejemplos inventados</li><li>Contenido autorizado</li></ul></article>
+        <article class="protect"><span aria-hidden="true">🪺</span><h3>Necesita protección</h3><ul><li>Contraseñas o API keys</li><li>Datos personales</li><li>Información confidencial</li></ul></article>
+      </div>
+      <p class="privacy-check"><strong>Preguntate:</strong> ¿qué sale de mi entorno, dónde se procesa y cuánto tiempo se conserva?</p>
+    </section>
+
+    <section class="visual-block safe-cycle" aria-labelledby="cycle-title">
+      <div class="heading"><p>El ciclo seguro</p><h2 id="cycle-title">Cuatro pasos para conservar el control</h2></div>
+      <ol>
+        {safeCycle.map((item) => (
+          <li><span>{item.step}</span><div><strong>{item.title}</strong><small>{item.text}</small></div></li>
+        ))}
+      </ol>
+    </section>
+
+    <FieldNote summary="Excavar más · Local no siempre significa privado">
+      <p>Un modelo puede ejecutarse en tu equipo y aun así usar componentes o servicios conectados. Revisá la configuración real, la licencia y qué datos salen de la máquina.</p>
+      <p>Una API key es una credencial secreta: no debería quedar en código del navegador, repositorios, capturas o logs.</p>
+    </FieldNote>
+
+    <RiskSorter />
+
+    <TrailSummary
+      title="Tres huellas para llevarte"
+      items={level.takeaways}
+      nextHref={href("parte-1/juegos/")}
+      nextLabel="Ir al campamento de juegos"
+    />
+  </main>
+</BaseLayout>
+
+<style>
+  .level-page { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
+  .concept-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 2rem 0 4rem; }
+  .visual-block { margin: 3rem 0; padding: clamp(1.2rem, 4vw, 2.4rem); border-radius: 1.8rem; background: white; box-shadow: 0 18px 50px rgb(32 48 43 / 9%); }
+  .confidence { background: #f5effc; }
+  .evidence-ladder { background: #eef8fd; }
+  .traffic { background: #f7f5ee; }
+  .privacy { background: #f0f8f2; }
+  .safe-cycle { background: #fff8e7; }
+  .heading p { margin: 0; color: #176b55; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+  h2 { margin: .15rem 0 1.3rem; font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1; }
+  .confidence-demo { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; }
+  .speech, .evidence { min-height: 180px; display: flex; gap: .8rem; align-items: center; padding: 1.2rem; border-radius: 1.1rem; background: white; font-size: 1.1rem; font-weight: 750; }
+  .speech > span { font-size: 3rem; color: #6941a5; }
+  .evidence > span { font-size: 2.3rem; }
+  .not-equal { color: #c9573f; font-size: 2.5rem; font-weight: 900; }
+  .evidence-ladder ol { display: grid; grid-template-columns: repeat(5, 1fr); gap: .6rem; padding: 0; list-style: none; }
+  .evidence-ladder li { min-height: 145px; display: grid; align-content: center; gap: .25rem; padding: .9rem; border-radius: 1rem; background: white; }
+  .evidence-ladder li span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #245c7a; color: white; font-weight: 900; }
+  .evidence-ladder strong, .evidence-ladder small { display: block; }
+  .evidence-ladder small { color: #526159; }
+  .traffic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+  .risk { padding: 1.1rem; border-radius: 1rem; background: white; }
+  .light { display: block; width: 32px; height: 32px; border-radius: 50%; }
+  .risk--green .light { background: #4f9867; }
+  .risk--yellow .light { background: #d99a1e; }
+  .risk--red .light { background: #c9573f; }
+  .risk h3 { margin: .75rem 0 .25rem; }
+  .risk p { margin: 0; color: #526159; }
+  .nest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+  .nest-grid article { padding: 1.1rem; border-radius: 1rem; background: white; }
+  .nest-grid article > span { font-size: 2rem; }
+  .nest-grid h3 { margin: .5rem 0; }
+  .nest-grid ul { margin: 0; padding-left: 1.2rem; color: #526159; }
+  .protect { border: 2px solid #d7a695; }
+  .privacy-check { padding: .8rem 1rem; border-radius: .8rem; background: #dcefe3; }
+  .safe-cycle ol { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; padding: 0; list-style: none; }
+  .safe-cycle li { display: flex; gap: .7rem; align-items: center; padding: 1rem; border-radius: 1rem; background: white; }
+  .safe-cycle li > span { display: grid; flex: 0 0 36px; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #795307; color: white; font-weight: 900; }
+  .safe-cycle strong, .safe-cycle small { display: block; }
+  .safe-cycle small { color: #526159; }
+  @media (max-width: 800px) {
+    .concept-grid, .safe-cycle ol { grid-template-columns: 1fr 1fr; }
+    .evidence-ladder ol { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    .concept-grid, .traffic-grid, .nest-grid, .safe-cycle ol, .evidence-ladder ol, .confidence-demo { grid-template-columns: 1fr; }
+    .not-equal { text-align: center; transform: rotate(90deg); }
+  }
+</style>

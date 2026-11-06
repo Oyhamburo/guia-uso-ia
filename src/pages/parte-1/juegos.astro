@@ -1,0 +1,98 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DinoAvatar from "../../components/DinoAvatar.astro";
+import PromptBuilder from "../../components/PromptBuilder.astro";
+import RiskSorter from "../../components/RiskSorter.astro";
+import EcosystemGame from "../../components/EcosystemGame.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+---
+
+<BaseLayout title="Campamento de juegos · Expedición IA" description="Juegos breves para practicar los tres primeros niveles de la guía.">
+  <main id="contenido" class="games-page">
+    <section class="games-hero">
+      <div>
+        <p class="eyebrow">Campamento de práctica</p>
+        <h1>Jugá con lo que aprendiste</h1>
+        <p>No hay ranking ni examen. Probá, mirá el feedback y volvé a intentar.</p>
+      </div>
+      <DinoAvatar name="vera" mood="celebrating" size="large" />
+    </section>
+
+    <nav class="game-map" aria-label="Elegir un juego">
+      <a href="#museo"><span>01</span><strong>Museo de IA</strong></a>
+      <a href="#mision"><span>02</span><strong>Armá la misión</strong></a>
+      <a href="#semaforo"><span>03</span><strong>Semáforo</strong></a>
+      <a href="#expedicion"><span>★</span><strong>Expedición grupal</strong></a>
+    </nav>
+
+    <section id="museo" class="game-stop" aria-labelledby="museo-title">
+      <div class="stop-label"><span>01</span><div><p>Nivel 1</p><h2 id="museo-title">Ordená el ecosistema</h2></div></div>
+      <EcosystemGame />
+    </section>
+
+    <section id="mision" class="game-stop" aria-labelledby="mision-title">
+      <div class="stop-label"><span>02</span><div><p>Nivel 2</p><h2 id="mision-title">Construí un buen pedido</h2></div></div>
+      <PromptBuilder />
+    </section>
+
+    <section id="semaforo" class="game-stop" aria-labelledby="semaforo-title">
+      <div class="stop-label"><span>03</span><div><p>Nivel 3</p><h2 id="semaforo-title">Protegé el nido</h2></div></div>
+      <RiskSorter />
+    </section>
+
+    <section id="expedicion" class="group-game">
+      <div class="group-copy">
+        <p class="eyebrow">Juego separado · para grupos</p>
+        <h2>¿Quieren una expedición más grande?</h2>
+        <p>IAventuras suma participantes, ruleta y preguntas para jugar en equipo. Vive en su propio repositorio y abre en otra pestaña.</p>
+        <a href="https://oyhamburo.github.io/iaventuras/" target="_blank" rel="noreferrer">Abrir IAventuras <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="group-dinos" aria-hidden="true">
+        <DinoAvatar name="bruna" mood="celebrating" size="medium" />
+        <DinoAvatar name="paco" mood="celebrating" size="medium" />
+        <DinoAvatar name="anky" mood="celebrating" size="medium" />
+      </div>
+    </section>
+
+    <nav class="next-route" aria-label="Continuar la guía">
+      <a href={href("parte-1/nivel-3/")}>← Volver al Nivel 3</a>
+      <a class="primary" href={href("parte-2/")}>Entrar al laboratorio técnico →</a>
+    </nav>
+  </main>
+</BaseLayout>
+
+<style>
+  .games-page { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
+  .games-hero { display: grid; grid-template-columns: 1.2fr .8fr; align-items: center; gap: 1rem; min-height: 430px; padding: clamp(1.5rem, 5vw, 3.5rem); border-radius: 2.2rem; background: radial-gradient(circle at 80% 20%, #e7dcf6, transparent 35%), linear-gradient(145deg, #f8f0d7, #eef8fd); }
+  .eyebrow { margin: 0 0 .6rem; color: #6941a5; font-size: .78rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+  h1 { max-width: 10ch; margin: 0; font-size: clamp(3rem, 8vw, 5.8rem); line-height: .92; letter-spacing: -.055em; }
+  .games-hero p:last-child { max-width: 42ch; color: #526159; font-size: 1.1rem; }
+  .game-map { position: sticky; top: 76px; z-index: 5; display: flex; gap: .6rem; overflow-x: auto; margin: 1rem 0 4rem; padding: .7rem; border: 1px solid #d9d2c2; border-radius: 1rem; background: rgb(247 243 232 / 94%); backdrop-filter: blur(12px); }
+  .game-map a { min-height: 44px; display: inline-flex; flex: 1 0 auto; align-items: center; gap: .5rem; padding: .55rem .7rem; border-radius: .75rem; color: inherit; text-decoration: none; }
+  .game-map a:hover { background: white; }
+  .game-map a:focus-visible { outline: 3px solid #6941a5; }
+  .game-map span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: #20302b; color: white; font-size: .75rem; font-weight: 900; }
+  .game-stop { scroll-margin-top: 160px; margin: 5rem 0; }
+  .stop-label { display: flex; gap: .8rem; align-items: center; margin-bottom: 1rem; }
+  .stop-label > span { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: #20302b; color: white; font-weight: 900; }
+  .stop-label p { margin: 0; color: #6941a5; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+  .stop-label h2 { margin: .1rem 0 0; font-size: clamp(1.6rem, 4vw, 2.5rem); }
+  .group-game { overflow: hidden; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 1rem; margin-top: 5rem; padding: clamp(1.4rem, 5vw, 3rem); border-radius: 2rem; background: #efe8f8; }
+  .group-copy h2 { margin: .2rem 0 .7rem; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1; }
+  .group-copy p { color: #526159; }
+  .group-copy a, .next-route a { min-height: 44px; display: inline-flex; align-items: center; padding: .75rem 1rem; border-radius: 999px; background: #6941a5; color: white; font-weight: 850; text-decoration: none; }
+  .group-copy a:focus-visible, .next-route a:focus-visible { outline: 3px solid #2f7196; outline-offset: 3px; }
+  .group-dinos { display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; }
+  .next-route { display: flex; justify-content: space-between; gap: .8rem; margin-top: 2rem; }
+  .next-route a { background: white; color: #20302b; border: 1px solid #b8c3bd; }
+  .next-route a.primary { background: #176b55; color: white; border: 0; }
+  @media (max-width: 720px) {
+    .game-map { position: static; }
+    .games-hero, .group-game { grid-template-columns: 1fr; }
+    .group-dinos { max-height: 230px; overflow: hidden; }
+    .next-route { flex-direction: column; align-items: stretch; }
+    .next-route a { justify-content: center; }
+  }
+</style>

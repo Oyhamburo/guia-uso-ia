@@ -1,0 +1,107 @@
+---
+const scenarios = [
+  {
+    text: "Pedís ideas de nombres para una actividad interna.",
+    answer: "green",
+    why: "Es exploratorio y fácil de descartar."
+  },
+  {
+    text: "La IA resume un informe que vas a compartir con todo el equipo.",
+    answer: "yellow",
+    why: "Revisá que no cambie datos, tono o conclusiones."
+  },
+  {
+    text: "Una respuesta recomienda cambiar una medicación.",
+    answer: "red",
+    why: "No actúes sólo con esa salida: necesitás una persona calificada."
+  },
+  {
+    text: "Querés pegar una planilla con nombres, mails y teléfonos.",
+    answer: "red",
+    why: "Frená: son datos personales y necesitás una herramienta y permiso adecuados."
+  }
+];
+---
+
+<section class="risk-game" data-risk-game aria-labelledby="risk-game-title">
+  <header>
+    <div class="signal" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div>
+      <p>Semáforo de decisiones</p>
+      <h3 id="risk-game-title">¿Explorás, verificás o frenás?</h3>
+    </div>
+  </header>
+  <p class="intro">Elegí una respuesta por situación. Después vas a ver el porqué.</p>
+  <form>
+    <ol>
+      {scenarios.map((scenario, index) => (
+        <li data-answer={scenario.answer} data-why={scenario.why}>
+          <p><strong>{index + 1}.</strong> {scenario.text}</p>
+          <div class="risk-options">
+            <label><input type="radio" name={`risk-${index}`} value="green" /> <span>🟢 Explorá</span></label>
+            <label><input type="radio" name={`risk-${index}`} value="yellow" /> <span>🟡 Verificá</span></label>
+            <label><input type="radio" name={`risk-${index}`} value="red" /> <span>🔴 Frená</span></label>
+          </div>
+          <div class="explanation" hidden aria-live="polite"></div>
+        </li>
+      ))}
+    </ol>
+    <button type="submit">Revisar decisiones</button>
+  </form>
+  <p class="summary" data-summary hidden aria-live="polite"></p>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-risk-game]").forEach((game) => {
+    const form = game.querySelector("form");
+    const summary = game.querySelector<HTMLElement>("[data-summary]");
+    if (!form || !summary) return;
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const cards = [...game.querySelectorAll<HTMLElement>("li[data-answer]")];
+      let completed = 0;
+      let correct = 0;
+      cards.forEach((card) => {
+        const picked = card.querySelector<HTMLInputElement>("input:checked");
+        const explanation = card.querySelector<HTMLElement>(".explanation");
+        if (!picked || !explanation) return;
+        completed += 1;
+        const isCorrect = picked.value === card.dataset.answer;
+        if (isCorrect) correct += 1;
+        explanation.hidden = false;
+        explanation.dataset.state = isCorrect ? "ok" : "review";
+        explanation.textContent = `${isCorrect ? "Bien. " : "Revisalo. "}${card.dataset.why}`;
+      });
+      summary.hidden = false;
+      summary.textContent = completed < cards.length
+        ? `Respondé las ${cards.length - completed} situaciones que faltan.`
+        : correct === cards.length
+          ? "¡Nido protegido! Mediste el riesgo antes de actuar."
+          : `Acertaste ${correct} de ${cards.length}. Leé cada explicación y volvé a intentarlo.`;
+    });
+  });
+</script>
+
+<style>
+  .risk-game { padding: clamp(1rem, 3vw, 2rem); border-radius: 1.75rem; background: #f4f9f5; border: 2px solid #9bc8ae; }
+  header { display: flex; gap: 1rem; align-items: center; }
+  header p { margin: 0; color: #176b55; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+  h3 { margin: .1rem 0 0; font-size: clamp(1.5rem, 4vw, 2.35rem); }
+  .intro { color: var(--muted, #526159); }
+  .signal { display: grid; gap: 3px; padding: 7px; border-radius: 999px; background: #26332e; }
+  .signal i { width: 14px; height: 14px; border-radius: 50%; background: #db4e3d; }
+  .signal i:nth-child(2) { background: #e5aa2e; }
+  .signal i:nth-child(3) { background: #5ea66e; }
+  ol { display: grid; gap: .8rem; padding: 0; list-style: none; }
+  li { padding: 1rem; border: 1px solid #c9ddd0; border-radius: 1rem; background: white; }
+  li p { margin: 0 0 .75rem; }
+  .risk-options { display: flex; flex-wrap: wrap; gap: .5rem; }
+  label { min-height: 44px; display: inline-flex; align-items: center; gap: .4rem; padding: .55rem .7rem; border-radius: 999px; background: #f1eee3; cursor: pointer; }
+  input { accent-color: #176b55; }
+  input:focus-visible + span { outline: 3px solid #2f7196; outline-offset: 3px; }
+  .explanation { margin-top: .7rem; padding: .65rem .8rem; border-radius: .7rem; background: #e4f5ea; color: #17503a; }
+  .explanation[data-state="review"] { background: #fff0e5; color: #77361f; }
+  button { min-height: 44px; padding: .75rem 1rem; border: 0; border-radius: 999px; background: #176b55; color: white; font: inherit; font-weight: 850; cursor: pointer; }
+  button:focus-visible { outline: 3px solid #2f7196; outline-offset: 3px; }
+  .summary { padding: .8rem 1rem; border-left: 4px solid #176b55; background: white; font-weight: 750; }
+</style>
