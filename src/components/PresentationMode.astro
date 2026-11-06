@@ -228,6 +228,7 @@
     body.classList.remove("is-presenting");
     if (controls) controls.hidden = true;
     restoreSlides();
+    document.dispatchEvent(new CustomEvent("presentation:restored"));
     storage.remove(STORAGE_KEY);
     updateToggles();
     window.scrollTo({ top: savedScroll, behavior: "auto" });

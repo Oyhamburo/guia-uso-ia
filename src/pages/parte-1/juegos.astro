@@ -246,13 +246,15 @@ const stations = [
       }
     });
 
-    refreshCompleted();
-    const requested = location.hash.replace("#", "").replace(/^stage-/, "");
-    showStage(stages.some((stage) => stage.dataset.gameStage === requested) ? requested : "trivia", false);
-    addEventListener("hashchange", () => {
+    const syncStageFromHash = () => {
       const id = location.hash.replace("#", "").replace(/^stage-/, "");
-      if (stages.some((stage) => stage.dataset.gameStage === id)) showStage(id, false);
-    });
+      showStage(stages.some((stage) => stage.dataset.gameStage === id) ? id : "trivia", false);
+    };
+
+    refreshCompleted();
+    syncStageFromHash();
+    addEventListener("hashchange", syncStageFromHash);
+    document.addEventListener("presentation:restored", syncStageFromHash);
   }
 </script>
 
