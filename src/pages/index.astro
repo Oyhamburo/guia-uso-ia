@@ -1,11 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import LevelHero from "../components/LevelHero.astro";
-import ConceptCard from "../components/ConceptCard.astro";
 import ExpeditionMap from "../components/ExpeditionMap.astro";
-
-const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
-const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
 ---
 
 <BaseLayout
@@ -13,50 +8,14 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   description="Una guía visual, divertida y práctica para aprender a usar inteligencia artificial con criterio, desde cero hasta conceptos técnicos."
   current="home"
 >
-  <main id="contenido">
-    <div class="wrap home-hero">
-      <LevelHero
-        eyebrow="Guía visual para personas curiosas"
-        title="Explorá la IA sin perderte en la selva."
-        intro="Aprendé con mapas, ejemplos, dinosaurios y desafíos cortos. Empezamos desde cero; lo técnico aparece sólo cuando vos querés."
-        dino="bruna"
-        dinoLabel="Bruna"
-        guide="Yo veo el mapa completo. Vos elegís hasta dónde querés explorar."
-        tone="fern"
-      >
-        <a slot="actions" class="button" href={href("parte-1/nivel-1/")}>Empezar desde cero</a>
-        <a slot="actions" class="button secondary" href="#mapa">Ver el mapa</a>
-      </LevelHero>
-    </div>
-
-    <section class="section wrap promise" aria-labelledby="promise-title">
-      <div class="section-heading">
-        <span class="eyebrow">Cómo funciona</span>
-        <h2 id="promise-title">Una idea por pantalla. Lo importante primero.</h2>
-        <p>El detalle largo queda disponible para quien quiera excavar más.</p>
-      </div>
-      <div class="card-grid">
-        <ConceptCard title="Mirá" icon="◉" accent="sky">
-          <p>Diagramas y ejemplos antes que definiciones.</p>
-        </ConceptCard>
-        <ConceptCard title="Probá" icon="◆" accent="fossil">
-          <p>Mini desafíos sin ranking ni presión.</p>
-        </ConceptCard>
-        <ConceptCard title="Decidí" icon="✓" accent="coral">
-          <p>El criterio y la responsabilidad siguen siendo tuyos.</p>
-        </ConceptCard>
-      </div>
-    </section>
-
-    <div class="section wrap">
+  <main id="contenido" class="map-home">
+    <div class="map-shell">
       <ExpeditionMap />
     </div>
-
   </main>
 </BaseLayout>
 
 <style>
-  .home-hero { padding-block: 1.1rem 0; }
-  .promise { padding-bottom: 2rem; }
-
+  .map-home { padding: clamp(.55rem, 2vw, 1.25rem) 0 3rem; }
+  .map-shell { width: min(1440px, calc(100% - clamp(.75rem, 2vw, 2rem))); margin-inline: auto; }
 </style>
