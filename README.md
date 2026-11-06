@@ -2,6 +2,8 @@
 
 Una guía visual y práctica para aprender a usar inteligencia artificial con criterio. La experiencia usa dinosaurios, tarjetas breves y actividades interactivas para avanzar desde lo cotidiano hasta conceptos técnicos.
 
+La portada es el único mapa global. Desde allí se puede entrar a cualquier parada; dentro de cada recorrido, la navegación avanza de una pantalla a la siguiente. Los juegos y evaluaciones aparecen únicamente al final de cada parte.
+
 ## Recorridos
 
 - **Parte 1 · Primeras huellas:** tres niveles para personas sin conocimientos técnicos y un campamento con tres juegos.

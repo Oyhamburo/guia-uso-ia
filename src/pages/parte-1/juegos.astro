@@ -58,7 +58,8 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
 
     <nav class="next-route" aria-label="Continuar la guía">
       <a href={href("parte-1/nivel-3/")}>← Volver al Nivel 3</a>
-      <a class="primary" href={href("parte-2/")}>Entrar al laboratorio técnico →</a>
+      <a class="map-link" href={href("#mapa")}>Mapa de la expedición</a>
+      <a class="primary" href={href("parte-2/nivel-1/")}>Entrar al laboratorio técnico →</a>
     </nav>
   </main>
 </BaseLayout>
@@ -87,6 +88,7 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   .group-dinos { display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; }
   .next-route { display: flex; justify-content: space-between; gap: .8rem; margin-top: 2rem; }
   .next-route a { background: white; color: #20302b; border: 1px solid #b8c3bd; }
+  .next-route .map-link { margin-inline: auto; border-color: transparent; background: transparent; }
   .next-route a.primary { background: #176b55; color: white; border: 0; }
   @media (max-width: 720px) {
     .game-map { position: static; }

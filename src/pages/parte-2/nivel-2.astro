@@ -11,7 +11,7 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
 <BaseLayout title="T2 · La mochila de contexto" description="Tokens, sesión, peticiones, contexto, posición y compactación explicados visualmente." current="parte-2" theme="technical">
   <main id="contenido" class="tech-level">
     <LevelHero eyebrow="Parte 2 · Nivel técnico 2" title="La mochila de contexto" intro="El modelo no mantiene una conversación abierta por sí mismo. En cada llamada recibe una selección concreta de instrucciones, mensajes, archivos y resultados." dino="bruna" dinoLabel="Bruna ve el mapa completo" guide="Más espacio no significa que cada dato sea igual de visible." tone="sky">
-      <div slot="actions" class="hero-actions"><a href="#mesa">Abrir la mochila ↓</a><a href={href("parte-2/")}>Mapa técnico</a></div>
+      <div slot="actions" class="hero-actions"><a href="#mesa">Abrir la mochila ↓</a><a href={href("#mapa")}>Mapa de la expedición</a></div>
     </LevelHero>
 
     <section id="mesa" class="visual-section" aria-labelledby="mesa-title">
@@ -74,7 +74,7 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
 
     <section class="quick-check"><span class="step">Chequeo de salida</span><h2>La ventana indica cuánto puede entrar.<br><strong>No cuánto se entiende perfectamente.</strong></h2></section>
 
-    <nav class="level-actions" aria-label="Navegación del recorrido técnico"><a href={href("parte-2/nivel-1/")}>← Anatomía de un agente</a><a class="next" href={href("parte-2/nivel-3/")}>Siguiente: trabajo confiable →</a></nav>
+    <nav class="level-actions" aria-label="Navegación del recorrido técnico"><a href={href("parte-2/nivel-1/")}>← Anatomía de un agente</a><a class="map-link" href={href("#mapa")}>Mapa</a><a class="next" href={href("parte-2/nivel-3/")}>Siguiente: trabajo confiable →</a></nav>
   </main>
 </BaseLayout>
 
@@ -89,6 +89,6 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
   .compact-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: .65rem; align-items: center; }.compact-flow article { display: grid; justify-items: center; min-height: 9rem; align-content: center; gap: .25rem; padding: 1rem; border: 1px solid rgba(32,48,43,.14); border-radius: 1.1rem; background: #fff; text-align: center; }.compact-flow article > span { font-size: 1.8rem; }.compact-flow small { color: #65716d; }
   .model-windows { display: grid; gap: .5rem; }.model-windows > span { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem .8rem; border-radius: .8rem; background: rgba(47,113,150,.07); }.model-windows small { text-align: right; }
   .quick-check { margin: clamp(3rem, 8vw, 6rem) 0 2rem; padding: clamp(1.3rem, 4vw, 2.4rem); border-radius: 1.5rem; background: #172c3a; color: #fff; }.quick-check .step { color: #8fd5e9; }.quick-check h2 { margin-bottom: 0; }.quick-check strong { color: #f5c45f; }
-  .level-actions { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; }.level-actions a { color: #375249; font-weight: 850; }.level-actions .next { color: #245d7c; }a:focus-visible { outline: 3px solid #d99a1e; outline-offset: 4px; }
+  .level-actions { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; }.level-actions a { color: #375249; font-weight: 850; }.level-actions .map-link { margin-inline: auto; }.level-actions .next { color: #245d7c; }a:focus-visible { outline: 3px solid #d99a1e; outline-offset: 4px; }
   @media(max-width:760px){.session-flow,.compact-flow{grid-template-columns:1fr}.arrow,.compact-flow>span{transform:rotate(90deg);text-align:center}.position-card{grid-template-columns:1fr}.budget{flex-direction:column}.budget div{width:100%!important;min-height:2.5rem}.model-windows>span{display:grid}.model-windows small{text-align:left}.level-actions{flex-direction:column}}
 </style>

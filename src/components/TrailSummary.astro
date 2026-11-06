@@ -5,16 +5,22 @@ interface Props {
   title?: string;
   items: string[];
   dino?: "cera" | "paco" | "vera" | "anky" | "bruna" | "roco";
+  previousHref?: string;
+  previousLabel?: string;
   nextHref?: string;
   nextLabel?: string;
+  mapHref?: string;
 }
 
 const {
   title = "Lo que te llevás en la mochila",
   items,
   dino = "vera",
+  previousHref,
+  previousLabel = "Volver",
   nextHref,
-  nextLabel = "Seguir la expedición"
+  nextLabel = "Seguir la expedición",
+  mapHref
 } = Astro.props;
 ---
 
@@ -26,7 +32,11 @@ const {
     <ul>
       {items.map((item) => <li><span aria-hidden="true">✓</span>{item}</li>)}
     </ul>
-    {nextHref && <a class="button" href={nextHref}>{nextLabel} →</a>}
+    <nav class="slide-nav" aria-label="Avanzar por la expedición">
+      {previousHref && <a class="previous" href={previousHref}>← {previousLabel}</a>}
+      {mapHref && <a class="map" href={mapHref}>Mapa de la expedición</a>}
+      {nextHref && <a class="button" href={nextHref}>{nextLabel} →</a>}
+    </nav>
   </div>
 </section>
 
@@ -71,8 +81,22 @@ const {
     font-weight: 900;
   }
 
+  .slide-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .slide-nav a { min-height: 44px; display: inline-flex; align-items: center; }
+  .slide-nav .previous, .slide-nav .map { color: var(--jungle); font-weight: 800; }
+  .slide-nav .map { margin-inline: auto; font-size: 0.9rem; }
+
   @media (max-width: 620px) {
     .trail-summary { grid-template-columns: 1fr; }
     .trail-summary :global(.dino-avatar) { max-width: 125px; justify-self: center; }
+    .slide-nav { align-items: stretch; }
+    .slide-nav a { width: 100%; justify-content: center; }
+    .slide-nav .map { order: 3; }
   }
 </style>

@@ -4,7 +4,6 @@ import LevelHero from "../../components/LevelHero.astro";
 import ConceptCard from "../../components/ConceptCard.astro";
 import FieldNote from "../../components/FieldNote.astro";
 import TrailSummary from "../../components/TrailSummary.astro";
-import RiskSorter from "../../components/RiskSorter.astro";
 import { initialLevels, riskGuide, safeCycle } from "../../data/part1";
 
 const level = initialLevels[2];
@@ -85,13 +84,14 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
       <p>Una API key es una credencial secreta: no debería quedar en código del navegador, repositorios, capturas o logs.</p>
     </FieldNote>
 
-    <RiskSorter />
-
     <TrailSummary
       title="Tres huellas para llevarte"
       items={level.takeaways}
+      previousHref={href("parte-1/nivel-2/")}
+      previousLabel="Nivel 2"
+      mapHref={href("#mapa")}
       nextHref={href("parte-1/juegos/")}
-      nextLabel="Ir al campamento de juegos"
+      nextLabel="Completar la parte con juegos"
     />
   </main>
 </BaseLayout>

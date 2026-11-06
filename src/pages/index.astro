@@ -2,7 +2,6 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import LevelHero from "../components/LevelHero.astro";
 import ConceptCard from "../components/ConceptCard.astro";
-import DinoAvatar from "../components/DinoAvatar.astro";
 import ExpeditionMap from "../components/ExpeditionMap.astro";
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
@@ -53,27 +52,6 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
       <ExpeditionMap />
     </div>
 
-    <section class="section technical-gate" aria-labelledby="technical-title">
-      <div class="wrap technical-inner">
-        <div>
-          <span class="eyebrow">Parte 2 · Laboratorio técnico</span>
-          <h2 id="technical-title">¿Querés mirar debajo del capó?</h2>
-          <p>No necesitás esta parte para usar IA bien. Entrá cuando quieras entender agentes, herramientas, contexto y cómo verificar trabajo técnico.</p>
-          <a class="button technical" href={href("parte-2/")}>Abrir el laboratorio</a>
-        </div>
-        <DinoAvatar dino="roco" mood="thinking" size="lg" label="Roco, guía del laboratorio técnico" />
-      </div>
-    </section>
-
-    <section class="section wrap game-link" aria-labelledby="group-game-title">
-      <DinoAvatar dino="anky" mood="celebrating" size="sm" />
-      <div>
-        <span class="eyebrow">Juego grupal separado</span>
-        <h2 id="group-game-title">¿Están aprendiendo en equipo?</h2>
-        <p>IAventuras sigue siendo un proyecto independiente, pensado para jugar preguntas en grupo.</p>
-      </div>
-      <a class="button secondary" href="https://oyhamburo.github.io/iaventuras/" target="_blank" rel="noreferrer">Abrir IAventuras <span class="sr-only">en una pestaña nueva</span> ↗</a>
-    </section>
   </main>
 </BaseLayout>
 
@@ -81,50 +59,4 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   .home-hero { padding-block: 1.1rem 0; }
   .promise { padding-bottom: 2rem; }
 
-  .technical-gate {
-    background:
-      radial-gradient(circle at 85% 30%, rgb(105 65 165 / 38%), transparent 24rem),
-      var(--night);
-    color: var(--paper);
-  }
-
-  .technical-inner {
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  .technical-inner .eyebrow { color: #f4c766; }
-  .technical-inner h2 { max-width: 13ch; margin: 0.5rem 0 1rem; }
-  .technical-inner p { max-width: 58ch; color: #cbd8d4; font-size: 1.1rem; }
-  .technical-inner .button { margin-top: 0.75rem; }
-
-  .game-link {
-    display: grid;
-    grid-template-columns: 140px 1fr auto;
-    align-items: center;
-    gap: 1.25rem;
-    margin-block: 3rem;
-    padding: 1.4rem;
-    border: 2px solid var(--ink);
-    border-radius: var(--radius-xl);
-    background: #f2e9bf;
-    box-shadow: 5px 6px 0 var(--ink);
-  }
-
-  .game-link h2 { margin: 0.35rem 0 0.55rem; font-size: clamp(1.7rem, 4vw, 2.7rem); }
-  .game-link p { margin: 0; color: var(--muted); }
-
-  @media (max-width: 760px) {
-    .technical-inner { grid-template-columns: 1fr; }
-    .technical-inner :global(.dino-avatar) { grid-row: 1; max-width: 250px; justify-self: center; }
-    .game-link { grid-template-columns: 100px 1fr; }
-    .game-link .button { grid-column: 1 / -1; }
-  }
-
-  @media (max-width: 520px) {
-    .game-link { grid-template-columns: 1fr; text-align: center; }
-    .game-link :global(.dino-avatar) { justify-self: center; }
-  }
 </style>

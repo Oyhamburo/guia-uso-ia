@@ -11,7 +11,7 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
 <BaseLayout title="T1 · Anatomía de un agente" description="Modelo, agente, harness, herramientas, skills, guardrails y MCP sin confundir sus responsabilidades." current="parte-2" theme="technical">
   <main id="contenido" class="tech-level">
     <LevelHero eyebrow="Parte 2 · Nivel técnico 1" title="Anatomía de un agente" intro="No todo es “la IA”. Separar las piezas permite entender quién propone, quién ejecuta y quién pone los límites." dino="roco" dinoLabel="Roco abre el tablero del laboratorio" guide="Seguí el recorrido de una acción, no una lista de marcas." tone="technical">
-      <div slot="actions" class="hero-actions"><a href="#ciclo">Ver el ciclo ↓</a><a href={href("parte-2/")}>Mapa técnico</a></div>
+      <div slot="actions" class="hero-actions"><a href="#ciclo">Ver el ciclo ↓</a><a href={href("#mapa")}>Mapa de la expedición</a></div>
     </LevelHero>
 
     <section class="visual-section" aria-labelledby="entrada-title">
@@ -72,7 +72,7 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
       <p>Si sólo recibe parámetros, ejecuta y devuelve, estás viendo una tool.</p>
     </section>
 
-    <nav class="level-actions" aria-label="Navegación del recorrido técnico"><a href={href("parte-2/")}>← Mapa técnico</a><a class="next" href={href("parte-2/nivel-2/")}>Siguiente: la mochila de contexto →</a></nav>
+    <nav class="level-actions" aria-label="Navegación del recorrido técnico"><a href={href("parte-1/juegos/")}>← Juegos de la Parte 1</a><a class="map-link" href={href("#mapa")}>Mapa</a><a class="next" href={href("parte-2/nivel-2/")}>Siguiente: la mochila de contexto →</a></nav>
   </main>
 </BaseLayout>
 
@@ -114,7 +114,7 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
   .piece-icon.violet { background: #eee8fa; color: #5c358f; }.piece-icon.green { background: #dff3e9; color: #145c49; }.piece-icon.amber { background: #fff0cc; color: #714c00; }
   .quick-check { margin: clamp(3rem, 8vw, 6rem) 0 2rem; padding: clamp(1.3rem, 4vw, 2.4rem); border-radius: 1.5rem; background: #172c3a; color: #fff; }
   .quick-check .step { color: #f5c45f; }.quick-check h2 { max-width: 20ch; }.quick-check > strong { color: #9fe0ca; font-size: clamp(1.25rem, 3vw, 2rem); }.quick-check p { color: #dce6e8; }
-  .level-actions { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; }.level-actions a { color: #375249; font-weight: 850; }.level-actions .next { color: #5c358f; }
+  .level-actions { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; }.level-actions a { color: #375249; font-weight: 850; }.level-actions .map-link { margin-inline: auto; }.level-actions .next { color: #5c358f; }
   a:focus-visible { outline: 3px solid #d99a1e; outline-offset: 4px; }
   @media (max-width: 720px) { .triptych, .piece-grid, .harness-board { grid-template-columns: 1fr; }.harness-core { grid-column: auto; }.compare, .two-concepts, .note-grid { grid-template-columns: 1fr; }.level-actions { flex-direction: column; } }
 </style>

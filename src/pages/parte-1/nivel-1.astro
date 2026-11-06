@@ -4,7 +4,6 @@ import LevelHero from "../../components/LevelHero.astro";
 import ConceptCard from "../../components/ConceptCard.astro";
 import FieldNote from "../../components/FieldNote.astro";
 import TrailSummary from "../../components/TrailSummary.astro";
-import EcosystemGame from "../../components/EcosystemGame.astro";
 import { initialLevels } from "../../data/part1";
 
 const level = initialLevels[0];
@@ -78,11 +77,10 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
       <p>Algunos productos ofrecen controles llamados <em>thinking</em> o <em>reasoning effort</em>. Dar más profundidad puede ayudar en tareas complejas, pero suele requerir más tiempo y consumo; no garantiza una respuesta mejor.</p>
     </FieldNote>
 
-    <EcosystemGame />
-
     <TrailSummary
       title="Tres huellas para llevarte"
       items={level.takeaways}
+      mapHref={href("#mapa")}
       nextHref={href("parte-1/nivel-2/")}
       nextLabel="Seguir al Nivel 2"
     />

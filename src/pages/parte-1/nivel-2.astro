@@ -4,7 +4,6 @@ import LevelHero from "../../components/LevelHero.astro";
 import ConceptCard from "../../components/ConceptCard.astro";
 import FieldNote from "../../components/FieldNote.astro";
 import TrailSummary from "../../components/TrailSummary.astro";
-import PromptBuilder from "../../components/PromptBuilder.astro";
 import { initialLevels } from "../../data/part1";
 
 const level = initialLevels[1];
@@ -76,11 +75,12 @@ const formula = ["Objetivo", "Contexto", "Límites", "Formato", "Calidad"];
       <p>Podés cerrar con: <strong>“Si falta información que cambiaría mucho el resultado, preguntame. Si no, declará tus supuestos y avanzá.”</strong></p>
     </FieldNote>
 
-    <PromptBuilder />
-
     <TrailSummary
       title="Tres huellas para llevarte"
       items={level.takeaways}
+      previousHref={href("parte-1/nivel-1/")}
+      previousLabel="Nivel 1"
+      mapHref={href("#mapa")}
       nextHref={href("parte-1/nivel-3/")}
       nextLabel="Seguir al Nivel 3"
     />

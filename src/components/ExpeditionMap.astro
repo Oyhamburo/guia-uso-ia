@@ -4,67 +4,88 @@ import DinoAvatar from "./DinoAvatar.astro";
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
 
-const stops = [
+const parts = [
   {
-    step: "01",
-    title: "Conocé a la IA",
-    copy: "Qué puede hacer, qué no y qué estás usando realmente.",
-    dino: "bruna",
-    color: "sky",
-    path: "parte-1/nivel-1/"
+    id: "parte-1",
+    eyebrow: "Parte 1 · Para todo el mundo",
+    title: "Primeras huellas",
+    copy: "Empezá desde cero y practicá recién al completar los tres niveles.",
+    tone: "field",
+    stops: [
+      { step: "01", title: "Conocé a la IA", copy: "Qué es y qué estás usando.", dino: "bruna", color: "sky", path: "parte-1/nivel-1/", finale: false },
+      { step: "02", title: "Dale una misión", copy: "Convertí una idea en un pedido claro.", dino: "paco", color: "fossil", path: "parte-1/nivel-2/", finale: false },
+      { step: "03", title: "Usala con criterio", copy: "Verificá, cuidá datos y decidí.", dino: "vera", color: "coral", path: "parte-1/nivel-3/", finale: false },
+      { step: "FINAL", title: "Campamento de juegos", copy: "Practicá todo lo visto en la Parte 1.", dino: "anky", color: "fern", path: "parte-1/juegos/", finale: true }
+    ]
   },
   {
-    step: "02",
-    title: "Dale una misión clara",
-    copy: "Transformá una idea suelta en un pedido útil.",
-    dino: "paco",
-    color: "fossil",
-    path: "parte-1/nivel-2/"
-  },
-  {
-    step: "03",
-    title: "Usala con criterio",
-    copy: "Verificá, cuidá los datos y decidí según el riesgo.",
-    dino: "vera",
-    color: "coral",
-    path: "parte-1/nivel-3/"
-  },
-  {
-    step: "J",
-    title: "Campamento de juegos",
-    copy: "Practicá lo aprendido con desafíos cortos y feedback inmediato.",
-    dino: "anky",
-    color: "fern",
-    path: "parte-1/juegos/"
+    id: "parte-2",
+    eyebrow: "Parte 2 · Cuando quieras profundizar",
+    title: "Laboratorio técnico",
+    copy: "Entrá debajo del capó y comprobá lo aprendido al final del recorrido.",
+    tone: "technical",
+    stops: [
+      { step: "T1", title: "Anatomía de un agente", copy: "Modelo, harness, tools y permisos.", dino: "roco", color: "violet", path: "parte-2/nivel-1/", finale: false },
+      { step: "T2", title: "Mochila de contexto", copy: "Qué entra, qué se pierde y qué guardar.", dino: "cera", color: "sky", path: "parte-2/nivel-2/", finale: false },
+      { step: "T3", title: "Trabajo confiable", copy: "Alcance, evidencia, documentación y tests.", dino: "vera", color: "coral", path: "parte-2/nivel-3/", finale: false },
+      { step: "FINAL", title: "Preguntas técnicas", copy: "Resolvé escenarios de toda la Parte 2.", dino: "anky", color: "violet", path: "parte-2/preguntas/", finale: true }
+    ]
   }
 ] as const;
 ---
 
 <section class="expedition-map" id="mapa" aria-labelledby="map-title">
-  <div class="map-heading">
+  <header class="map-heading">
     <div>
-      <span class="eyebrow">Parte 1 · Expedición inicial</span>
-      <h2 id="map-title">Tres paradas. Cero requisitos técnicos.</h2>
-      <p>Podés hacer el recorrido completo o entrar directo al tema que necesitás.</p>
+      <span class="eyebrow">Mapa de la expedición</span>
+      <h2 id="map-title">Todo el camino, de un vistazo.</h2>
+      <p>Desde este mapa podés saltar a cualquier parada. Una vez adentro, avanzás de a una pantalla.</p>
     </div>
     <span class="map-key"><span aria-hidden="true">●</span> recorrido recomendado</span>
-  </div>
+  </header>
 
-  <ol class="stops">
-    {stops.map((stop) => (
-      <li class={`stop stop-${stop.color}`}>
-        <a href={href(stop.path)}>
-          <span class="stop-number">{stop.step}</span>
-          <DinoAvatar dino={stop.dino} size="sm" />
-          <span class="stop-copy">
-            <strong>{stop.title}</strong>
-            <small>{stop.copy}</small>
-          </span>
-          <span class="stop-arrow" aria-hidden="true">→</span>
-        </a>
-      </li>
+  <div class="trail" aria-label="Recorrido completo de la guía">
+    {parts.map((part, partIndex) => (
+      <section class={`trail-part trail-${part.tone}`} id={part.id} aria-labelledby={`${part.id}-title`}>
+        <header class="part-heading">
+          <span class="part-number" aria-hidden="true">{partIndex + 1}</span>
+          <div>
+            <span class="eyebrow">{part.eyebrow}</span>
+            <h3 id={`${part.id}-title`}>{part.title}</h3>
+            <p>{part.copy}</p>
+          </div>
+        </header>
+
+        <ol class="stops">
+          {part.stops.map((stop) => (
+            <li class:list={["stop", `stop-${stop.color}`, { finale: stop.finale }]}>
+              <a href={href(stop.path)}>
+                <span class="stop-number">{stop.step}</span>
+                <DinoAvatar dino={stop.dino} size="sm" />
+                <span class="stop-copy">
+                  {stop.finale && <small class="final-label">Fin de la parte · ahora sí, a jugar</small>}
+                  <strong>{stop.title}</strong>
+                  <small>{stop.copy}</small>
+                </span>
+                <span class="stop-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
     ))}
-  </ol>
+
+    <a class="future-stop" href={href("parte-3/")}>
+      <span class="part-number" aria-hidden="true">3</span>
+      <span>
+        <small>Parte 3 · Próxima expedición</small>
+        <strong>La manada avanzada</strong>
+        <span>Coordinación de varios agentes. La diseñaremos más adelante.</span>
+      </span>
+      <DinoAvatar dino="bruna" mood="thinking" size="sm" />
+      <b aria-hidden="true">→</b>
+    </a>
+  </div>
 </section>
 
 <style>
@@ -74,128 +95,64 @@ const stops = [
     border: 2px solid var(--ink);
     border-radius: var(--radius-xl);
     background:
-      linear-gradient(rgb(255 253 247 / 76%), rgb(255 253 247 / 76%)),
+      linear-gradient(rgb(255 253 247 / 78%), rgb(255 253 247 / 78%)),
       repeating-radial-gradient(circle at 20% 30%, transparent 0 25px, rgb(23 107 85 / 11%) 26px 28px);
     box-shadow: 6px 7px 0 var(--ink);
   }
-
-  .map-heading {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  h2 { max-width: 14ch; margin-top: 0.45rem; }
-  .map-heading p { max-width: 55ch; margin: 0.8rem 0 0; color: var(--muted); }
-
-  .map-key {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.55rem 0.75rem;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    background: var(--white);
-    color: var(--muted);
-    font-size: 0.8rem;
-    font-weight: 800;
-    white-space: nowrap;
-  }
-
+  .map-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
+  .map-heading h2 { max-width: 15ch; margin: 0.45rem 0 0; }
+  .map-heading p { max-width: 58ch; margin: 0.8rem 0 0; color: var(--muted); }
+  .map-key { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.55rem 0.75rem; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--white); color: var(--muted); font-size: 0.8rem; font-weight: 800; white-space: nowrap; }
   .map-key span { color: var(--coral); }
-
-  .stops {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.9rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .stops::before {
-    position: absolute;
-    top: 50%;
-    right: 5%;
-    left: 5%;
-    height: 4px;
-    background: repeating-linear-gradient(90deg, var(--coral) 0 12px, transparent 12px 23px);
-    content: "";
-  }
-
-  .stop { --stop: var(--jungle); position: relative; z-index: 1; }
+  .trail { display: grid; gap: 1.25rem; }
+  .trail-part { padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid var(--line-strong); border-radius: 1.5rem; background: rgb(255 255 255 / 76%); }
+  .trail-technical { border-color: rgb(105 65 165 / 35%); background: linear-gradient(145deg, rgb(242 237 251 / 92%), rgb(235 245 248 / 88%)); }
+  .part-heading { display: grid; grid-template-columns: auto 1fr; gap: 0.8rem; align-items: start; margin-bottom: 1rem; }
+  .part-number { display: grid; width: 46px; height: 46px; place-items: center; border-radius: 15px; background: var(--ink); color: white; font-family: var(--font-display); font-size: 1.2rem; font-weight: 900; }
+  .part-heading h3 { margin: 0.2rem 0 0.35rem; font-size: clamp(1.7rem, 4vw, 2.8rem); }
+  .part-heading p { max-width: 60ch; margin: 0; color: var(--muted); }
+  .stops { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+  .stops::before { position: absolute; top: 50%; right: 4%; left: 4%; height: 4px; background: repeating-linear-gradient(90deg, var(--coral) 0 12px, transparent 12px 23px); content: ""; }
+  .stop { --stop: var(--jungle); position: relative; z-index: 1; min-width: 0; }
   .stop-sky { --stop: var(--sky); }
-  .stop-fossil { --stop: #9b6600; }
+  .stop-fossil { --stop: #8a5c00; }
   .stop-coral { --stop: var(--coral); }
   .stop-fern { --stop: var(--jungle); }
-
-  .stop a {
-    display: grid;
-    min-height: 330px;
-    grid-template-rows: auto 120px 1fr auto;
-    align-items: start;
-    gap: 0.35rem;
-    padding: 1rem;
-    border: 2px solid var(--ink);
-    border-radius: 22px;
-    background: var(--white);
-    box-shadow: 4px 5px 0 var(--ink);
-    color: var(--ink);
-    text-decoration: none;
-    transition: translate 160ms ease, box-shadow 160ms ease;
-  }
-
-  .stop a:hover {
-    translate: 0 -4px;
-    box-shadow: 5px 8px 0 var(--ink);
-    color: var(--ink);
-  }
-
-  .stop-number {
-    display: grid;
-    width: 42px;
-    height: 42px;
-    place-items: center;
-    border-radius: 13px;
-    background: var(--stop);
-    color: white;
-    font-family: var(--font-display);
-    font-weight: 900;
-  }
-
-  .stop :global(.dino-avatar) { align-self: center; justify-self: center; max-height: 120px; }
-  .stop :global(.dino-avatar svg) { max-height: 120px; }
-
-  .stop-copy { display: grid; gap: 0.35rem; }
-  .stop-copy { min-width: 0; }
-  .stop-copy strong { color: var(--stop); font-family: var(--font-display); font-size: 1.18rem; line-height: 1.1; }
-  .stop-copy small { color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
-  .stop-arrow { justify-self: end; color: var(--stop); font-size: 1.5rem; font-weight: 900; }
-
+  .stop-violet { --stop: #6941a5; }
+  .stop a { display: grid; min-height: 285px; grid-template-rows: auto 90px 1fr auto; gap: 0.25rem; padding: 0.8rem; border: 2px solid var(--ink); border-radius: 20px; background: var(--white); box-shadow: 3px 4px 0 var(--ink); color: var(--ink); text-decoration: none; transition: translate 160ms ease, box-shadow 160ms ease; }
+  .stop a:hover { translate: 0 -4px; box-shadow: 4px 7px 0 var(--ink); color: var(--ink); }
+  .stop.finale a { border-color: var(--stop); background: #fff9df; }
+  .stop-number { display: inline-grid; min-width: 38px; width: max-content; height: 38px; padding-inline: 0.5rem; place-items: center; border-radius: 11px; background: var(--stop); color: white; font-family: var(--font-display); font-size: 0.72rem; font-weight: 900; }
+  .stop :global(.dino-avatar) { align-self: center; justify-self: center; max-height: 90px; }
+  .stop :global(.dino-avatar svg) { max-height: 90px; }
+  .stop-copy { display: grid; min-width: 0; align-content: start; gap: 0.25rem; }
+  .stop-copy strong { color: var(--stop); font-family: var(--font-display); font-size: 1.05rem; line-height: 1.1; }
+  .stop-copy small { color: var(--muted); font-size: 0.82rem; line-height: 1.35; }
+  .stop-copy .final-label { color: var(--stop); font-size: 0.64rem; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; }
+  .stop-arrow { justify-self: end; color: var(--stop); font-size: 1.35rem; font-weight: 900; }
+  .future-stop { display: grid; grid-template-columns: auto 1fr 110px auto; gap: 1rem; align-items: center; padding: 1rem 1.25rem; border: 2px dashed #6941a5; border-radius: 1.5rem; background: #f2edfb; color: var(--ink); text-decoration: none; }
+  .future-stop > span:nth-child(2) { display: grid; gap: 0.2rem; }
+  .future-stop small { color: #6941a5; font-weight: 900; text-transform: uppercase; }
+  .future-stop strong { font-family: var(--font-display); font-size: 1.4rem; }
+  .future-stop span span { color: var(--muted); }
+  .future-stop :global(.dino-avatar) { max-height: 85px; }
+  .future-stop :global(.dino-avatar svg) { max-height: 85px; }
+  .future-stop b { color: #6941a5; font-size: 1.5rem; }
   @media (max-width: 930px) {
     .stops { grid-template-columns: 1fr 1fr; }
     .stops::before { display: none; }
-    .stop a { min-height: 290px; }
+    .stop a { min-height: 250px; }
   }
-
   @media (max-width: 590px) {
     .expedition-map { padding-inline: 0.85rem; }
     .map-heading { display: grid; align-items: start; }
     .map-key { white-space: normal; }
     .stops { grid-template-columns: 1fr; }
-    .stop a {
-      min-height: 0;
-      grid-template-columns: 42px 72px minmax(0, 1fr) auto;
-      grid-template-rows: 1fr;
-      align-items: center;
-      padding: 0.75rem;
-    }
-    .stop :global(.dino-avatar) { max-width: 72px; }
-    .stop :global(.dino-avatar svg) { max-height: 64px; }
-    .stop-copy strong,
-    .stop-copy small { overflow-wrap: anywhere; }
+    .stop a { min-height: 0; grid-template-columns: 48px 66px minmax(0, 1fr) auto; grid-template-rows: 1fr; align-items: center; padding: 0.7rem; }
+    .stop :global(.dino-avatar) { max-width: 66px; }
+    .stop :global(.dino-avatar svg) { max-height: 58px; }
+    .stop-copy strong, .stop-copy small { overflow-wrap: anywhere; }
+    .future-stop { grid-template-columns: auto minmax(0, 1fr) auto; }
+    .future-stop :global(.dino-avatar) { display: none; }
   }
 </style>
