@@ -44,15 +44,36 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
         <span class="step">02</span>
         <div><p>Antes de pedir</p><h2 id="objective-title">¿Cuál es mi objetivo?</h2></div>
       </div>
-      <div class="goal-frame" aria-label="Frase para definir el objetivo">
-        <span>Al terminar, quiero tener</span><b>________</b><span>para poder</span><b>________</b>
+      <p class="lead objective-intro">Elegí la huella que más se parece a lo que querés lograr.</p>
+      <div class="objective-intents" role="list" aria-label="Tipos de objetivo">
+        <article class="information-intent" role="listitem">
+          <span aria-hidden="true">🔎</span>
+          <div><small>Entender</small><h3>Obtener información</h3></div>
+          <p>Comprender un tema, responder una pregunta o saber qué verificar.</p>
+        </article>
+        <article class="automation-intent" role="listitem">
+          <span aria-hidden="true">⚙️</span>
+          <div><small>Hacer</small><h3>Automatizar una tarea</h3></div>
+          <p>Convertir algo repetitivo en pasos o en un flujo más simple.</p>
+        </article>
+        <article class="options-intent" role="listitem">
+          <span aria-hidden="true">🧭</span>
+          <div><small>Decidir</small><h3>Conocer mis opciones</h3></div>
+          <p>Comparar alternativas antes de elegir.</p>
+        </article>
+        <article class="document-intent" role="listitem">
+          <span aria-hidden="true">📄</span>
+          <div><small>Revisar</small><h3>Analizar un documento</h3></div>
+          <p>Resumir, extraer datos o encontrar diferencias.</p>
+        </article>
       </div>
-      <div class="objective-compare">
-        <article class="blurry"><span>Tema borroso</span><blockquote>“Necesito algo sobre el evento.”</blockquote></article>
-        <b aria-hidden="true">→</b>
-        <article class="clear"><span>Objetivo claro</span><blockquote>“Necesito un mensaje para que las familias sepan cuándo venir y qué traer.”</blockquote></article>
+      <div class="goal-builder">
+        <p><span aria-hidden="true">🧩</span><strong>Ponelo en una frase</strong></p>
+        <div class="goal-frame" aria-label="Frase para definir el objetivo">
+          <span>Al terminar, quiero tener</span><b>________</b><span>para poder</span><b>________</b>
+        </div>
       </div>
-      <p class="tiny-note">Si no sabés qué resultado esperás, tampoco vas a poder evaluarlo.</p>
+      <p class="tiny-note">El objetivo no es el tema: es lo que querés poder hacer después.</p>
     </section>
 
     <section class="visual-block choice" aria-labelledby="choice-title">
@@ -180,15 +201,21 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   .prompt-flow div > span { font-size: 1.75rem; }
   .prompt-flow > b { color: #795307; font-size: 1.35rem; }
   .truth { display: flex; gap: .65rem; align-items: center; margin: 1rem 0 0; padding: .85rem 1rem; border-radius: .9rem; background: #e4f2e9; color: #375249; }
+  .objective-intro { margin-bottom: .85rem; }
+  .objective-intents { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; }
+  .objective-intents article { --intent-accent: #245c7a; --intent-tint: #e8f2f8; display: grid; grid-template-columns: auto 1fr; gap: .35rem .7rem; align-content: start; padding: 1rem; border: 1px solid color-mix(in srgb, var(--intent-accent) 45%, white); border-radius: 1rem; background: var(--intent-tint); }
+  .objective-intents article > span { display: grid; width: 40px; height: 40px; grid-row: 1 / span 2; place-items: center; border-radius: 13px; background: white; font-size: 1.25rem; }
+  .objective-intents small { color: var(--intent-accent); font-size: .67rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .objective-intents h3 { margin: .15rem 0 0; font-size: 1.05rem; line-height: 1.1; }
+  .objective-intents p { grid-column: 1 / -1; margin: .45rem 0 0; color: #526159; font-size: .9rem; }
+  .objective-intents .automation-intent { --intent-accent: #28715d; --intent-tint: #e5f3eb; }
+  .objective-intents .options-intent { --intent-accent: #8a5a11; --intent-tint: #fff1cd; }
+  .objective-intents .document-intent { --intent-accent: #98472f; --intent-tint: #ffe9df; }
+  .goal-builder { margin-top: 1rem; padding: .9rem; border-radius: 1rem; background: rgb(255 255 255 / 70%); }
+  .goal-builder > p { display: flex; gap: .5rem; align-items: center; margin: 0 0 .65rem; color: #7d3b26; }
   .goal-frame { display: flex; flex-wrap: wrap; justify-content: center; gap: .65rem; align-items: baseline; padding: 1.1rem; border: 2px dashed #d77b55; border-radius: 1rem; background: white; font-size: clamp(1.05rem, 2.5vw, 1.45rem); }
   .goal-frame b { color: #99412f; letter-spacing: .08em; }
-  .objective-compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: .8rem; align-items: center; margin-top: 1rem; }
-  .objective-compare article { min-height: 155px; padding: 1rem; border-radius: 1rem; }
-  .objective-compare article > span, .decision-label { color: #7d3b26; font-size: .72rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
-  .objective-compare blockquote { margin: .8rem 0 0; font-size: 1.05rem; font-weight: 750; }
-  .objective-compare .blurry { background: #ffe5da; }
-  .objective-compare .clear { background: #e6f3ea; }
-  .objective-compare > b { color: #99412f; font-size: 1.7rem; }
+  .decision-label { color: #7d3b26; font-size: .72rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
   .tiny-note { margin: 1rem 0 0; color: #526159; }
   .decision-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 1rem; }
   .decision-grid > article { padding: 1.1rem; border: 1px solid #cbd9d0; border-radius: 1.2rem; background: white; }
@@ -228,12 +255,12 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   .followups span { padding: .55rem .7rem; border: 1px solid #bdd5e1; border-radius: 999px; background: white; color: #375a6c; font-size: .9rem; font-weight: 750; }
   @media (max-width: 800px) {
     .prompt-flow, .piece-row { grid-template-columns: 1fr; }
-    .prompt-flow > b, .piece-row > b, .objective-compare > b { rotate: 90deg; text-align: center; }
-    .objective-compare, .decision-grid, .assembled-prompt { grid-template-columns: 1fr; }
-    .context-grid, .iteration-loop { grid-template-columns: 1fr 1fr; }
+    .prompt-flow > b, .piece-row > b { rotate: 90deg; text-align: center; }
+    .objective-intents, .context-grid, .iteration-loop { grid-template-columns: 1fr 1fr; }
+    .decision-grid, .assembled-prompt { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) {
-    .context-grid, .effort-scale, .iteration-loop { grid-template-columns: 1fr; }
+    .objective-intents, .context-grid, .effort-scale, .iteration-loop { grid-template-columns: 1fr; }
     .goal-frame { justify-content: flex-start; }
   }
 </style>
