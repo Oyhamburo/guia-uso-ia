@@ -1,0 +1,121 @@
+<figure class="context-backpack" aria-hidden="true">
+  <div class="carrier-scene">
+    <span class="scene-label">Cada dato suma peso</span>
+    <span class="weight-warning">Demasiado contexto</span>
+
+    <div class="context-token token-people"><span>👥</span><small>Personas</small></div>
+    <div class="context-token token-file"><span>📄</span><small>Archivo</small></div>
+    <div class="context-token token-example"><span>🖼️</span><small>Ejemplo</small></div>
+    <div class="context-token token-limit"><span>⏱️</span><small>Límite</small></div>
+
+    <svg class="carrier" viewBox="0 0 360 270" focusable="false">
+      <ellipse class="ground-shadow" cx="184" cy="251" rx="118" ry="13" />
+
+      <g class="carrier-load">
+        <g class="pack-load">
+          <path class="pack-back" d="M85 111c-15 10-20 31-18 58l3 30c2 19 15 30 34 30h19c20 0 33-13 34-33l-1-63c0-21-13-34-34-35Z" />
+          <ellipse class="pack-opening" cx="120" cy="107" rx="35" ry="13" />
+          <path class="pack-shell" d="M76 122c0-15 12-27 27-27h29c15 0 27 12 27 27v77c0 18-14 32-32 32h-18c-18 0-32-14-32-32Z" />
+          <path class="pack-flap" d="M83 112c8-14 20-21 36-21 17 0 29 7 37 21l-7 33H90Z" />
+          <path class="pack-pocket" d="M91 158h53v39c0 11-9 20-20 20h-13c-11 0-20-9-20-20Z" />
+          <path class="pack-pocket-line" d="M92 171h51" />
+          <rect class="pack-buckle" x="111" y="135" width="17" height="23" rx="5" />
+          <path class="pack-buckle-line" d="M116 142h7v9h-7" />
+          <g class="fossil-mark"><path d="M125 185c0-9-15-10-17-2-1 7 10 11 15 5 4-4-3-9-7-6-3 2 0 5 3 4" /><circle cx="128" cy="191" r="2" /></g>
+        </g>
+
+        <g class="person">
+          <path class="leg" d="M186 177c-2 24-8 44-20 63" />
+          <path class="leg" d="M209 177c3 23 10 44 21 62" />
+          <path class="boot" d="M165 238c8 1 16 5 20 10h-31c0-5 4-9 11-10Z" />
+          <path class="boot" d="M230 237c8 1 15 5 19 11h-31c0-6 4-10 12-11Z" />
+          <path class="torso" d="M177 100c13-9 31-9 45 0l8 75c-17 12-45 12-62 0Z" />
+          <path class="shirt-line" d="M178 147h48" />
+          <path class="neck" d="M190 90h22v17h-22Z" />
+          <circle class="head" cx="206" cy="65" r="31" />
+          <path class="hair" d="M177 64c-1-22 14-36 34-34 15 1 27 13 28 29-9-6-18-8-26-6-12 3-23 3-36 11Z" />
+          <path class="nose" d="m235 67 11 6-12 5" />
+          <circle class="eye" cx="223" cy="62" r="3.4" />
+          <path class="mouth mouth-calm" d="M222 81c6 3 11 2 15-1" />
+          <path class="mouth mouth-tired" d="M222 83c5-4 10-4 15 0" />
+          <path class="arm" d="M219 109c13 14 21 32 23 52" />
+          <path class="hand" d="M239 159c6 1 10 5 9 11" />
+          <path class="arm rear-arm" d="M178 108c-7 18-9 36-7 54" />
+          <path class="pack-strap" d="M184 102c-8 21-10 47-7 73" />
+          <path class="pack-strap" d="M206 102c-10 24-10 48-5 73" />
+        </g>
+
+        <g class="sweat-drops"><path d="M248 51c8 9 6 16 0 17-7-1-8-8 0-17Z" /><path d="M259 70c6 7 4 12 0 13-5-1-6-6 0-13Z" /></g>
+        <g class="effort-lines"><path d="m59 133-15-7m18 24-18 1m24 17-14 8" /></g>
+      </g>
+    </svg>
+
+    <span class="ground-mark mark-one"></span>
+    <span class="ground-mark mark-two"></span>
+  </div>
+</figure>
+
+<style>
+  .context-backpack { min-width: 0; margin: 0; }
+  .carrier-scene { position: relative; min-height: 310px; overflow: hidden; border: 1px solid rgb(40 113 93 / 22%); border-radius: 1.35rem; background: radial-gradient(circle at 52% 75%, rgb(255 255 255 / 88%) 0 22%, transparent 49%), linear-gradient(165deg, #e9f5ed 0%, #fff8e7 100%); isolation: isolate; }
+  .carrier-scene::before { position: absolute; inset: auto 8% 1.15rem; height: 2px; border-radius: 999px; background: rgb(121 83 7 / 18%); content: ""; }
+  .scene-label, .weight-warning { position: absolute; top: .9rem; z-index: 5; padding: .35rem .58rem; border-radius: 999px; font-size: .66rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .scene-label { left: 1rem; background: rgb(255 255 255 / 82%); color: #28715d; }
+  .weight-warning { right: 1rem; background: #ffe5da; color: #98472f; opacity: 0; animation: warning-state 9.6s ease-in-out infinite; }
+
+  .context-token { --start-x: -118px; --start-y: -24px; --curve-x: -20px; --token-rotate: -9deg; --delay: 0s; position: absolute; top: 22%; left: 36%; z-index: 2; display: grid; min-width: 78px; justify-items: center; gap: .15rem; padding: .46rem .58rem; border: 1px solid rgb(32 48 43 / 13%); border-radius: .85rem; background: rgb(255 255 255 / 95%); box-shadow: 0 9px 24px rgb(32 48 43 / 14%); opacity: 0; transform: translate(-50%, -50%); animation: load-context 9.6s cubic-bezier(.35, .05, .25, 1) infinite both; animation-delay: var(--delay); }
+  .context-token > span { font-size: 1.3rem; line-height: 1; }
+  .context-token small { color: #375249; font-size: .66rem; font-weight: 850; }
+  .token-file { --start-x: 150px; --start-y: -30px; --curve-x: 25px; --token-rotate: 10deg; --delay: 1.8s; }
+  .token-example { --start-x: -106px; --start-y: 34px; --curve-x: -18px; --token-rotate: 8deg; --delay: 3.6s; }
+  .token-limit { --start-x: 154px; --start-y: 32px; --curve-x: 27px; --token-rotate: -10deg; --delay: 5.4s; }
+
+  .carrier { position: absolute; bottom: .3rem; left: 50%; z-index: 3; display: block; width: min(96%, 350px); translate: -50% 0; overflow: visible; }
+  .carrier-load { transform-box: fill-box; transform-origin: 55% 100%; animation: carrier-burden 9.6s ease-in-out infinite; }
+  .pack-load { transform-box: fill-box; transform-origin: 100% 60%; animation: pack-weight 9.6s ease-in-out infinite; }
+  .ground-shadow { fill: rgb(32 48 43 / 14%); }
+  .pack-back { fill: #315f53; }
+  .pack-opening { fill: #20302b; }
+  .pack-shell { fill: #c8863f; stroke: #20302b; stroke-width: 4; }
+  .pack-flap { fill: #e1a65b; stroke: #20302b; stroke-linejoin: round; stroke-width: 4; }
+  .pack-pocket { fill: #efbd72; stroke: #20302b; stroke-width: 3; }
+  .pack-pocket-line { fill: none; stroke: #9a5a2a; stroke-width: 2.5; }
+  .pack-buckle { fill: #315f53; stroke: #20302b; stroke-width: 2.5; }
+  .pack-buckle-line { fill: none; stroke: #f5d38d; stroke-linecap: round; stroke-width: 2; }
+  .fossil-mark { fill: none; stroke: #9a5a2a; stroke-linecap: round; stroke-width: 2.6; }
+  .fossil-mark circle { fill: #9a5a2a; stroke: none; }
+  .leg, .arm, .hand, .pack-strap { fill: none; stroke: #20302b; stroke-linecap: round; stroke-linejoin: round; }
+  .leg { stroke-width: 14; }
+  .boot { fill: #315f53; stroke: #20302b; stroke-width: 3; }
+  .torso { fill: #4d84a3; stroke: #20302b; stroke-linejoin: round; stroke-width: 4; }
+  .shirt-line { fill: none; stroke: #326985; stroke-width: 3; }
+  .neck, .head { fill: #df9c6c; stroke: #20302b; stroke-width: 3; }
+  .hair { fill: #563b2e; stroke: #20302b; stroke-linejoin: round; stroke-width: 3; }
+  .nose { fill: #df9c6c; stroke: #20302b; stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; }
+  .eye { fill: #20302b; }
+  .mouth { fill: none; stroke: #20302b; stroke-linecap: round; stroke-width: 2.5; }
+  .mouth-calm { animation: calm-face 9.6s linear infinite; }
+  .mouth-tired { opacity: 0; animation: tired-face 9.6s linear infinite; }
+  .arm { stroke-width: 12; }
+  .hand { stroke: #df9c6c; stroke-width: 9; }
+  .rear-arm { stroke-width: 11; }
+  .pack-strap { stroke: #315f53; stroke-width: 7; }
+  .sweat-drops { fill: #2f7196; opacity: 0; animation: sweat-state 9.6s ease-in-out infinite; }
+  .effort-lines { fill: none; stroke: #98472f; stroke-linecap: round; stroke-width: 4; opacity: 0; animation: effort-state 9.6s ease-in-out infinite; }
+  .ground-mark { position: absolute; bottom: 1.05rem; z-index: 1; width: 9px; height: 4px; border-radius: 999px; background: #9b7a45; opacity: .4; }
+  .mark-one { left: 10%; rotate: -12deg; }
+  .mark-two { right: 9%; width: 13px; rotate: 8deg; }
+
+  @keyframes load-context { 0%, 2% { opacity: 0; transform: translate(calc(-50% + var(--start-x)), calc(-50% + var(--start-y))) rotate(var(--token-rotate)) scale(.72); } 5%, 8% { opacity: 1; } 11% { opacity: 1; transform: translate(calc(-50% + var(--curve-x)), calc(-50% - 4px)) rotate(0deg) scale(1); } 15% { opacity: 1; transform: translate(-50%, calc(-50% + 76px)) rotate(0deg) scale(.68); } 18%, 100% { opacity: 0; transform: translate(-50%, calc(-50% + 94px)) rotate(0deg) scale(.32); } }
+  @keyframes carrier-burden { 0%, 15% { transform: translateY(0) rotate(0deg) scale(1); } 19%, 32% { transform: translateY(0) rotate(2deg) scale(1); } 37%, 50% { transform: translateY(1px) rotate(5deg) scale(1); } 55%, 68% { transform: translateY(3px) rotate(9deg) scale(.995, .985); } 74%, 84% { transform: translateY(8px) rotate(15deg) scale(.99, .965); } 88%, 96% { transform: translateY(14px) rotate(20deg) scale(.985, .94); } 100% { transform: translateY(0) rotate(0deg) scale(1); } }
+  @keyframes pack-weight { 0%, 15% { transform: translate(0, 0) scale(1); } 19%, 32% { transform: translate(-1px, 1px) scale(1.06); } 37%, 50% { transform: translate(-3px, 2px) scale(1.12); } 55%, 68% { transform: translate(-5px, 4px) scale(1.18); } 74%, 96% { transform: translate(-9px, 9px) scale(1.27); } 100% { transform: translate(0, 0) scale(1); } }
+  @keyframes warning-state { 0%, 70%, 100% { opacity: 0; translate: 0 -5px; } 76%, 96% { opacity: 1; translate: 0 0; } }
+  @keyframes sweat-state { 0%, 68%, 100% { opacity: 0; translate: 0 -4px; } 75%, 94% { opacity: 1; translate: 0 4px; } }
+  @keyframes effort-state { 0%, 68%, 100% { opacity: 0; } 75%, 96% { opacity: 1; } }
+  @keyframes calm-face { 0%, 69%, 100% { opacity: 1; } 75%, 96% { opacity: 0; } }
+  @keyframes tired-face { 0%, 69%, 100% { opacity: 0; } 75%, 96% { opacity: 1; } }
+
+  @media (max-width: 800px) { .carrier-scene { min-height: 250px; } .carrier { width: min(90%, 320px); } .context-token { --start-x: -104px; } .token-file { --start-x: 134px; } .token-example { --start-x: -96px; } .token-limit { --start-x: 137px; } }
+  @media (max-width: 430px) { .carrier-scene { min-height: 235px; } .scene-label { top: .65rem; left: .7rem; } .weight-warning { top: .65rem; right: .7rem; max-width: 13ch; text-align: center; } .context-token { min-width: 68px; padding: .38rem .45rem; } .context-token small { font-size: .6rem; } .carrier { width: min(94%, 300px); } }
+  @media (prefers-reduced-motion: reduce) { .context-token, .carrier-load, .pack-load, .weight-warning, .sweat-drops, .effort-lines, .mouth-calm, .mouth-tired { animation: none; } .context-token { opacity: 1; transform: translate(calc(-50% + var(--start-x)), calc(-50% + var(--start-y))) scale(.75); } .carrier-load { transform: translateY(8px) rotate(14deg) scale(.99, .96); } .pack-load { transform: translate(-7px, 7px) scale(1.22); } .weight-warning, .sweat-drops, .effort-lines, .mouth-tired { opacity: 1; } .mouth-calm { opacity: 0; } }
+</style>

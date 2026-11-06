@@ -76,7 +76,7 @@ export const initialLevels: InitialLevel[] = [
     ],
     takeaways: [
       "Un prompt es un punto de partida, no una fórmula secreta.",
-      "Objetivo, contexto y formato importan más que adornar el pedido.",
+      "Definí qué querés lograr y qué contexto cambia la respuesta.",
       "Elegí modelo y esfuerzo según la tarea; después revisá e iterá."
     ]
   },

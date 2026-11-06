@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import LevelHero from "../../components/LevelHero.astro";
+import ContextBackpack from "../../components/ContextBackpack.astro";
 import FieldNote from "../../components/FieldNote.astro";
 import TrailSummary from "../../components/TrailSummary.astro";
 import { initialLevels } from "../../data/part1";
@@ -111,63 +112,66 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
         <span class="step">04</span>
         <div><p>La mochila de contexto</p><h2 id="context-title">¿Qué necesita saber?</h2></div>
       </div>
-      <div class="context-grid">
-        {level.concepts.map((concept) => (
-          <article>
-            <span aria-hidden="true">{concept.icon}</span>
-            <h3>{concept.title}</h3>
-            <p>{concept.text}</p>
-          </article>
-        ))}
+      <div class="context-showcase">
+        <ContextBackpack />
+        <div class="context-explainer">
+          <div class="context-grid">
+            {level.concepts.map((concept) => (
+              <article>
+                <span aria-hidden="true">{concept.icon}</span>
+                <h3>{concept.title}</h3>
+                <p>{concept.text}</p>
+              </article>
+            ))}
+          </div>
+          <p class="truth"><span aria-hidden="true">🎒</span><strong>Más contexto no siempre es mejor.</strong> Elegí el que realmente cambia la respuesta.</p>
+        </div>
       </div>
-      <p class="truth"><span aria-hidden="true">🎒</span><strong>Más contexto no siempre es mejor.</strong> Elegí el que realmente cambia la respuesta.</p>
-    </section>
-
-    <section class="visual-block build" aria-labelledby="build-title">
-      <div class="block-heading">
-        <span class="step">05</span>
-        <div><p>Armá el pedido</p><h2 id="build-title">Cuatro piezas alcanzan para empezar</h2></div>
-      </div>
-      <div class="piece-row" role="list">
-        <div class="objective-piece" role="listitem"><span>1</span><strong>Objetivo</strong></div>
-        <b aria-hidden="true">+</b>
-        <div class="context-piece" role="listitem"><span>2</span><strong>Contexto</strong></div>
-        <b aria-hidden="true">+</b>
-        <div class="format-piece" role="listitem"><span>3</span><strong>Formato</strong></div>
-        <b aria-hidden="true">+</b>
-        <div class="criterion-piece" role="listitem"><span>4</span><strong>Criterio</strong></div>
-      </div>
-      <blockquote class="assembled-prompt">
-        <span class="prompt-fragment objective-piece"><small>Objetivo</small>Invitá a las familias a participar del evento.</span>
-        <span class="prompt-fragment context-piece"><small>Contexto</small>Todavía no conocen la actividad.</span>
-        <span class="prompt-fragment format-piece"><small>Formato</small>Escribí un mensaje de WhatsApp de hasta 80 palabras.</span>
-        <span class="prompt-fragment criterion-piece"><small>Criterio</small>Incluí fecha, lugar y qué llevar.</span>
-      </blockquote>
-      <p class="tiny-note">Rol, tono y ejemplos son opcionales. Agregalos sólo cuando cambien el resultado.</p>
     </section>
 
     <section class="visual-block iteration" aria-labelledby="iteration-title">
       <div class="block-heading">
-        <span class="step">06</span>
-        <div><p>Conversar e iterar</p><h2 id="iteration-title">La primera respuesta es un borrador</h2></div>
+        <span class="step">05</span>
+        <div><p>Segunda vuelta</p><h2 id="iteration-title">La primera respuesta es un borrador</h2></div>
       </div>
-      <ol class="iteration-loop">
-        <li><span>1</span><strong>Pedí</strong></li>
-        <li><span>2</span><strong>Revisá</strong></li>
-        <li><span>3</span><strong>Ajustá</strong></li>
-        <li><span>4</span><strong>Verificá</strong></li>
-      </ol>
-      <div class="followups" aria-label="Ejemplos para continuar la conversación">
-        <span>“Acortalo a 60 palabras.”</span>
-        <span>“Dame dos versiones.”</span>
-        <span>“Usá un tono más directo.”</span>
-        <span>“¿Qué supuesto hiciste?”</span>
+      <p class="lead iteration-lead">No empieces de cero: marcá qué falta y pedí un cambio concreto.</p>
+      <div class="revision-story" aria-label="Ejemplo de cómo mejorar una respuesta en cuatro pasos">
+        <article class="revision-card first-draft">
+          <span class="phase"><b>1</b> Primer intento</span>
+          <div class="chat-bubble from-user"><small>Vos</small><p>“Escribí una invitación para las familias.”</p></div>
+          <div class="chat-bubble from-ai"><small>IA</small><p>“Los invitamos a una jornada especial llena de actividades…”</p></div>
+          <p class="card-note">Todavía es demasiado genérico.</p>
+        </article>
+
+        <article class="revision-card inspect-draft">
+          <span class="phase"><b>2</b> Miralo con lupa</span>
+          <div class="review-chips" role="list">
+            <span role="listitem" class="missing">Falta la fecha</span>
+            <span role="listitem" class="missing">No dice qué llevar</span>
+            <span role="listitem" class="warning">Es demasiado largo</span>
+          </div>
+          <p class="card-note">Elegí una o dos mejoras. No corrijas todo junto.</p>
+        </article>
+
+        <article class="revision-card ask-again">
+          <span class="phase"><b>3</b> Pedí el ajuste</span>
+          <div class="chat-bubble from-user emphasized"><small>Vos</small><p>“Sumá sábado 14, Centro Norte y botella de agua. Máximo 60 palabras.”</p></div>
+          <p class="card-note">Seguís en la misma conversación.</p>
+        </article>
+
+        <article class="revision-card verify-result">
+          <span class="phase"><b>4</b> Verificá</span>
+          <div class="chat-bubble from-ai final-answer"><small>IA</small><p>“Familias: las esperamos el sábado 14 en Centro Norte. Traigan una botella de agua. ¡Nos vemos!”</p></div>
+          <div class="result-checks" aria-label="Comprobaciones cumplidas">
+            <span>✓ Fecha</span><span>✓ Lugar</span><span>✓ Qué llevar</span><span>✓ Menos de 60 palabras</span>
+          </div>
+        </article>
       </div>
-      <p class="truth"><span aria-hidden="true">🔁</span><strong>Corregí una dimensión por vez.</strong> No hace falta empezar de nuevo.</p>
+      <p class="truth"><span aria-hidden="true">🔁</span><strong>Esto también es prompting.</strong> Una buena conversación vale más que intentar acertar todo de una.</p>
     </section>
 
     <FieldNote summary="Excavar más · ¿Hace falta decir “actuá como…”?">
-      <p>Puede ayudar cuando buscás una perspectiva concreta, pero no es obligatorio. Objetivo, contexto y criterio suelen aportar más.</p>
+      <p>Puede ayudar cuando buscás una perspectiva concreta, pero no es obligatorio. Objetivo, contexto y una forma de verificar suelen aportar más.</p>
       <p>Si falta información decisiva, pedile que pregunte. Si no, que declare sus supuestos y avance.</p>
     </FieldNote>
 
@@ -186,7 +190,7 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
 <style>
   .level-page { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
   .visual-block { margin: 3rem 0; padding: clamp(1.2rem, 4vw, 2.4rem); border-radius: 1.8rem; background: white; box-shadow: 0 18px 50px rgb(32 48 43 / 9%); }
-  .prompt, .build { background: #fff8e7; }
+  .prompt { background: #fff8e7; }
   .objective { background: #fff4ec; }
   .choice, .context { background: #f1f8f3; }
   .iteration { background: #eef7fb; }
@@ -232,35 +236,53 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   .effort-scale div > span { font-size: 1.6rem; }
   .effort-scale small { color: #526159; }
   .caveat { margin: 1rem 0 0; padding: .85rem 1rem; border-left: 4px solid #176b55; border-radius: 0 .9rem .9rem 0; background: #e2f0e7; color: #375249; }
-  .context-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .7rem; }
+  .context-showcase { display: grid; grid-template-columns: minmax(280px, .9fr) minmax(0, 1.1fr); gap: 1rem; align-items: stretch; }
+  .context-explainer { display: grid; align-content: center; gap: .7rem; }
+  .context-grid { display: grid; grid-template-columns: 1fr; gap: .7rem; }
   .context-grid article { padding: 1rem; border: 1px solid #cbd9d0; border-radius: 1rem; background: white; }
   .context-grid article > span { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; background: #e3f3ea; font-size: 1.25rem; }
   .context-grid h3 { margin: .7rem 0 .3rem; }
   .context-grid p { margin: 0; color: #526159; }
-  .piece-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: .55rem; align-items: center; }
-  .objective-piece { --piece-accent: #28715d; --piece-tint: #e3f3ea; }
-  .context-piece { --piece-accent: #8a5a11; --piece-tint: #fff0c9; }
-  .format-piece { --piece-accent: #245c7a; --piece-tint: #e7effb; }
-  .criterion-piece { --piece-accent: #98472f; --piece-tint: #ffe7dd; }
-  .piece-row div { min-height: 92px; display: grid; place-items: center; align-content: center; gap: .3rem; padding: .7rem; border: 1px solid var(--piece-accent); border-radius: .9rem; background: var(--piece-tint); text-align: center; }
-  .piece-row div > span { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; background: var(--piece-accent); color: white; font-size: .75rem; font-weight: 900; }
-  .piece-row > b { color: #795307; }
-  .assembled-prompt { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin: 1rem 0 0; padding: 1rem; border: 2px solid #20302b; border-radius: 1.1rem; background: white; font-size: clamp(.95rem, 2vw, 1.08rem); font-weight: 700; }
-  .prompt-fragment { display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: center; padding: .7rem .8rem; border-left: 4px solid var(--piece-accent); border-radius: .65rem; background: var(--piece-tint); }
-  .prompt-fragment small { color: var(--piece-accent); font-size: .68rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
-  .iteration-loop { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; margin: 0; padding: 0; list-style: none; }
-  .iteration-loop li { display: flex; gap: .6rem; align-items: center; padding: .85rem; border-radius: .9rem; background: white; }
-  .iteration-loop li > span { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border-radius: 50%; background: #245c7a; color: white; font-weight: 900; }
-  .followups { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1rem; }
-  .followups span { padding: .55rem .7rem; border: 1px solid #bdd5e1; border-radius: 999px; background: white; color: #375a6c; font-size: .9rem; font-weight: 750; }
+  .context-explainer .truth { margin-top: 0; }
+  .iteration-lead { margin-top: -.2rem; }
+  .revision-story { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; }
+  .revision-card { position: relative; display: grid; align-content: start; gap: .65rem; min-width: 0; min-height: 280px; padding: .9rem; border: 1px solid rgb(36 92 122 / 18%); border-radius: 1rem; background: white; }
+  .revision-card:not(:last-child)::after { position: absolute; top: 50%; right: -.78rem; z-index: 2; display: grid; width: 1.25rem; height: 1.25rem; place-items: center; border-radius: 50%; background: #245c7a; color: white; content: "→"; font-size: .72rem; font-weight: 900; translate: 0 -50%; }
+  .first-draft { background: #fff9e9; }
+  .inspect-draft { background: #fff0e9; }
+  .ask-again { background: #edf6fb; }
+  .verify-result { background: #e8f5ed; }
+  .phase { display: flex; gap: .45rem; align-items: center; color: #375249; font-size: .72rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+  .phase b { display: grid; width: 26px; height: 26px; place-items: center; border-radius: 50%; background: #20302b; color: white; font-size: .7rem; }
+  .chat-bubble { padding: .65rem .7rem; border-radius: .85rem; background: white; box-shadow: 0 5px 14px rgb(32 48 43 / 7%); }
+  .chat-bubble small { display: block; margin-bottom: .2rem; color: #245c7a; font-size: .66rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .chat-bubble p { margin: 0; font-size: .86rem; line-height: 1.35; }
+  .from-user { border-bottom-left-radius: .25rem; }
+  .from-user small { color: #8a5a11; }
+  .from-ai { border-bottom-right-radius: .25rem; }
+  .emphasized { border: 2px solid #2f7196; }
+  .final-answer { border: 2px solid #28715d; }
+  .card-note { margin: auto 0 0; color: #526159; font-size: .78rem; font-weight: 700; }
+  .review-chips { display: grid; gap: .45rem; }
+  .review-chips span { padding: .5rem .6rem; border-radius: .7rem; background: white; font-size: .78rem; font-weight: 800; }
+  .review-chips span::before { margin-right: .35rem; content: "●"; }
+  .review-chips .missing::before { color: #b84a35; }
+  .review-chips .warning::before { color: #d99a1e; }
+  .result-checks { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; }
+  .result-checks span { color: #28715d; font-size: .72rem; font-weight: 850; }
   @media (max-width: 800px) {
-    .prompt-flow, .piece-row { grid-template-columns: 1fr; }
-    .prompt-flow > b, .piece-row > b { rotate: 90deg; text-align: center; }
-    .objective-intents, .context-grid, .iteration-loop { grid-template-columns: 1fr 1fr; }
-    .decision-grid, .assembled-prompt { grid-template-columns: 1fr; }
+    .prompt-flow { grid-template-columns: 1fr; }
+    .prompt-flow > b { rotate: 90deg; text-align: center; }
+    .objective-intents, .context-grid, .revision-story { grid-template-columns: 1fr 1fr; }
+    .context-showcase { grid-template-columns: 1fr; }
+    .context-grid article:last-child { grid-column: 1 / -1; }
+    .decision-grid { grid-template-columns: 1fr; }
+    .revision-card { min-height: 0; }
+    .revision-card::after { display: none !important; }
   }
   @media (max-width: 560px) {
-    .objective-intents, .context-grid, .effort-scale, .iteration-loop { grid-template-columns: 1fr; }
+    .objective-intents, .context-grid, .effort-scale, .revision-story { grid-template-columns: 1fr; }
+    .context-grid article:last-child { grid-column: auto; }
     .goal-frame { justify-content: flex-start; }
   }
 </style>
