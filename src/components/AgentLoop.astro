@@ -12,20 +12,13 @@ const { compact = false } = Astro.props;
     <strong>Un objetivo avanza con decisiones, acciones y evidencia.</strong>
   </figcaption>
 
-  <div class="harness-frame">
-    <div class="harness-bar" role="group" aria-label="El harness sostiene el ciclo">
-      <div>
-        <span aria-hidden="true">⚙</span>
-        <p><b>Harness</b><small>sostiene el ciclo · lo abrimos en la próxima parada</small></p>
-      </div>
-    </div>
-
+  <div class="cycle-frame">
     <div class="example" role="group" aria-label="Ejemplo que recorre el ciclo">
       <span>Ejemplo</span>
       <p>“Leé este PDF, encontrá tres riesgos y prepará un resumen.”</p>
     </div>
 
-    <div class="loop-track" role="group" aria-label="Objetivo, propuesta del modelo, ejecución de una herramienta, evidencia y próxima decisión">
+    <div class="loop-track" role="group" aria-label="Objetivo, solicitud del modelo, validación y ejecución de una herramienta por el entorno, evidencia y próxima decisión">
       <div class="loop-node objective">
         <span class="node-icon" aria-hidden="true">◎</span>
         <b>Objetivo</b>
@@ -35,13 +28,13 @@ const { compact = false } = Astro.props;
       <div class="loop-node model">
         <span class="node-icon" aria-hidden="true">◇</span>
         <b>Modelo</b>
-        <small>propone leer el PDF</small>
+        <small>solicita leer el PDF</small>
       </div>
       <span class="arrow" aria-hidden="true">→</span>
       <div class="loop-node tool">
         <span class="node-icon" aria-hidden="true">⚙</span>
-        <b>Tool</b>
-        <small>abre el archivo</small>
+        <b>Entorno + tool</b>
+        <small>valida y abre el archivo</small>
       </div>
       <span class="arrow" aria-hidden="true">→</span>
       <div class="loop-node evidence">
@@ -76,12 +69,7 @@ const { compact = false } = Astro.props;
   figcaption { display: grid; gap: .25rem; margin-bottom: 1.15rem; }
   figcaption span { color: var(--violet, #6941a5); font-size: .78rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
   figcaption strong { font-size: clamp(1.05rem, 2vw, 1.35rem); }
-  .harness-frame { overflow: hidden; border: 2px solid #20302b; border-radius: 1.35rem; background: rgba(255,255,255,.62); box-shadow: 4px 5px 0 rgba(32,48,43,.14); }
-  .harness-bar { display: flex; align-items: center; gap: 1rem; padding: .75rem 1rem; background: #20302b; color: #fff; }
-  .harness-bar > div { display: flex; align-items: center; gap: .6rem; }
-  .harness-bar > div > span { display: grid; width: 2.2rem; height: 2.2rem; place-items: center; border-radius: .65rem; background: rgba(255,255,255,.12); }
-  .harness-bar p { display: grid; gap: .05rem; margin: 0; }
-  .harness-bar small { color: #dce5e1; font-size: .72rem; }
+  .cycle-frame { overflow: hidden; border: 2px solid #20302b; border-radius: 1.35rem; background: rgba(255,255,255,.62); box-shadow: 4px 5px 0 rgba(32,48,43,.14); }
   .example { display: flex; align-items: baseline; gap: .65rem; margin: 1rem 1rem 0; padding: .7rem .85rem; border-left: 4px solid #d99a1e; border-radius: 0 .8rem .8rem 0; background: #fff7e5; }
   .example span { flex: none; color: #714c00; font-size: .68rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
   .example p { margin: 0; color: #394a44; font-weight: 750; }
@@ -104,7 +92,6 @@ const { compact = false } = Astro.props;
   .compact .loop-node { min-height: 7rem; }
   :global(body.is-presenting) .agent-loop { margin: .35rem 0; padding: .75rem; }
   :global(body.is-presenting) .agent-loop figcaption { margin-bottom: .5rem; }
-  :global(body.is-presenting) .agent-loop .harness-bar { padding: .45rem .7rem; }
   :global(body.is-presenting) .agent-loop .example { margin: .5rem .7rem 0; padding: .45rem .65rem; }
   :global(body.is-presenting) .agent-loop .loop-track { padding: .55rem .7rem; }
   :global(body.is-presenting) .agent-loop .loop-node { min-height: 6.2rem; padding: .55rem .4rem; }
@@ -116,7 +103,6 @@ const { compact = false } = Astro.props;
     .loop-node { min-height: auto; }
   }
   @media (max-width: 620px) {
-    .harness-bar { align-items: flex-start; flex-direction: column; }
     .example { align-items: flex-start; flex-direction: column; gap: .2rem; }
     .outcomes { grid-template-columns: 1fr; }
   }
