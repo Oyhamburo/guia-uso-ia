@@ -52,7 +52,7 @@ const choices = [
     <span aria-hidden="true">🦕</span>
     <div>
       <p>Mini desafío</p>
-      <h3 id="prompt-builder-title">Armá una misión útil</h3>
+      <h3 id="prompt-builder-title">Armá un prompt útil</h3>
     </div>
   </div>
   <p class="intro">Elegí la pieza más concreta de cada fila. No hay que arrastrar nada.</p>
@@ -72,7 +72,7 @@ const choices = [
       ))}
     </div>
     <div class="actions">
-      <button type="submit">Probar la misión</button>
+      <button type="submit">Probar el prompt</button>
       <button type="reset" class="secondary">Empezar de nuevo</button>
     </div>
   </form>
@@ -106,7 +106,7 @@ const choices = [
       result.hidden = false;
       if (correct === groups.length) {
         result.dataset.state = "success";
-        result.innerHTML = "<strong>¡Misión lista!</strong> Tiene objetivo, contexto, formato y una forma concreta de revisar el resultado.";
+        result.innerHTML = "<strong>¡Prompt listo!</strong> Tiene objetivo, contexto, formato y una forma concreta de revisar el resultado.";
       } else {
         result.dataset.state = "retry";
         result.innerHTML = `<strong>Encontraste ${correct} de ${groups.length} piezas.</strong> Buscá opciones observables: evitá palabras como “perfecto”, “bueno” o “lo que te parezca”.`;

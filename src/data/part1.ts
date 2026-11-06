@@ -52,37 +52,32 @@ export const initialLevels: InitialLevel[] = [
   {
     number: 2,
     slug: "nivel-2",
-    kicker: "Segunda parada · Paco ordena la misión",
-    title: "Dale una misión clara",
-    promise: "Pasá de «haceme algo» a un pedido que se pueda evaluar.",
+    kicker: "Segunda parada · Paco prepara la expedición",
+    title: "¿Cómo la uso?",
+    promise: "Empezá por el objetivo, dale el contexto justo y ajustá el resultado paso a paso.",
     dino: "paco",
     color: "amber",
     concepts: [
       {
-        icon: "🎯",
-        title: "Objetivo",
-        text: "Decí qué necesitás conseguir, no sólo el tema."
+        icon: "👥",
+        title: "Para quién",
+        text: "Quién va a leer, usar o recibir el resultado."
       },
       {
-        icon: "🗺️",
-        title: "Contexto",
-        text: "Contá para quién es, qué información importa y en qué situación se usará."
+        icon: "📎",
+        title: "Material útil",
+        text: "Datos, notas, ejemplos o archivos que cambian la respuesta."
       },
       {
-        icon: "📦",
-        title: "Formato y límites",
-        text: "Indicá cómo querés recibirlo y qué debería evitar."
-      },
-      {
-        icon: "🔎",
-        title: "Criterio de calidad",
-        text: "Explicá cómo sabrás que el resultado está bien."
+        icon: "🚧",
+        title: "Límites",
+        text: "Extensión, tono, tiempo y cosas que debe evitar."
       }
     ],
     takeaways: [
-      "No existe un prompt mágico: existe un problema mejor encuadrado.",
-      "El rol es opcional; objetivo y contexto suelen importar más.",
-      "Si falta algo decisivo, la IA debería preguntar; si no, declarar supuestos y avanzar."
+      "Un prompt es un punto de partida, no una fórmula secreta.",
+      "Objetivo, contexto y formato importan más que adornar el pedido.",
+      "Elegí modelo y esfuerzo según la tarea; después revisá e iterá."
     ]
   },
   {
