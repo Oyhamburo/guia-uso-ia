@@ -21,9 +21,9 @@ export const initialLevels: InitialLevel[] = [
   {
     number: 1,
     slug: "nivel-1",
-    kicker: "Primera parada · Bruna mira el mapa",
-    title: "Conocé a la IA",
-    promise: "Entendé qué estás usando sin palabras raras ni magia.",
+    kicker: "Primera parada · La pregunta clave",
+    title: "¿Qué es la IA?",
+    promise: "Es tecnología que usa modelos entrenados con datos para reconocer patrones y generar resultados. No piensa ni entiende como una persona.",
     dino: "bruna",
     color: "sky",
     concepts: [

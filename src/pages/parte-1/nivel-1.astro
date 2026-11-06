@@ -1,9 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import LevelHero from "../../components/LevelHero.astro";
-import ConceptCard from "../../components/ConceptCard.astro";
 import FieldNote from "../../components/FieldNote.astro";
-import TrailSummary from "../../components/TrailSummary.astro";
 import { initialLevels } from "../../data/part1";
 
 const level = initialLevels[0];
@@ -22,15 +20,90 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
       tone={level.color}
     />
 
-    <section class="concept-grid" aria-label="Ideas principales">
-      {level.concepts.map((concept) => (
-        <ConceptCard icon={concept.icon} title={concept.title}>{concept.text}</ConceptCard>
-      ))}
+    <section class="visual-block llm" aria-labelledby="llm-title">
+      <div class="block-heading">
+        <span class="step">01</span>
+        <div><p>Primero, una diferencia</p><h2 id="llm-title">IA es el paraguas. LLM es el motor de texto.</h2></div>
+      </div>
+      <div class="definition-grid">
+        <article>
+          <span class="definition-icon" aria-hidden="true">☂</span>
+          <h3>Inteligencia artificial</h3>
+          <p>Incluye muchas tecnologías: recomendaciones, visión, voz, detección de fraude y lenguaje.</p>
+        </article>
+        <article class="featured">
+          <span class="definition-icon" aria-hidden="true">Aa</span>
+          <h3>LLM</h3>
+          <p>Es un <strong>modelo grande de lenguaje</strong>. Cuando chateás con una IA, normalmente este es el motor que produce el texto.</p>
+        </article>
+      </div>
+      <p class="truth"><span aria-hidden="true">🧭</span><strong>En esta guía, cuando digamos “la IA” hablaremos sobre todo del LLM que está detrás del chat.</strong></p>
+    </section>
+
+    <section class="visual-block prediction" aria-labelledby="prediction-title">
+      <div class="block-heading">
+        <span class="step">02</span>
+        <div><p>La idea central</p><h2 id="prediction-title">Escribe prediciendo qué viene después</h2></div>
+      </div>
+      <div class="formula-card" aria-label="Probabilidad del próximo token dado el texto anterior">
+        <span>Texto anterior</span><b aria-hidden="true">→</b><code>P(próximo token | texto anterior)</code><b aria-hidden="true">→</b><span>Elige y repite</span>
+      </div>
+      <div class="prediction-demo">
+        <p>“El dinosaurio encontró un…”</p>
+        <div class="candidate-list" aria-label="Ejemplo inventado de probabilidades">
+          <span class="winner"><b>fósil</b><small>62%</small></span>
+          <span><b>mapa</b><small>18%</small></span>
+          <span><b>río</b><small>11%</small></span>
+          <span><b>otro</b><small>9%</small></span>
+        </div>
+        <small>Ejemplo inventado. Un <em>token</em> puede ser una palabra o un pedacito de palabra.</small>
+      </div>
+      <p class="tiny-note">El LLM construye la respuesta token por token. Que una continuación sea probable no significa que sea verdadera.</p>
+    </section>
+
+    <section class="visual-block history" aria-labelledby="history-title">
+      <div class="block-heading">
+        <span class="step">03</span>
+        <div><p>Dos hitos</p><h2 id="history-title">De adivinar una palabra a conectar todo el contexto</h2></div>
+      </div>
+      <div class="history-grid">
+        <article class="history-card phone-era">
+          <div class="old-phone" aria-hidden="true">
+            <div class="phone-screen">HOLA_</div>
+            <div class="phone-keys"><i>1</i><i>2<br/>ABC</i><i>3<br/>DEF</i><i>4<br/>GHI</i><i>5<br/>JKL</i><i>6<br/>MNO</i><i>7<br/>PQRS</i><i>8<br/>TUV</i><i>9<br/>WXYZ</i></div>
+          </div>
+          <div><span class="year">1995 · T9</span><h3>Un celular elegía la palabra más probable</h3><p>Con pocas teclas, comparaba la secuencia con un diccionario ordenado por frecuencia. No era un LLM, pero hizo cotidiana la idea de predecir texto.</p><a href="https://patents.google.com/patent/US5818437" rel="noreferrer">Ver la patente presentada en 1995 ↗</a></div>
+        </article>
+        <article class="history-card transformer-era">
+          <div class="attention-map" aria-hidden="true"><span>El</span><span>dino</span><span>halló</span><span>un</span><span>fósil</span><i></i><i></i><i></i></div>
+          <div><span class="year">2017 · Transformer</span><h3>Cada token mira el contexto</h3><p>La arquitectura Transformer usa atención para relacionar partes del texto y es la base de muchos LLM modernos.</p><a href="https://research.google/pubs/attention-is-all-you-need/" rel="noreferrer">Ver el trabajo original ↗</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="visual-block everyday" aria-labelledby="everyday-title">
+      <div class="block-heading">
+        <span class="step">04</span>
+        <div><p>Antes del chat</p><h2 id="everyday-title">La IA ya estaba a tu alrededor</h2></div>
+      </div>
+      <div class="everyday-grid">
+        <div class="captcha-demo" aria-label="Ilustración de un desafío CAPTCHA, no interactivo">
+          <div class="captcha-check"><span aria-hidden="true">□</span><strong>No soy un robot</strong><small>CAPTCHA</small></div>
+          <p>Elegí los cuadros con semáforos</p>
+          <div class="image-grid" aria-hidden="true"><i>🚦</i><i>🏙️</i><i>🚦</i><i>🚲</i><i>🚦</i><i>🌳</i><i>🚗</i><i>🚦</i><i>🏠</i></div>
+        </div>
+        <div class="everyday-copy">
+          <p><strong>Un CAPTCHA intenta distinguir personas de bots.</strong> Los desafíos con imágenes son otra clase de sistema: seguridad y reconocimiento visual, no un LLM.</p>
+          <ul><li>El filtro de spam clasifica mensajes.</li><li>Una app recomienda música o series.</li><li>La cámara detecta caras u objetos.</li></ul>
+          <p class="tiny-note">Resolver un CAPTCHA no significa que estés entrenando directamente al LLM de este chat.</p>
+          <a href="https://support.google.com/recaptcha/faq/6080947?hl=es" rel="noreferrer">Cómo funciona reCAPTCHA ↗</a>
+        </div>
+      </div>
     </section>
 
     <section class="visual-block family" aria-labelledby="family-title">
       <div class="block-heading">
-        <span class="step">01</span>
+        <span class="step">05</span>
         <div><p>La familia</p><h2 id="family-title">No toda IA hace lo mismo</h2></div>
       </div>
       <div class="modality-row">
@@ -44,7 +117,7 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
 
     <section class="visual-block layers" aria-labelledby="layers-title">
       <div class="block-heading">
-        <span class="step">02</span>
+        <span class="step">06</span>
         <div><p>Las capas</p><h2 id="layers-title">Motor, acceso y experiencia</h2></div>
       </div>
       <div class="layer-flow" role="list">
@@ -59,7 +132,7 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
 
     <section class="visual-block pay" aria-labelledby="pay-title">
       <div class="block-heading">
-        <span class="step">03</span>
+        <span class="step">07</span>
         <div><p>El acceso</p><h2 id="pay-title">¿Qué estás pagando?</h2></div>
       </div>
       <div class="compare-grid">
@@ -77,20 +150,20 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
       <p>Algunos productos ofrecen controles llamados <em>thinking</em> o <em>reasoning effort</em>. Dar más profundidad puede ayudar en tareas complejas, pero suele requerir más tiempo y consumo; no garantiza una respuesta mejor.</p>
     </FieldNote>
 
-    <TrailSummary
-      title="Tres huellas para llevarte"
-      items={level.takeaways}
-      mapHref={href("#mapa")}
-      nextHref={href("parte-1/nivel-2/")}
-      nextLabel="Seguir al Nivel 2"
-    />
+    <nav class="level-actions" aria-label="Continuar la expedición">
+      <a href={href("#mapa")}>Mapa de la expedición</a>
+      <a class="next" href={href("parte-1/nivel-2/")}>Seguir al Nivel 2 →</a>
+    </nav>
   </main>
 </BaseLayout>
 
 <style>
   .level-page { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
-  .concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0 4rem; }
   .visual-block { margin: 3rem 0; padding: clamp(1.2rem, 4vw, 2.4rem); border-radius: 1.8rem; background: white; box-shadow: 0 18px 50px rgb(32 48 43 / 9%); }
+  .llm { background: #f1f8f3; }
+  .prediction { background: #fff7e5; }
+  .history { background: #f3effa; }
+  .everyday { background: #eef7fb; }
   .family { background: #f6fbfd; }
   .layers { background: #f4faf6; }
   .pay { background: #fff9ea; }
@@ -98,6 +171,41 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   .step { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 16px; background: #20302b; color: white; font-weight: 900; }
   .block-heading p { margin: 0; color: #2f7196; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
   h2 { margin: .1rem 0 0; font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1; }
+  .definition-grid, .history-grid, .everyday-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+  .definition-grid article { padding: 1.15rem; border: 1px solid #c9d8cf; border-radius: 1.2rem; background: rgb(255 255 255 / 76%); }
+  .definition-grid article.featured { border: 2px solid #176b55; background: #fff; }
+  .definition-icon { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 14px; background: #dff3e9; color: #145c49; font-size: 1.25rem; font-weight: 900; }
+  .definition-grid h3 { margin: .75rem 0 .3rem; }
+  .definition-grid p { margin: 0; color: #526159; }
+  .formula-card { display: grid; grid-template-columns: 1fr auto minmax(260px, 1.5fr) auto 1fr; gap: .7rem; align-items: center; padding: 1rem; border: 2px solid #20302b; border-radius: 1.2rem; background: white; text-align: center; }
+  .formula-card span { font-weight: 850; }
+  .formula-card code { padding: .7rem; border-radius: .75rem; background: #20302b; color: #fff4c4; font-size: clamp(.82rem, 2vw, 1.05rem); }
+  .prediction-demo { display: grid; gap: .8rem; margin-top: 1rem; padding: 1rem; border-radius: 1.1rem; background: rgb(255 255 255 / 78%); }
+  .prediction-demo > p { margin: 0; font-size: 1.15rem; font-weight: 850; }
+  .candidate-list { display: flex; flex-wrap: wrap; gap: .55rem; }
+  .candidate-list span { display: inline-flex; gap: .6rem; align-items: center; padding: .55rem .7rem; border: 1px solid #d8c89b; border-radius: 999px; background: white; }
+  .candidate-list .winner { border-color: #176b55; background: #e3f3ea; }
+  .candidate-list small { color: #526159; }
+  .history-card { display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: center; padding: 1rem; border: 1px solid #d2c5e4; border-radius: 1.2rem; background: rgb(255 255 255 / 80%); }
+  .history-card h3 { margin: .4rem 0; }
+  .history-card p { margin: 0 0 .65rem; color: #526159; }
+  .history-card a, .everyday-copy a { color: #5c358f; font-weight: 800; }
+  .year { color: #5c358f; font-size: .75rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .old-phone { width: 132px; padding: .65rem; border: 4px solid #263632; border-radius: 1.3rem 1.3rem 2rem 2rem; background: #62736c; box-shadow: inset 0 0 0 2px #9aa69f; }
+  .phone-screen { min-height: 52px; display: grid; place-items: center; margin-bottom: .55rem; border: 3px inset #8fa18a; background: #c4d5aa; color: #24352d; font: 900 .92rem ui-monospace, monospace; }
+  .phone-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: .27rem; }
+  .phone-keys i { min-height: 25px; display: grid; place-items: center; border-radius: 50%; background: #e2e7e4; color: #293833; font: 700 .52rem ui-sans-serif, sans-serif; line-height: .7; text-align: center; }
+  .attention-map { position: relative; min-height: 130px; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: .35rem; padding: .8rem; border-radius: 1rem; background: #1f3037; }
+  .attention-map span { position: relative; z-index: 2; padding: .35rem .45rem; border-radius: .45rem; background: #fff; color: #20302b; font-size: .72rem; font-weight: 800; }
+  .attention-map i { position: absolute; width: 62%; height: 2px; background: #f4bc4e; transform-origin: left; }.attention-map i:nth-of-type(1){transform:rotate(20deg)}.attention-map i:nth-of-type(2){transform:rotate(-18deg)}.attention-map i:nth-of-type(3){transform:rotate(42deg)}
+  .captcha-demo { overflow: hidden; align-self: start; border: 1px solid #b9c7cc; border-radius: 1rem; background: white; box-shadow: 0 8px 20px rgb(32 48 43 / 10%); }
+  .captcha-check { display: grid; grid-template-columns: auto 1fr auto; gap: .65rem; align-items: center; padding: 1rem; border-bottom: 1px solid #dbe3e5; }.captcha-check > span{font-size:2rem}.captcha-check small{color:#2f7196;font-weight:900}
+  .captcha-demo > p { margin: 0; padding: .7rem 1rem .2rem; font-weight: 800; }
+  .image-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: .65rem; }
+  .image-grid i { min-height: 56px; display: grid; place-items: center; background: #dcecf3; font-style: normal; font-size: 1.35rem; }
+  .everyday-copy { align-self: center; }
+  .everyday-copy p { color: #526159; }
+  .everyday-copy ul { padding-left: 1.2rem; }
   .modality-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; }
   .modality-row article, .compare-grid article { padding: 1rem; border: 1px solid #d6ddd8; border-radius: 1rem; background: rgb(255 255 255 / 75%); }
   .modality-row article > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; background: #dceef7; color: #245c7a; font-weight: 900; }
@@ -113,9 +221,18 @@ const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
   .compare-grid h3 { margin: .65rem 0 .25rem; }
   .compare-grid p { margin: 0; color: #526159; }
   .tag { display: inline-block; padding: .3rem .55rem; border-radius: 999px; background: #f2e4b8; color: #684a0b; font-size: .75rem; font-weight: 850; }
+  .level-actions { display: flex; justify-content: space-between; gap: 1rem; align-items: center; margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid #cbd4cf; }
+  .level-actions a { min-height: 44px; display: inline-flex; align-items: center; color: #176b55; font-weight: 850; }
+  .level-actions .next { padding: .75rem 1rem; border-radius: 999px; background: #176b55; color: white; text-decoration: none; }
   @media (max-width: 740px) {
-    .concept-grid, .modality-row, .compare-grid { grid-template-columns: 1fr; }
+    .definition-grid, .history-grid, .everyday-grid, .modality-row, .compare-grid { grid-template-columns: 1fr; }
+    .formula-card { grid-template-columns: 1fr; }
+    .formula-card > b { transform: rotate(90deg); }
+    .history-card { grid-template-columns: 1fr; }
+    .old-phone { justify-self: center; }
     .layer-flow { grid-template-columns: 1fr; }
     .layer-flow > b { transform: rotate(90deg); text-align: center; }
+    .level-actions { flex-direction: column; align-items: stretch; }
+    .level-actions a { justify-content: center; }
   }
 </style>
