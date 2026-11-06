@@ -155,7 +155,9 @@
     return [...main.children].filter((element): element is HTMLElement => {
       if (!(element instanceof HTMLElement)) return false;
       if (["NAV", "SCRIPT", "STYLE", "TEMPLATE"].includes(element.tagName)) return false;
-      if (element.matches("[data-presentation-ignore]") || element.hidden || element.inert) return false;
+      const forced = element.matches("[data-presentation-force]");
+      if (element.matches("[data-presentation-ignore]") || element.inert) return false;
+      if (!forced && element.hidden) return false;
       return element.getAttribute("aria-hidden") !== "true";
     });
   };

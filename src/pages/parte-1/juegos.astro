@@ -23,7 +23,6 @@ const stations = [
   title="Campamento jurásico · Expedición IA"
   description="Cinco juegos interactivos con dinosaurios para practicar lo aprendido en la Parte 1."
   current="juegos"
-  presentation={false}
 >
   <main id="contenido" class="games-page">
     <section class="camp-hero" aria-labelledby="camp-title">
@@ -31,7 +30,7 @@ const stations = [
       <span class="ambient-orb orb-two" aria-hidden="true"></span>
       <div class="hero-copy">
         <p class="eyebrow">Campamento de desafíos</p>
-        <h1 id="camp-title">Jugá, probá<br /><span>y descubrí.</span></h1>
+        <h1 id="camp-title">Jugá, probá<br />{" "}<span>y descubrí.</span></h1>
         <p class="hero-intro">Cinco misiones cortas para usar lo aprendido. Sin puntos, sin ranking y sin presión.</p>
         <button class="start-button" type="button" data-game-start>
           Empezar la aventura <span aria-hidden="true">→</span>
@@ -68,9 +67,9 @@ const stations = [
       ))}
     </nav>
 
-    <p class="route-status" data-route-status aria-live="polite">Misión 1 de 5 · Huellas rápidas</p>
+    <p class="route-status" data-route-status data-presentation-ignore aria-live="polite">Misión 1 de 5 · Huellas rápidas</p>
 
-    <section id="trivia" class="game-stop is-active" aria-labelledby="trivia-title" data-game-stage="trivia">
+    <section id="trivia" class="game-stop is-active" aria-labelledby="trivia-title" data-game-stage="trivia" data-presentation-force>
       <div class="stop-label">
         <span>01</span>
         <div><p>Entrada en calor</p><h2 id="trivia-title">Seguí las huellas correctas</h2></div>
@@ -80,7 +79,7 @@ const stations = [
       <div class="station-actions"><button type="button" class="next-mission" data-game-next="museo">Siguiente misión <span aria-hidden="true">→</span></button></div>
     </section>
 
-    <section id="museo" class="game-stop" aria-labelledby="museo-title" data-game-stage="museo" hidden>
+    <section id="museo" class="game-stop" aria-labelledby="museo-title" data-game-stage="museo" data-presentation-force hidden>
       <div class="stop-label">
         <span>02</span>
         <div><p>Nivel 1</p><h2 id="museo-title">Ordená el ecosistema</h2></div>
@@ -93,7 +92,7 @@ const stations = [
       </div>
     </section>
 
-    <section id="mision" class="game-stop" aria-labelledby="mision-title" data-game-stage="mision" hidden>
+    <section id="mision" class="game-stop" aria-labelledby="mision-title" data-game-stage="mision" data-presentation-force hidden>
       <div class="stop-label">
         <span>03</span>
         <div><p>Nivel 2</p><h2 id="mision-title">Construí un prompt útil</h2></div>
@@ -106,7 +105,7 @@ const stations = [
       </div>
     </section>
 
-    <section id="semaforo" class="game-stop" aria-labelledby="semaforo-title" data-game-stage="semaforo" hidden>
+    <section id="semaforo" class="game-stop" aria-labelledby="semaforo-title" data-game-stage="semaforo" data-presentation-force hidden>
       <div class="stop-label">
         <span>04</span>
         <div><p>Nivel 3</p><h2 id="semaforo-title">Protegé el nido</h2></div>
@@ -119,7 +118,7 @@ const stations = [
       </div>
     </section>
 
-    <section id="radar" class="game-stop" aria-labelledby="radar-title" data-game-stage="radar" hidden>
+    <section id="radar" class="game-stop" aria-labelledby="radar-title" data-game-stage="radar" data-presentation-force hidden>
       <div class="stop-label">
         <span>05</span>
         <div><p>Nivel 4</p><h2 id="radar-title">Ubicá cada capacidad</h2></div>
@@ -132,10 +131,10 @@ const stations = [
       </div>
     </section>
 
-    <section id="cierre" class="game-stop finish-camp" data-game-stage="cierre" hidden aria-labelledby="finish-title">
+    <section id="cierre" class="game-stop finish-camp" data-game-stage="cierre" data-presentation-force hidden aria-labelledby="finish-title">
       <div class="finish-copy">
         <p class="eyebrow">Campamento completado</p>
-        <h2 id="finish-title">No juntaste puntos.<br />Juntaste criterio.</h2>
+        <h2 id="finish-title">No juntaste puntos.<br />{" "}Juntaste criterio.</h2>
         <p>Volvé a cualquier misión para probar otro camino o seguí hacia la parte técnica.</p>
         <div class="finish-actions">
           <button type="button" data-game-next="trivia">Volver a las misiones</button>
@@ -184,6 +183,7 @@ const stations = [
     };
 
     const showStage = (id: string, focus = true) => {
+      if (document.body.classList.contains("is-presenting")) return;
       const target = stages.find((stage) => stage.dataset.gameStage === id);
       if (!target) return;
       stages.forEach((stage) => {
@@ -347,6 +347,10 @@ const stations = [
   @media (prefers-reduced-motion: reduce) {
     .ambient-orb, .hero-dino :global(.dino-avatar), .game-stop.is-active { animation: none; }
   }
-  :global(body.is-presenting) .station-rail, :global(body.is-presenting) .route-status { display: none !important; }
+  :global(body.is-presenting) .station-rail,
+  :global(body.is-presenting) .route-status,
+  :global(body.is-presenting) .start-button,
+  :global(body.is-presenting) .station-actions,
+  :global(body.is-presenting) .finish-actions button { display: none !important; }
   :global(body.is-presenting) .game-stop { padding: 1rem; }
 </style>
