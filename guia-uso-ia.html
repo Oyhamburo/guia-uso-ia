@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nivel 1 · Guía viva para usar IA con criterio</title>
+  <meta name="description" content="Conceptos base para usar IA con criterio: prompts, verificación, proveedores, modelos y herramientas." />
+  <link rel="stylesheet" href="guia-uso-ia.css" />
+</head>
+<body class="guia-uso-ia">
+  <header>
+    <nav class="wrap top-nav">
+      <a class="brand" href="guia-uso-ia.html"><div class="brand-mark">IA</div><span>Guía viva de uso inteligente</span></a>
+      <div class="nav-links" aria-label="Navegación por niveles">
+        <a href="guia-uso-ia.html" aria-current="page">Nivel 1</a>
+        <a href="guia-uso-ia-nivel-2.html">Nivel 2</a>
+        <a href="guia-uso-ia-nivel-3.html">Nivel 3</a>
+        <a href="guia-uso-ia-nivel-4.html">Nivel 4</a>
+      </div>
+    </nav>
+  </header>
+    <nav class="wrap section-nav" aria-label="Navegación de esta página">
+      <a href="#mapa">Mapa</a>
+      <a href="#criterio">Criterio</a>
+      <a href="#prompts">Prompts</a>
+      <a href="#verificacion">Verificación</a>
+      <a href="#proveedores">Proveedores</a>
+      <a href="#herramientas">Herramientas</a>
+    </nav>
+
+  <main>
+    <section class="hero wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Versión inicial editable</div>
+          <h1>Usar IA sin apagar el criterio.</h1>
+          <p class="lead">Una guía para ordenar conceptos, detectar límites y convertir la IA en una herramienta de pensamiento, producción y aprendizaje. La idea no es “creerle” a la IA: es dirigirla, verificarla y mejorar el resultado.</p>
+          <div class="hero-actions">
+            <a class="button" href="#mapa">Empezar por el mapa →</a>
+            <a class="button secondary" href="#proveedores">Entender el ecosistema</a>
+          </div>
+        </div>
+
+        <aside class="map-card" id="mapa">
+          <div class="mini-title"><strong>Hilo principal</strong><span class="badge">clickeable</span></div>
+          <div class="flow">
+            <a class="flow-step" href="#criterio"><div class="num">1</div><div><h3>Criterio humano</h3><p>Definís objetivo, contexto y estándar de calidad.</p></div></a>
+            <a class="flow-step" href="#prompts"><div class="num">2</div><div><h3>Instrucción clara</h3><p>La IA responde mejor cuando el trabajo está bien encuadrado.</p></div></a>
+            <a class="flow-step" href="#verificacion"><div class="num">3</div><div><h3>Verificación de código</h3><p>La pregunta clave: ¿cómo sé que lo generado funciona de verdad?</p></div></a>
+            <a class="flow-step" href="#proveedores"><div class="num">4</div><div><h3>Proveedores y modelos</h3><p>Frontier, open-source, gratuitos, pagos y diferencias reales.</p></div></a>
+            <a class="flow-step" href="#herramientas"><div class="num">5</div><div><h3>Accesos y herramientas</h3><p>API keys, suscripciones, OpenRouter, Cursor, OpenCode y demás.</p></div></a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="wrap" id="criterio">
+      <div class="section-head">
+        <h2>Primero: la IA no piensa por vos.</h2>
+        <p>La diferencia entre un uso pobre y uno fuerte no está en “el prompt mágico”, sino en el marco de decisión que ponés antes de pedirle algo.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><span class="pill ok">Bueno</span><h3>Usarla como socio de trabajo</h3><p>Sirve para explorar alternativas, ordenar información, generar borradores, detectar huecos y acelerar ciclos de prueba.</p></article>
+        <article class="card"><span class="pill warn">Cuidado</span><h3>Confundir seguridad con certeza</h3><p>Una respuesta puede sonar impecable y estar mal. La confianza del tono no es evidencia.</p></article>
+        <article class="card"><span class="pill danger">Evitar</span><h3>Delegar juicio crítico</h3><p>Si no podés explicar por qué una respuesta es correcta, todavía no tenés una respuesta: tenés una hipótesis.</p></article>
+      </div>
+    </section>
+
+    <section class="wrap" id="prompts">
+      <div class="section-head">
+        <h2>Un buen pedido reduce ambigüedad.</h2>
+        <p>La IA necesita rol, objetivo, contexto, restricciones, formato esperado y criterio de aceptación.</p>
+      </div>
+      <div class="two">
+        <div class="card">
+          <h3>Plantilla base</h3>
+          <div class="prompt-box">Actuá como [rol].
+Necesito [objetivo concreto].
+Contexto: [datos, audiencia, situación].
+Restricciones: [no hacer / límites / tono / longitud].
+Criterio de calidad: [cómo sabremos que está bien].
+Formato de salida: [lista, tabla, pasos, código, etc.].
+Antes de responder, preguntame lo que falte.</div>
+        </div>
+        <div class="card">
+          <h3>Qué cambia realmente</h3>
+          <ul>
+            <li><strong>Menos relleno:</strong> la respuesta va al punto.</li>
+            <li><strong>Menos invento:</strong> obliga a declarar supuestos.</li>
+            <li><strong>Mejor iteración:</strong> podés corregir una dimensión por vez.</li>
+            <li><strong>Más control:</strong> la IA trabaja sobre tu estándar, no sobre uno genérico.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="verificacion">
+      <div class="section-head">
+        <h2>Verificar es parte del trabajo, no un extra.</h2>
+        <p>En temas importantes, la salida de IA debería pasar por una etapa de contraste: fuentes, pruebas, lectura humana o ejecución técnica.</p>
+      </div>
+      <div class="thread">
+        <div class="thread-item"><b>Fuentes</b><small>¿De dónde sale esta afirmación?</small></div>
+        <div class="thread-item"><b>Pruebas</b><small>¿Qué evidencia concreta la sostiene?</small></div>
+        <div class="thread-item"><b>Contraejemplos</b><small>¿Cuándo sería falso?</small></div>
+        <div class="thread-item"><b>Riesgo</b><small>¿Qué pasa si está mal?</small></div>
+        <div class="thread-item"><b>Iteración</b><small>¿Qué aprendimos para la próxima versión?</small></div>
+      </div>
+      <div class="callout"><strong>Regla práctica:</strong> cuanto más irreversible sea una decisión, más evidencia externa necesitás. Para ideas exploratorias alcanza un borrador; para salud, legal, seguridad, dinero o producción, no.</div>
+      <div class="open-question">
+        <div class="eyebrow">Pregunta abierta</div>
+        <h3>Pero si la IA produce cientos o miles de líneas, ¿cómo hago para verificar tanto código?</h3>
+      </div>
+    </section>
+
+    <section class="wrap" id="proveedores">
+      <div class="section-head">
+        <h2>El ecosistema tiene capas.</h2>
+        <p>“Estoy usando Claude” o “estoy usando GPT” no alcanza para describir qué ocurre. Un modelo puede llegar a vos a través de distintas empresas, productos y formas de pago.</p>
+      </div>
+
+      <div class="stack" aria-label="Capas del ecosistema de inteligencia artificial">
+        <div class="stack-row"><strong>1. Modelo</strong><p>El motor que interpreta y genera: GPT, Claude, Gemini, Llama, Qwen, DeepSeek y otros.</p><span>capacidad</span></div>
+        <div class="stack-row"><strong>2. Proveedor</strong><p>La empresa o infraestructura que ejecuta el modelo y define precio, disponibilidad, privacidad y límites.</p><span>acceso</span></div>
+        <div class="stack-row"><strong>3. Producto</strong><p>La interfaz que usás: un chat, un editor de código, una terminal, una app propia o una plataforma web.</p><span>experiencia</span></div>
+        <div class="stack-row"><strong>4. Agente</strong><p>La capa que además puede leer archivos, ejecutar comandos, llamar herramientas y trabajar en varios pasos.</p><span>acciones</span></div>
+      </div>
+
+      <div class="callout mt-20">
+        <strong>No toda inteligencia artificial es un LLM.</strong> “Modelo” es una categoría amplia. Algunos trabajan con lenguaje; otros están entrenados para crear, interpretar o transformar imágenes, audio y video.
+      </div>
+
+      <div class="model-types" aria-label="Tipos de modelos generativos">
+        <article class="type-card"><span class="icon">Aa</span><strong>Lenguaje y razonamiento</strong><p><b>Sí, son LLMs:</b> modelos grandes de lenguaje. Trabajan principalmente con texto y código, aunque algunos también entienden imágenes, audio o video.</p><small>GPT · Claude · Gemini · Qwen — LLMs, varios de ellos multimodales</small></article>
+        <article class="type-card"><span class="icon">▧</span><strong>Imagen</strong><p><b>No son LLMs:</b> son modelos generativos de imagen. Crean o modifican píxeles a partir de texto, referencias, máscaras u otras imágenes.</p><small>GPT Image · Midjourney · FLUX · Imagen — generación y edición de imagen</small></article>
+        <article class="type-card"><span class="icon">♫</span><strong>Audio y voz</strong><p><b>No son un único tipo de modelo:</b> Whisper reconoce voz; ElevenLabs sintetiza voz; Suno genera música. Pueden usar transformers, pero eso no los convierte automáticamente en LLMs.</p><small>Whisper — transcripción · ElevenLabs — voz · Suno — música</small></article>
+        <article class="type-card"><span class="icon">▶</span><strong>Video</strong><p><b>No son LLMs:</b> son modelos generativos de video. Producen o editan secuencias visuales manteniendo movimiento, tiempo y consistencia entre cuadros.</p><small>Sora · Veo · Runway — generación y edición de video</small></article>
+      </div>
+
+      <div class="callout mb-18">
+        <strong>Generador, editor y producto tampoco son lo mismo:</strong> el generador crea contenido; el editor transforma material existente; el producto —por ejemplo una app de diseño o video— puede usar varios modelos por detrás.
+      </div>
+
+      <div class="thinking-card">
+        <div class="thinking-scale" aria-label="Niveles de esfuerzo de razonamiento">
+          <div class="thinking-level">Low · rápido</div>
+          <div class="thinking-level">Medium · equilibrado</div>
+          <div class="thinking-level">High · más profundo</div>
+        </div>
+        <div class="thinking-copy">
+          <h3>Thinking / reasoning effort</h3>
+          <p>Algunos modelos permiten indicar cuánto esfuerzo de razonamiento deben usar antes de responder. Más effort puede ayudar en código, matemática o planificación, pero normalmente aumenta el tiempo y el consumo. Según el producto puede aparecer como <b>thinking</b>, <b>extended thinking</b>, <b>reasoning effort</b> o funcionar automáticamente.</p>
+          <small>Más thinking no garantiza una mejor respuesta: depende de la tarea y del modelo.</small>
+        </div>
+      </div>
+
+      <div class="two">
+        <article class="card">
+          <span class="pill ok">Frontier · ahora</span>
+          <h3>Los pesos pesados</h3>
+          <div class="model-list">
+            <div class="model-chip">GPT-6 Astra<small>OpenAI · trabajo complejo</small></div>
+            <div class="model-chip">Claude Fable 5.1<small>Anthropic · razonamiento y agentes</small></div>
+            <div class="model-chip">Claude Opus 5<small>Anthropic · código y empresa</small></div>
+            <div class="model-chip">Gemini 3.8 Flash<small>Google · velocidad y agentes</small></div>
+          </div>
+          <p class="compact-note">Son nombres de referencia, no un ranking: cambian rápido y cada uno puede rendir distinto según la tarea.</p>
+        </article>
+        <article class="card">
+          <span class="pill warn">Los “chinardos” y compañía</span>
+          <h3>Abiertos, baratos, gratis o locales</h3>
+          <div class="model-list">
+            <div class="model-chip">Qwen3-Coder<small>chino · código · local</small></div>
+            <div class="model-chip">DeepSeek<small>chino · razonamiento · abierto</small></div>
+            <div class="model-chip">Gemma<small>Google · pesos abiertos · local</small></div>
+            <div class="model-chip">Mistral<small>europeo · abierto · local</small></div>
+            <div class="model-chip">Llama<small>Meta · pesos abiertos · local</small></div>
+            <div class="model-chip">Ollama<small>los ejecuta en tu máquina</small></div>
+          </div>
+          <p class="compact-note">“Gratis” puede ser un cupo web; “local” usa tu hardware; “abierto” depende de la licencia concreta. No son la misma cosa.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="herramientas">
+      <div class="section-head">
+        <h2>¿Qué estás pagando y qué te llevás?</h2>
+        <p>Una suscripción, una API key y un agregador resuelven problemas diferentes. Pueden convivir, pero normalmente se facturan por separado.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="comparison">
+          <thead><tr><th>Opción</th><th>Qué comprás</th><th>Cómo se cobra</th><th>Cuándo tiene sentido</th></tr></thead>
+          <tbody>
+            <tr><td>Suscripción a un chat</td><td>Una aplicación terminada: interfaz, historial, archivos y funciones del producto.</td><td>Abono mensual con límites definidos por la app.</td><td>Conversar, investigar, redactar o analizar sin configurar infraestructura.</td></tr>
+            <tr><td>API key</td><td>Permiso para que software propio consuma un modelo directamente.</td><td>Generalmente por uso: tokens, imágenes, audio o llamadas.</td><td>Automatizaciones, productos, scripts y control técnico del flujo.</td></tr>
+            <tr><td>OpenRouter</td><td>Una API unificada y saldo para acceder a modelos de múltiples proveedores.</td><td>Consumo según el modelo elegido y las condiciones del servicio.</td><td>Comparar modelos o cambiar de proveedor sin integrar cada API por separado.</td></tr>
+            <tr><td>Cursor</td><td>Un editor de código con contexto del proyecto y funciones de IA integradas.</td><td>Plan del producto; sus límites y modelos dependen del plan vigente.</td><td>Programar con asistencia dentro de una experiencia visual de IDE.</td></tr>
+            <tr><td>OpenCode</td><td>Un agente de programación que opera desde la terminal y se conecta a modelos.</td><td>La herramienta y el consumo del modelo son capas diferentes.</td><td>Trabajar con archivos, comandos y tareas de código desde un flujo más configurable.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="two mt-16">
+        <article class="card">
+          <span class="pill info">Ejemplo</span>
+          <h3>Pagar ChatGPT no equivale a tener crédito de API</h3>
+          <p>La suscripción paga el producto ChatGPT. Una aplicación propia que llama a la API usa otra vía de acceso y, normalmente, otra facturación. El modelo puede pertenecer a la misma empresa, pero el contrato de uso no es el mismo.</p>
+        </article>
+        <article class="card">
+          <span class="pill info">Ejemplo</span>
+          <h3>El mismo modelo puede sentirse distinto</h3>
+          <p>En un chat recibe tu conversación. En Cursor puede recibir archivos del proyecto. En un agente de terminal puede además ejecutar comandos. El motor puede ser igual; cambian el contexto disponible, las herramientas y el control del flujo.</p>
+        </article>
+      </div>
+    </section>
+
+    <nav class="page-nav wrap" aria-label="Navegación entre niveles">
+      <span class="page-nav-spacer">Nivel 1 completado</span>
+      <a class="button" href="guia-uso-ia-nivel-2.html">Siguiente: Nivel 2 →</a>
+    </nav>
+  </main>
+
+  <footer class="wrap">
+    <p>Guía viva: cada nivel agrega profundidad sin perder el recorrido principal.</p>
+  </footer>
+</body>
+</html>
