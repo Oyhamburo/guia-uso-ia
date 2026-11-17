@@ -1,0 +1,62 @@
+---
+interface Props {
+  summary: string;
+  variant?: "note" | "warning" | "technical";
+  open?: boolean;
+}
+
+const { summary, variant = "note", open = false } = Astro.props;
+---
+
+<details class:list={["field-note", `variant-${variant}`]} open={open}>
+  <summary><span aria-hidden="true">＋</span>{summary}</summary>
+  <div class="field-note-body"><slot /></div>
+</details>
+
+<style>
+  .field-note {
+    --note: var(--jungle);
+    overflow: hidden;
+    border: 1.5px solid color-mix(in srgb, var(--note) 45%, var(--line));
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--note) 7%, var(--white));
+  }
+
+  .variant-warning { --note: var(--coral); }
+  .variant-technical { --note: var(--violet); }
+
+  summary {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    color: color-mix(in srgb, var(--note) 75%, black);
+    font-weight: 850;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  summary span {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border-radius: 9px;
+    background: var(--note);
+    color: white;
+    transition: rotate 160ms ease;
+  }
+
+  details[open] summary span { rotate: 45deg; }
+
+  .field-note-body {
+    padding: 0 1rem 1rem 3.45rem;
+    color: var(--muted);
+  }
+
+  .field-note-body :global(p:last-child),
+  .field-note-body :global(ul:last-child) { margin-bottom: 0; }
+</style>

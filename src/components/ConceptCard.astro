@@ -1,0 +1,100 @@
+---
+interface Props {
+  title: string;
+  icon?: string;
+  accent?: "jungle" | "sky" | "fossil" | "coral" | "violet";
+  href?: string;
+  tag?: string;
+  number?: string;
+}
+
+const { title, icon, accent = "jungle", href, tag, number } = Astro.props;
+const Element = href ? "a" : "article";
+---
+
+<Element class:list={["concept-card", `accent-${accent}`, { linked: href }]} href={href}>
+  <div class="card-top">
+    {(icon || number) && <span class="card-icon" aria-hidden="true">{number ?? icon}</span>}
+    {tag && <span class="tag">{tag}</span>}
+  </div>
+  <h3>{title}</h3>
+  <div class="card-body"><slot /></div>
+  {href && <span class="card-link" aria-hidden="true">Explorar →</span>}
+</Element>
+
+<style>
+  .concept-card {
+    --card-accent: var(--jungle);
+    position: relative;
+    display: grid;
+    min-height: 220px;
+    align-content: start;
+    gap: 0.75rem;
+    padding: 1.15rem;
+    border: 1.5px solid var(--line);
+    border-top: 7px solid var(--card-accent);
+    border-radius: var(--radius-lg);
+    background: rgb(255 253 247 / 92%);
+    box-shadow: var(--shadow-small);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .accent-sky { --card-accent: var(--sky); }
+  .accent-fossil { --card-accent: var(--fossil); }
+  .accent-coral { --card-accent: var(--coral); }
+  .accent-violet { --card-accent: var(--violet); }
+
+  .linked {
+    transition: translate 160ms ease, box-shadow 160ms ease;
+  }
+
+  .linked:hover {
+    translate: 0 -3px;
+    box-shadow: 0 13px 26px rgb(32 48 43 / 16%);
+    color: var(--ink);
+  }
+
+  .card-top {
+    display: flex;
+    min-height: 42px;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+
+  .card-icon {
+    display: grid;
+    min-width: 42px;
+    min-height: 42px;
+    place-items: center;
+    padding: 0.3rem;
+    border-radius: 13px;
+    background: color-mix(in srgb, var(--card-accent) 18%, white);
+    color: color-mix(in srgb, var(--card-accent) 78%, black);
+    font-family: var(--font-display);
+    font-weight: 900;
+  }
+
+  .tag {
+    padding: 0.28rem 0.55rem;
+    border-radius: 999px;
+    background: var(--paper-deep);
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 850;
+  }
+
+  .card-body {
+    color: var(--muted);
+  }
+
+  .card-body :global(p:last-child) { margin-bottom: 0; }
+
+  .card-link {
+    align-self: end;
+    margin-top: auto;
+    color: var(--card-accent);
+    font-weight: 850;
+  }
+</style>

@@ -1,0 +1,288 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LevelHero from "../../components/LevelHero.astro";
+import ContextBackpack from "../../components/ContextBackpack.astro";
+import FieldNote from "../../components/FieldNote.astro";
+import TrailSummary from "../../components/TrailSummary.astro";
+import { initialLevels } from "../../data/part1";
+
+const level = initialLevels[1];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+---
+
+<BaseLayout title={`${level.title} · Expedición IA`} description={level.promise}>
+  <main id="contenido" class="level-page">
+    <LevelHero
+      level="Nivel 2"
+      eyebrow={level.kicker}
+      title={level.title}
+      intro={level.promise}
+      dino={level.dino}
+      tone={level.color}
+    />
+
+    <section class="visual-block prompt" aria-labelledby="prompt-title">
+      <div class="block-heading">
+        <span class="step">01</span>
+        <div><p>El punto de partida</p><h2 id="prompt-title">¿Qué es un prompt?</h2></div>
+      </div>
+      <p class="lead">Es lo que le das a la IA para orientar su respuesta.</p>
+      <div class="prompt-flow" aria-label="Un prompt viaja desde una persona hacia la IA y produce un primer borrador">
+        <div><span aria-hidden="true">🙋</span><strong>Vos</strong></div>
+        <b aria-hidden="true">→</b>
+        <div class="prompt-piece"><span aria-hidden="true">💬</span><strong>Pregunta, instrucción o archivo</strong></div>
+        <b aria-hidden="true">→</b>
+        <div><span aria-hidden="true">⚙️</span><strong>IA</strong></div>
+        <b aria-hidden="true">→</b>
+        <div><span aria-hidden="true">📝</span><strong>Primer borrador</strong></div>
+      </div>
+      <p class="truth"><span aria-hidden="true">🧭</span><strong>No es una contraseña mágica.</strong> Es el comienzo de una conversación.</p>
+    </section>
+
+    <section class="visual-block objective" aria-labelledby="objective-title">
+      <div class="block-heading">
+        <span class="step">02</span>
+        <div><p>Antes de pedir</p><h2 id="objective-title">¿Cuál es mi objetivo?</h2></div>
+      </div>
+      <p class="lead objective-intro">Elegí la huella que más se parece a lo que querés lograr.</p>
+      <div class="objective-intents" role="list" aria-label="Tipos de objetivo">
+        <article class="information-intent" role="listitem">
+          <span aria-hidden="true">🔎</span>
+          <div><small>Entender</small><h3>Obtener información</h3></div>
+          <p>Comprender un tema, responder una pregunta o saber qué verificar.</p>
+        </article>
+        <article class="automation-intent" role="listitem">
+          <span aria-hidden="true">⚙️</span>
+          <div><small>Hacer</small><h3>Automatizar una tarea</h3></div>
+          <p>Convertir algo repetitivo en pasos o en un flujo más simple.</p>
+        </article>
+        <article class="options-intent" role="listitem">
+          <span aria-hidden="true">🧭</span>
+          <div><small>Decidir</small><h3>Conocer mis opciones</h3></div>
+          <p>Comparar alternativas antes de elegir.</p>
+        </article>
+        <article class="document-intent" role="listitem">
+          <span aria-hidden="true">📄</span>
+          <div><small>Revisar</small><h3>Analizar un documento</h3></div>
+          <p>Resumir, extraer datos o encontrar diferencias.</p>
+        </article>
+      </div>
+      <div class="goal-builder">
+        <p><span aria-hidden="true">🧩</span><strong>Ponelo en una frase</strong></p>
+        <div class="goal-frame" aria-label="Frase para definir el objetivo">
+          <span>Al terminar, quiero tener</span><b>________</b><span>para poder</span><b>________</b>
+        </div>
+      </div>
+      <p class="tiny-note">El objetivo no es el tema: es lo que querés poder hacer después.</p>
+    </section>
+
+    <section class="visual-block choice" aria-labelledby="choice-title">
+      <div class="block-heading">
+        <span class="step">03</span>
+        <div><p>Motor y profundidad</p><h2 id="choice-title">¿Qué modelo y cuánto esfuerzo necesito?</h2></div>
+      </div>
+      <div class="decision-grid">
+        <article class="model-choice">
+          <span class="decision-label">1 · Resultado y motor</span>
+          <h3>Primero, elegí qué querés crear</h3>
+          <div class="mode-chips" aria-label="Tipos de resultado"><span>Texto</span><span>Imagen</span><span>Audio</span><span>Video</span></div>
+          <dl class="choice-legend">
+            <div><dt>Herramienta</dt><dd>El lugar que usás para crear.</dd></div>
+            <div><dt>Modalidad</dt><dd>Texto, imagen, audio o video.</dd></div>
+            <div><dt>Modelo</dt><dd>El motor que trabaja por detrás; muchas aplicaciones lo eligen por vos.</dd></div>
+          </dl>
+        </article>
+        <article class="effort-choice">
+          <span class="decision-label">2 · Dificultad de la tarea</span>
+          <h3>Asigná la profundidad necesaria</h3>
+          <div class="effort-scale" role="list">
+            <div role="listitem"><span aria-hidden="true">🌱</span><strong>Rápido</strong><small>Reformular o listar.</small></div>
+            <div role="listitem"><span aria-hidden="true">🌿</span><strong>Intermedio</strong><small>Comparar opciones.</small></div>
+            <div role="listitem"><span aria-hidden="true">🌳</span><strong>Profundo</strong><small>Analizar o planificar.</small></div>
+          </div>
+          <p><strong>Esfuerzo</strong> indica cuánto tiempo o profundidad le asigna el producto.</p>
+        </article>
+      </div>
+      <p class="caveat"><strong>Más esfuerzo o un modelo más grande no garantizan una respuesta mejor.</strong> Si no tenés un motivo para cambiar, la opción recomendada suele alcanzar.</p>
+    </section>
+
+    <section class="visual-block context" aria-labelledby="context-title">
+      <div class="block-heading">
+        <span class="step">04</span>
+        <div><p>La mochila de contexto</p><h2 id="context-title">¿Qué necesita saber?</h2></div>
+      </div>
+      <div class="context-showcase">
+        <ContextBackpack />
+        <div class="context-explainer">
+          <div class="context-grid">
+            {level.concepts.map((concept) => (
+              <article>
+                <span aria-hidden="true">{concept.icon}</span>
+                <h3>{concept.title}</h3>
+                <p>{concept.text}</p>
+              </article>
+            ))}
+          </div>
+          <p class="truth"><span aria-hidden="true">🎒</span><strong>Más contexto no siempre es mejor.</strong> Elegí el que realmente cambia la respuesta.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="visual-block iteration" aria-labelledby="iteration-title">
+      <div class="block-heading">
+        <span class="step">05</span>
+        <div><p>Segunda vuelta</p><h2 id="iteration-title">La primera respuesta es un borrador</h2></div>
+      </div>
+      <p class="lead iteration-lead">No empieces de cero: marcá qué falta y pedí un cambio concreto.</p>
+      <div class="revision-story" aria-label="Ejemplo de cómo mejorar una respuesta en cuatro pasos">
+        <article class="revision-card first-draft">
+          <span class="phase"><b>1</b> Primer intento</span>
+          <div class="chat-bubble from-user"><small>Vos</small><p>“Escribí una invitación para las familias.”</p></div>
+          <div class="chat-bubble from-ai"><small>IA</small><p>“Los invitamos a una jornada especial llena de actividades…”</p></div>
+          <p class="card-note">Todavía es demasiado genérico.</p>
+        </article>
+
+        <article class="revision-card inspect-draft">
+          <span class="phase"><b>2</b> Miralo con lupa</span>
+          <div class="review-chips" role="list">
+            <span role="listitem" class="missing">Falta la fecha</span>
+            <span role="listitem" class="missing">No dice qué llevar</span>
+            <span role="listitem" class="warning">Es demasiado largo</span>
+          </div>
+          <p class="card-note">Elegí una o dos mejoras. No corrijas todo junto.</p>
+        </article>
+
+        <article class="revision-card ask-again">
+          <span class="phase"><b>3</b> Pedí el ajuste</span>
+          <div class="chat-bubble from-user emphasized"><small>Vos</small><p>“Sumá sábado 14, Centro Norte y botella de agua. Máximo 60 palabras.”</p></div>
+          <p class="card-note">Seguís en la misma conversación.</p>
+        </article>
+
+        <article class="revision-card verify-result">
+          <span class="phase"><b>4</b> Verificá</span>
+          <div class="chat-bubble from-ai final-answer"><small>IA</small><p>“Familias: las esperamos el sábado 14 en Centro Norte. Traigan una botella de agua. ¡Nos vemos!”</p></div>
+          <div class="result-checks" aria-label="Comprobaciones cumplidas">
+            <span>✓ Fecha</span><span>✓ Lugar</span><span>✓ Qué llevar</span><span>✓ Menos de 60 palabras</span>
+          </div>
+        </article>
+      </div>
+      <p class="truth"><span aria-hidden="true">🔁</span><strong>Esto también es prompting.</strong> Una buena conversación vale más que intentar acertar todo de una.</p>
+    </section>
+
+    <FieldNote summary="Excavar más · ¿Hace falta decir “actuá como…”?">
+      <p>Puede ayudar cuando buscás una perspectiva concreta, pero no es obligatorio. Objetivo, contexto y una forma de verificar suelen aportar más.</p>
+      <p>Si falta información decisiva, pedile que pregunte. Si no, que declare sus supuestos y avance.</p>
+    </FieldNote>
+
+    <TrailSummary
+      title="Tres huellas para llevarte"
+      items={level.takeaways}
+      previousHref={href("parte-1/nivel-1/")}
+      previousLabel="Nivel 1"
+      mapHref={href("#mapa")}
+      nextHref={href("parte-1/nivel-3/")}
+      nextLabel="Seguir al Nivel 3"
+    />
+  </main>
+</BaseLayout>
+
+<style>
+  .level-page { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 5rem; }
+  .visual-block { margin: 3rem 0; padding: clamp(1.2rem, 4vw, 2.4rem); border-radius: 1.8rem; background: white; box-shadow: 0 18px 50px rgb(32 48 43 / 9%); }
+  .prompt { background: #fff8e7; }
+  .objective { background: #fff4ec; }
+  .choice, .context { background: #f1f8f3; }
+  .iteration { background: #eef7fb; }
+  .block-heading { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.2rem; }
+  .block-heading p { margin: 0; color: #795307; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+  .step { display: grid; width: 48px; height: 48px; flex: 0 0 48px; place-items: center; border-radius: 16px; background: #20302b; color: white; font-weight: 900; }
+  h2 { margin: .1rem 0 0; font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1; }
+  .lead { margin: 0 0 1rem; color: #526159; font-size: 1.1rem; }
+  .prompt-flow { display: grid; grid-template-columns: .75fr auto 1.45fr auto .75fr auto 1fr; gap: .65rem; align-items: center; }
+  .prompt-flow div { min-height: 116px; display: grid; place-items: center; align-content: center; gap: .35rem; padding: .8rem; border: 1px solid #e3d2a0; border-radius: 1rem; background: white; text-align: center; }
+  .prompt-flow .prompt-piece { border: 2px solid #d99a1e; }
+  .prompt-flow div > span { font-size: 1.75rem; }
+  .prompt-flow > b { color: #795307; font-size: 1.35rem; }
+  .truth { display: flex; gap: .65rem; align-items: center; margin: 1rem 0 0; padding: .85rem 1rem; border-radius: .9rem; background: #e4f2e9; color: #375249; }
+  .objective-intro { margin-bottom: .85rem; }
+  .objective-intents { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; }
+  .objective-intents article { --intent-accent: #245c7a; --intent-tint: #e8f2f8; display: grid; grid-template-columns: auto 1fr; gap: .35rem .7rem; align-content: start; padding: 1rem; border: 1px solid color-mix(in srgb, var(--intent-accent) 45%, white); border-radius: 1rem; background: var(--intent-tint); }
+  .objective-intents article > span { display: grid; width: 40px; height: 40px; grid-row: 1 / span 2; place-items: center; border-radius: 13px; background: white; font-size: 1.25rem; }
+  .objective-intents small { color: var(--intent-accent); font-size: .67rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .objective-intents h3 { margin: .15rem 0 0; font-size: 1.05rem; line-height: 1.1; }
+  .objective-intents p { grid-column: 1 / -1; margin: .45rem 0 0; color: #526159; font-size: .9rem; }
+  .objective-intents .automation-intent { --intent-accent: #28715d; --intent-tint: #e5f3eb; }
+  .objective-intents .options-intent { --intent-accent: #8a5a11; --intent-tint: #fff1cd; }
+  .objective-intents .document-intent { --intent-accent: #98472f; --intent-tint: #ffe9df; }
+  .goal-builder { margin-top: 1rem; padding: .9rem; border-radius: 1rem; background: rgb(255 255 255 / 70%); }
+  .goal-builder > p { display: flex; gap: .5rem; align-items: center; margin: 0 0 .65rem; color: #7d3b26; }
+  .goal-frame { display: flex; flex-wrap: wrap; justify-content: center; gap: .65rem; align-items: baseline; padding: 1.1rem; border: 2px dashed #d77b55; border-radius: 1rem; background: white; font-size: clamp(1.05rem, 2.5vw, 1.45rem); }
+  .goal-frame b { color: #99412f; letter-spacing: .08em; }
+  .decision-label { color: #7d3b26; font-size: .72rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .tiny-note { margin: 1rem 0 0; color: #526159; }
+  .decision-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 1rem; }
+  .decision-grid > article { padding: 1.1rem; border: 1px solid #cbd9d0; border-radius: 1.2rem; background: white; }
+  .decision-grid h3 { margin: .45rem 0 .8rem; font-size: 1.3rem; }
+  .decision-grid p { margin: .85rem 0 0; color: #526159; }
+  .mode-chips { display: flex; flex-wrap: wrap; gap: .45rem; }
+  .mode-chips span { padding: .5rem .7rem; border-radius: 999px; background: #e7effb; color: #245c7a; font-weight: 850; }
+  .choice-legend { display: grid; gap: .45rem; margin: .9rem 0 0; }
+  .choice-legend div { display: grid; grid-template-columns: 84px 1fr; gap: .55rem; padding-top: .45rem; border-top: 1px solid #e1e9e3; }
+  .choice-legend dt { color: #20302b; font-weight: 850; }
+  .choice-legend dd { margin: 0; color: #526159; }
+  .effort-scale { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+  .effort-scale div { display: grid; min-height: 110px; justify-items: center; align-content: center; padding: .6rem; border-radius: .8rem; background: #f2f7f3; text-align: center; }
+  .effort-scale div > span { font-size: 1.6rem; }
+  .effort-scale small { color: #526159; }
+  .caveat { margin: 1rem 0 0; padding: .85rem 1rem; border-left: 4px solid #176b55; border-radius: 0 .9rem .9rem 0; background: #e2f0e7; color: #375249; }
+  .context-showcase { display: grid; grid-template-columns: minmax(280px, .9fr) minmax(0, 1.1fr); gap: 1rem; align-items: stretch; }
+  .context-explainer { display: grid; align-content: center; gap: .7rem; }
+  .context-grid { display: grid; grid-template-columns: 1fr; gap: .7rem; }
+  .context-grid article { padding: 1rem; border: 1px solid #cbd9d0; border-radius: 1rem; background: white; }
+  .context-grid article > span { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; background: #e3f3ea; font-size: 1.25rem; }
+  .context-grid h3 { margin: .7rem 0 .3rem; }
+  .context-grid p { margin: 0; color: #526159; }
+  .context-explainer .truth { margin-top: 0; }
+  .iteration-lead { margin-top: -.2rem; }
+  .revision-story { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; }
+  .revision-card { position: relative; display: grid; align-content: start; gap: .65rem; min-width: 0; min-height: 280px; padding: .9rem; border: 1px solid rgb(36 92 122 / 18%); border-radius: 1rem; background: white; }
+  .revision-card:not(:last-child)::after { position: absolute; top: 50%; right: -.78rem; z-index: 2; display: grid; width: 1.25rem; height: 1.25rem; place-items: center; border-radius: 50%; background: #245c7a; color: white; content: "→"; font-size: .72rem; font-weight: 900; translate: 0 -50%; }
+  .first-draft { background: #fff9e9; }
+  .inspect-draft { background: #fff0e9; }
+  .ask-again { background: #edf6fb; }
+  .verify-result { background: #e8f5ed; }
+  .phase { display: flex; gap: .45rem; align-items: center; color: #375249; font-size: .72rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+  .phase b { display: grid; width: 26px; height: 26px; place-items: center; border-radius: 50%; background: #20302b; color: white; font-size: .7rem; }
+  .chat-bubble { padding: .65rem .7rem; border-radius: .85rem; background: white; box-shadow: 0 5px 14px rgb(32 48 43 / 7%); }
+  .chat-bubble small { display: block; margin-bottom: .2rem; color: #245c7a; font-size: .66rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .chat-bubble p { margin: 0; font-size: .86rem; line-height: 1.35; }
+  .from-user { border-bottom-left-radius: .25rem; }
+  .from-user small { color: #8a5a11; }
+  .from-ai { border-bottom-right-radius: .25rem; }
+  .emphasized { border: 2px solid #2f7196; }
+  .final-answer { border: 2px solid #28715d; }
+  .card-note { margin: auto 0 0; color: #526159; font-size: .78rem; font-weight: 700; }
+  .review-chips { display: grid; gap: .45rem; }
+  .review-chips span { padding: .5rem .6rem; border-radius: .7rem; background: white; font-size: .78rem; font-weight: 800; }
+  .review-chips span::before { margin-right: .35rem; content: "●"; }
+  .review-chips .missing::before { color: #b84a35; }
+  .review-chips .warning::before { color: #d99a1e; }
+  .result-checks { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; }
+  .result-checks span { color: #28715d; font-size: .72rem; font-weight: 850; }
+  @media (max-width: 800px) {
+    .prompt-flow { grid-template-columns: 1fr; }
+    .prompt-flow > b { rotate: 90deg; text-align: center; }
+    .objective-intents, .context-grid, .revision-story { grid-template-columns: 1fr 1fr; }
+    .context-showcase { grid-template-columns: 1fr; }
+    .context-grid article:last-child { grid-column: 1 / -1; }
+    .decision-grid { grid-template-columns: 1fr; }
+    .revision-card { min-height: 0; }
+    .revision-card::after { display: none !important; }
+  }
+  @media (max-width: 560px) {
+    .objective-intents, .context-grid, .effort-scale, .revision-story { grid-template-columns: 1fr; }
+    .context-grid article:last-child { grid-column: auto; }
+    .goal-frame { justify-content: flex-start; }
+  }
+</style>

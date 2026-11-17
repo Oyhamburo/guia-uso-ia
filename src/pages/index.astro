@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ExpeditionMap from "../components/ExpeditionMap.astro";
+---
+
+<BaseLayout
+  title="Expedición IA"
+  description="Una guía visual, divertida y práctica para aprender a usar inteligencia artificial con criterio, desde cero hasta conceptos técnicos."
+  current="home"
+>
+  <main id="contenido" class="map-home">
+    <div class="map-shell">
+      <ExpeditionMap />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .map-home { padding: clamp(.55rem, 2vw, 1.25rem) 0 3rem; }
+  .map-shell { width: min(1440px, calc(100% - clamp(.75rem, 2vw, 2rem))); margin-inline: auto; }
+</style>

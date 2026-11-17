@@ -1,0 +1,365 @@
+---
+import DinoAvatar from "./DinoAvatar.astro";
+
+const questions = [
+  {
+    prompt: "Cuando un LLM escribe una respuesta, ¿qué hace en cada paso?",
+    options: [
+      "Busca una frase completa que ya estaba guardada.",
+      "Predice qué fragmento de texto probablemente sigue.",
+      "Comprueba automáticamente todos los hechos.",
+      "Piensa y recuerda igual que una persona."
+    ],
+    correct: 1,
+    explanation: "Un LLM construye la respuesta token a token. Que una continuación sea probable no significa que sea verdadera."
+  },
+  {
+    prompt: "¿Cuál de estos pedidos le da un objetivo más claro a la IA?",
+    options: [
+      "Escribí algo lindo sobre una actividad.",
+      "Necesito ayuda con un mensaje.",
+      "Prepará una invitación de WhatsApp, de hasta 80 palabras, para familias que no conocen la actividad.",
+      "Hacelo perfecto y que suene inteligente."
+    ],
+    correct: 2,
+    explanation: "Un objetivo útil dice qué necesitás, para quién es y qué forma debería tener el resultado."
+  },
+  {
+    prompt: "Querés una explicación para personas que recién empiezan. ¿Qué contexto ayuda más?",
+    options: [
+      "La audiencia no tiene conocimientos técnicos y dispone de cinco minutos.",
+      "Usá toda la información posible.",
+      "Que la explicación sea muy buena.",
+      "Agregá todo lo que sepas del tema."
+    ],
+    correct: 0,
+    explanation: "El contexto útil cambia la respuesta: audiencia, material disponible y límites concretos pesan más que acumular datos."
+  },
+  {
+    prompt: "Una respuesta de IA recomienda cambiar una medicación. ¿Cuál es el próximo paso responsable?",
+    options: [
+      "Aplicar el cambio porque la respuesta parece segura.",
+      "Pedirle que responda con más confianza.",
+      "Compartir más datos personales hasta que confirme.",
+      "Verificarlo con una persona profesional antes de actuar."
+    ],
+    correct: 3,
+    explanation: "En una decisión de alto impacto, la salida de la IA es un insumo: hace falta evidencia y una persona calificada."
+  },
+  {
+    prompt: "¿Cuál describe mejor una capacidad disponible hoy?",
+    options: [
+      "Puede resumir y analizar documentos, pero conviene revisar cifras y omisiones.",
+      "Puede saber siempre qué es verdad sin consultar fuentes.",
+      "Un robot doméstico general ya resuelve cualquier tarea con fiabilidad.",
+      "Puede reemplazar cualquier decisión humana sin supervisión."
+    ],
+    correct: 0,
+    explanation: "Crear y analizar ya es cotidiano. Disponible no significa infalible: revisar sigue siendo parte de la tarea."
+  }
+] as const;
+
+const letters = ["A", "B", "C", "D"] as const;
+---
+
+<section class="trivia-trail" data-trivia-trail data-mood="thinking" aria-labelledby="trivia-trail-title">
+  <div class="ambient-leaves" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+  <aside class="dino-guide" aria-label="Bruna acompaña la trivia">
+    <div class="dino-stage">
+      <div class="dino-reaction dino-thinking"><DinoAvatar name="bruna" mood="thinking" size="medium" /></div>
+      <div class="dino-reaction dino-alert"><DinoAvatar name="bruna" mood="alert" size="medium" /></div>
+      <div class="dino-reaction dino-celebrating"><DinoAvatar name="bruna" mood="celebrating" size="medium" /></div>
+      <div class="confetti" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="guide-bubble">
+      <strong>Bruna</strong>
+      <p data-guide-message>Seguí las huellas. Cada respuesta trae una pista nueva.</p>
+    </div>
+  </aside>
+
+  <div class="trivia-board">
+    <header class="trivia-heading">
+      <div>
+        <p>Ronda rápida</p>
+        <h3 id="trivia-trail-title">Elegí la huella correcta</h3>
+      </div>
+      <div class="footprint-progress" data-progress aria-label={`Primera huella de ${questions.length}`}>
+        {questions.map((_, index) => (
+          <span data-step={index} data-state={index === 0 ? "current" : "waiting"} aria-hidden="true">●</span>
+        ))}
+      </div>
+    </header>
+
+    <div class="question-stage" data-question-stage>
+      {questions.map((question, questionIndex) => (
+        <article
+          class="question-card"
+          data-question={questionIndex}
+          data-correct={question.correct}
+          data-explanation={question.explanation}
+          hidden={questionIndex !== 0}
+        >
+          <p class="trail-position">Huella {questionIndex + 1} de {questions.length}</p>
+          <h4 id={`trivia-question-${questionIndex}`}>{question.prompt}</h4>
+          <div class="answer-grid" role="group" aria-labelledby={`trivia-question-${questionIndex}`}>
+            {question.options.map((option, optionIndex) => (
+              <button type="button" class="answer-card" data-option={optionIndex} aria-pressed="false">
+                <span class="answer-letter" aria-hidden="true">{letters[optionIndex]}</span>
+                <span>{option}</span>
+              </button>
+            ))}
+          </div>
+          <div class="feedback" data-feedback hidden tabindex="-1" aria-live="polite"></div>
+          <button type="button" class="next-question" data-next hidden>
+            {questionIndex === questions.length - 1 ? "Llegar al campamento" : "Seguir la próxima huella"}
+            <span aria-hidden="true">→</span>
+          </button>
+        </article>
+      ))}
+    </div>
+
+    <section class="trail-finish" data-finish hidden tabindex="-1" aria-labelledby="trail-finish-title">
+      <span class="finish-badge" aria-hidden="true">🦕</span>
+      <p>Campamento alcanzado</p>
+      <h4 id="trail-finish-title">¡Recorriste todas las huellas!</h4>
+      <p>No hacía falta memorizar: comparaste ideas, miraste el criterio y aprendiste con cada explicación.</p>
+      <button type="button" data-restart><span aria-hidden="true">↺</span> Recorrer otra vez</button>
+    </section>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-trivia-trail]").forEach((game) => {
+    const questions = [...game.querySelectorAll<HTMLElement>("[data-question]")];
+    const steps = [...game.querySelectorAll<HTMLElement>("[data-step]")];
+    const progress = game.querySelector<HTMLElement>("[data-progress]");
+    const questionStage = game.querySelector<HTMLElement>("[data-question-stage]");
+    const finish = game.querySelector<HTMLElement>("[data-finish]");
+    const restart = game.querySelector<HTMLButtonElement>("[data-restart]");
+    const guideMessage = game.querySelector<HTMLElement>("[data-guide-message]");
+    if (!questions.length || !progress || !questionStage || !finish || !restart || !guideMessage) return;
+
+    let current = 0;
+    let hasCompleted = false;
+
+    const updateProgress = () => {
+      steps.forEach((step, index) => {
+        step.dataset.state = index < current ? "visited" : index === current ? "current" : "waiting";
+      });
+      progress.setAttribute("aria-label", `Huella ${Math.min(current + 1, questions.length)} de ${questions.length}`);
+    };
+
+    const showQuestion = (index: number) => {
+      current = index;
+      questions.forEach((question, questionIndex) => question.hidden = questionIndex !== current);
+      game.dataset.mood = "thinking";
+      guideMessage.textContent = "Mirá las opciones con calma. La explicación también es parte del juego.";
+      updateProgress();
+      questions[current]?.querySelector<HTMLButtonElement>("[data-option]")?.focus({ preventScroll: true });
+    };
+
+    questions.forEach((question, questionIndex) => {
+      const answers = [...question.querySelectorAll<HTMLButtonElement>("[data-option]")];
+      const feedback = question.querySelector<HTMLElement>("[data-feedback]");
+      const next = question.querySelector<HTMLButtonElement>("[data-next]");
+      if (!feedback || !next) return;
+
+      answers.forEach((answer) => {
+        answer.addEventListener("click", () => {
+          if (question.dataset.answered === "true") return;
+          question.dataset.answered = "true";
+          const picked = Number(answer.dataset.option);
+          const correct = Number(question.dataset.correct);
+          const isCorrect = picked === correct;
+          const correctText = answers[correct]?.querySelector("span:last-child")?.textContent?.trim() ?? "la opción marcada en verde";
+
+          answers.forEach((option) => {
+            const optionIndex = Number(option.dataset.option);
+            option.disabled = true;
+            option.setAttribute("aria-pressed", String(option === answer));
+            if (optionIndex === correct) option.dataset.state = "correct";
+          });
+          if (!isCorrect) answer.dataset.state = "retry";
+
+          feedback.hidden = false;
+          feedback.dataset.state = isCorrect ? "success" : "learn";
+          feedback.innerHTML = isCorrect
+            ? `<strong>¡Esa es la huella!</strong> ${question.dataset.explanation ?? ""}`
+            : `<strong>Miremos la pista.</strong> La respuesta correcta era: “${correctText}”<br>${question.dataset.explanation ?? ""}`;
+          next.hidden = false;
+          game.dataset.mood = isCorrect ? "celebrating" : "alert";
+          guideMessage.textContent = isCorrect
+            ? "¡Bien visto! Guardemos esa pista para el camino."
+            : "Equivocarse también descubre huellas. Leé la pista y seguimos.";
+          feedback.focus({ preventScroll: true });
+        });
+      });
+
+      next.addEventListener("click", () => {
+        if (questionIndex < questions.length - 1) {
+          showQuestion(questionIndex + 1);
+          return;
+        }
+
+        current = questions.length;
+        questions.forEach((item) => item.hidden = true);
+        questionStage.hidden = true;
+        finish.hidden = false;
+        game.dataset.mood = "celebrating";
+        guideMessage.textContent = "¡Llegamos! Cada explicación queda lista para usar en la próxima decisión.";
+        steps.forEach((step) => step.dataset.state = "visited");
+        progress.setAttribute("aria-label", "Recorrido completo");
+        finish.focus({ preventScroll: true });
+        if (!hasCompleted) {
+          hasCompleted = true;
+          game.dispatchEvent(new CustomEvent("game:complete", { bubbles: true }));
+        }
+      });
+    });
+
+    restart.addEventListener("click", () => {
+      questions.forEach((question) => {
+        delete question.dataset.answered;
+        question.querySelectorAll<HTMLButtonElement>("[data-option]").forEach((answer) => {
+          answer.disabled = false;
+          answer.setAttribute("aria-pressed", "false");
+          delete answer.dataset.state;
+        });
+        const feedback = question.querySelector<HTMLElement>("[data-feedback]");
+        const next = question.querySelector<HTMLButtonElement>("[data-next]");
+        if (feedback) {
+          feedback.hidden = true;
+          feedback.textContent = "";
+          delete feedback.dataset.state;
+        }
+        if (next) next.hidden = true;
+      });
+      finish.hidden = true;
+      questionStage.hidden = false;
+      showQuestion(0);
+    });
+
+    updateProgress();
+  });
+</script>
+
+<style>
+  .trivia-trail {
+    --trail-ink: #20302b;
+    --trail-green: #176b55;
+    --trail-violet: #6941a5;
+    --trail-amber: #d99a1e;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(210px, .72fr) minmax(0, 1.7fr);
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1rem, 3vw, 2rem);
+    border: 2px solid #c8b6df;
+    border-radius: 2rem;
+    background:
+      radial-gradient(circle at 8% 12%, rgb(217 154 30 / 16%), transparent 25%),
+      radial-gradient(circle at 94% 82%, rgb(23 107 85 / 13%), transparent 28%),
+      linear-gradient(145deg, #f7f0ff, #fffdf5 55%, #eef8f2);
+    box-shadow: 0 22px 60px rgb(32 48 43 / 12%);
+    color: var(--trail-ink);
+  }
+
+  .ambient-leaves { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .ambient-leaves i { position: absolute; width: 12px; height: 7px; border-radius: 100% 0 100% 0; background: #79a97f; opacity: .28; animation: leaf-drift 8s ease-in-out infinite; }
+  .ambient-leaves i:nth-child(1) { left: 7%; top: 8%; rotate: 18deg; }
+  .ambient-leaves i:nth-child(2) { right: 11%; top: 13%; rotate: -28deg; animation-delay: -2s; }
+  .ambient-leaves i:nth-child(3) { left: 41%; bottom: 8%; rotate: 55deg; animation-delay: -5s; }
+  .ambient-leaves i:nth-child(4) { right: 4%; bottom: 25%; rotate: -8deg; animation-delay: -7s; }
+
+  .dino-guide { align-self: center; display: grid; justify-items: center; gap: .55rem; }
+  .dino-stage { position: relative; display: grid; width: min(100%, 245px); min-height: 190px; place-items: end center; }
+  .dino-reaction { grid-area: 1 / 1; width: 100%; transition: opacity 180ms ease, transform 220ms ease; }
+  .dino-alert, .dino-celebrating { opacity: 0; transform: scale(.9); pointer-events: none; }
+  .trivia-trail[data-mood="alert"] .dino-thinking,
+  .trivia-trail[data-mood="celebrating"] .dino-thinking { opacity: 0; transform: scale(.9); }
+  .trivia-trail[data-mood="alert"] .dino-alert,
+  .trivia-trail[data-mood="celebrating"] .dino-celebrating { opacity: 1; transform: scale(1); }
+
+  .guide-bubble { position: relative; max-width: 27ch; padding: .8rem .9rem; border: 2px solid var(--trail-ink); border-radius: 1rem; background: white; box-shadow: 4px 5px 0 var(--trail-ink); font-size: .82rem; line-height: 1.35; }
+  .guide-bubble::before { content: ""; position: absolute; top: -9px; left: 48%; width: 14px; height: 14px; rotate: 45deg; border-top: 2px solid var(--trail-ink); border-left: 2px solid var(--trail-ink); background: white; }
+  .guide-bubble strong { margin-right: .28rem; color: var(--trail-violet); }
+  .guide-bubble p { display: inline; margin: 0; }
+
+  .confetti { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+  .confetti i { position: absolute; left: 50%; top: 28%; width: 8px; height: 12px; border-radius: 3px; opacity: 0; background: var(--trail-amber); }
+  .confetti i:nth-child(2n) { background: #c9573f; }
+  .confetti i:nth-child(3n) { background: #2f7196; }
+  .trivia-trail[data-mood="celebrating"] .confetti i { animation: confetti-pop 700ms ease-out both; }
+  .confetti i:nth-child(2) { --x: 52px; --y: -42px; animation-delay: 40ms !important; }
+  .confetti i:nth-child(3) { --x: -58px; --y: -28px; animation-delay: 80ms !important; }
+  .confetti i:nth-child(4) { --x: 82px; --y: 5px; animation-delay: 120ms !important; }
+  .confetti i:nth-child(5) { --x: -84px; --y: 8px; animation-delay: 160ms !important; }
+  .confetti i:nth-child(6) { --x: 30px; --y: 36px; animation-delay: 200ms !important; }
+
+  .trivia-board { min-width: 0; padding: clamp(.9rem, 2.5vw, 1.35rem); border: 1px solid rgb(105 65 165 / 19%); border-radius: 1.45rem; background: rgb(255 255 255 / 88%); backdrop-filter: blur(10px); }
+  .trivia-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+  .trivia-heading p { margin: 0; color: var(--trail-violet); font-size: .7rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+  .trivia-heading h3 { margin: .15rem 0 0; font-size: clamp(1.45rem, 3vw, 2.25rem); line-height: 1; }
+  .footprint-progress { display: flex; align-items: center; gap: .35rem; padding: .45rem .55rem; border-radius: 999px; background: #efe8f8; }
+  .footprint-progress span { color: #c9bdcf; font-size: .78rem; transition: color 180ms ease, transform 180ms ease; }
+  .footprint-progress span[data-state="current"] { color: var(--trail-amber); transform: scale(1.35); }
+  .footprint-progress span[data-state="visited"] { color: var(--trail-green); }
+
+  .question-card { animation: card-arrive 360ms ease both; }
+  .trail-position { margin: 0 0 .45rem; color: #526159; font-size: .78rem; font-weight: 850; }
+  .question-card h4, .trail-finish h4 { max-width: 29ch; margin: 0 0 1rem; font-size: clamp(1.2rem, 2.6vw, 1.75rem); line-height: 1.15; }
+  .answer-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+  .answer-card { min-height: 76px; display: grid; grid-template-columns: 34px 1fr; gap: .7rem; align-items: center; padding: .75rem; border: 1px solid #d7d0c5; border-radius: 1rem; background: #fffdf8; color: var(--trail-ink); font: inherit; font-size: .86rem; font-weight: 750; line-height: 1.3; text-align: left; cursor: pointer; transition: translate 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease; }
+  .answer-card:hover:not(:disabled) { translate: 0 -3px; border-color: var(--trail-violet); box-shadow: 0 7px 16px rgb(105 65 165 / 12%); }
+  .answer-card:focus-visible, .next-question:focus-visible, .trail-finish button:focus-visible { outline: 3px solid #2f7196; outline-offset: 3px; }
+  .answer-card:disabled { cursor: default; opacity: .64; }
+  .answer-card[data-state="correct"] { border-color: #3e8966; background: #e5f5eb; box-shadow: inset 0 0 0 1px #3e8966; opacity: 1; }
+  .answer-card[data-state="retry"] { border-color: #c9573f; background: #fff0e8; animation: answer-shake 300ms ease; opacity: 1; }
+  .answer-letter { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 10px; background: var(--trail-ink); color: white; font-size: .78rem; font-weight: 950; }
+  .answer-card[data-state="correct"] .answer-letter { background: var(--trail-green); }
+  .answer-card[data-state="retry"] .answer-letter { background: #a64230; }
+
+  .feedback { margin-top: .8rem; padding: .8rem .9rem; border-left: 5px solid var(--trail-green); border-radius: .75rem; background: #e8f5ed; color: #174c38; font-size: .88rem; line-height: 1.4; }
+  .feedback[data-state="learn"] { border-color: var(--trail-amber); background: #fff4dc; color: #654605; }
+  .next-question, .trail-finish button { min-height: 44px; display: inline-flex; align-items: center; gap: .5rem; margin-top: .9rem; padding: .7rem .95rem; border: 0; border-radius: 999px; background: var(--trail-violet); color: white; font: inherit; font-weight: 900; cursor: pointer; }
+  .next-question:hover, .trail-finish button:hover { filter: brightness(.94); }
+
+  .trail-finish { min-height: 360px; display: grid; place-items: center; align-content: center; padding: clamp(1rem, 4vw, 2rem); text-align: center; animation: card-arrive 420ms ease both; }
+  .finish-badge { display: grid; width: 72px; height: 72px; place-items: center; border-radius: 24px; background: #efe8f8; font-size: 2.4rem; rotate: -4deg; box-shadow: 0 8px 0 #d5c4e7; }
+  .trail-finish > p:first-of-type { margin: 1.2rem 0 .35rem; color: var(--trail-green); font-size: .75rem; font-weight: 950; letter-spacing: .1em; text-transform: uppercase; }
+  .trail-finish h4 { margin-bottom: .55rem; }
+  .trail-finish h4 + p { max-width: 48ch; margin: 0; color: #526159; }
+  [hidden] { display: none !important; }
+
+  @keyframes card-arrive { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes answer-shake { 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-2px); } }
+  @keyframes confetti-pop { 0% { opacity: 0; transform: translate(0, 0) rotate(0); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--x, -36px), var(--y, -52px)) rotate(220deg); } }
+  @keyframes leaf-drift { 50% { translate: 0 12px; rotate: 28deg; } }
+
+  @media (max-width: 760px) {
+    .trivia-trail { grid-template-columns: 1fr; }
+    .dino-guide { grid-template-columns: 110px minmax(0, 1fr); justify-items: stretch; }
+    .dino-stage { width: 110px; min-height: 96px; }
+    .guide-bubble { align-self: center; max-width: none; }
+    .guide-bubble::before { top: 45%; left: -9px; border-top: 0; border-bottom: 2px solid var(--trail-ink); }
+  }
+  @media (max-width: 560px) {
+    .trivia-trail { padding: .75rem; border-radius: 1.4rem; }
+    .trivia-board { padding: .85rem; }
+    .trivia-heading { align-items: flex-start; }
+    .footprint-progress { gap: .25rem; padding: .4rem; }
+    .answer-grid { grid-template-columns: 1fr; }
+    .answer-card { min-height: 64px; }
+    .dino-guide { grid-template-columns: 82px minmax(0, 1fr); }
+    .dino-stage { width: 82px; min-height: 74px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-leaves i, .question-card, .trail-finish, .answer-card[data-state="retry"],
+    .trivia-trail[data-mood="celebrating"] .confetti i { animation: none; }
+    .answer-card, .dino-reaction, .footprint-progress span { transition: none; }
+    .answer-card:hover:not(:disabled) { translate: 0; }
+  }
+</style>

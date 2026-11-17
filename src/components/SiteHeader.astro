@@ -1,0 +1,197 @@
+---
+interface Props {
+  current?: "home" | "parte-1" | "juegos" | "parte-2" | "parte-3";
+  showPresentation?: boolean;
+}
+
+const { current = "home", showPresentation = true } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (path: string) => `${base}${path.replace(/^\//, "")}`;
+---
+
+<header class="site-header">
+  <nav class="top-nav wrap" aria-label="Navegación principal">
+    <a class="home-link" href={`${href("")}#mapa`} aria-current={current === "home" ? "page" : undefined}>
+      <span class="brand">
+        <span class="brand-footprint" aria-hidden="true">◆</span>
+        <span><strong>Expedición IA</strong><small>Aprender sin perder el criterio</small></span>
+      </span>
+      <span class="map-cta"><span aria-hidden="true">⌂</span> Mapa del recorrido</span>
+    </a>
+    {showPresentation && (
+      <button
+        class="presentation-toggle"
+        type="button"
+        data-presentation-toggle
+        aria-pressed="false"
+        aria-label="Activar modo presentación"
+        title="Mostrar esta guía como diapositivas"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="13" rx="2"></rect>
+          <path d="M8 21h8M12 17v4"></path>
+          <path d="m10 8 5 2.5-5 2.5Z" class="play"></path>
+        </svg>
+        <span data-presentation-toggle-label>Presentar</span>
+      </button>
+    )}
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    border-bottom: 1px solid rgb(255 255 255 / 14%);
+    background: rgb(23 44 58 / 94%);
+    box-shadow: 0 6px 20px rgb(23 44 58 / 12%);
+    backdrop-filter: blur(14px);
+  }
+
+  .top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 74px;
+  }
+
+  .home-link {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    color: white;
+    text-decoration: none;
+  }
+
+  .home-link:hover .map-cta {
+    border-color: #ffe1a0;
+    background: rgb(245 189 67 / 16%);
+    color: #fff4c4;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .brand-footprint {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    rotate: 45deg;
+    border: 2px solid #ffe1a0;
+    border-radius: 13px 18px 13px 18px;
+    background: #f5bd43;
+    color: var(--night);
+    box-shadow: 3px 3px 0 #071720;
+  }
+
+  .brand > span:last-child {
+    display: grid;
+    line-height: 1.1;
+  }
+
+  .brand strong {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+  }
+
+  .brand small {
+    margin-top: 0.2rem;
+    color: #cadad4;
+    font-size: 0.72rem;
+  }
+
+  .map-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    padding: 0.55rem 0.85rem;
+    border: 1px solid rgb(255 255 255 / 22%);
+    border-radius: 999px;
+    color: #e8f0ed;
+    font-size: 0.86rem;
+    font-weight: 760;
+    white-space: nowrap;
+    transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+  }
+
+  .home-link:focus-visible {
+    outline: 3px solid #ffe1a0;
+    outline-offset: 4px;
+  }
+
+  .presentation-toggle {
+    display: inline-flex;
+    min-height: 50px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+    padding: .75rem 1.15rem;
+    border: 2px solid #ffe1a0;
+    border-radius: 1rem;
+    background: #f5bd43;
+    box-shadow: 3px 4px 0 #071720;
+    color: #172c3a;
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
+    transition: translate 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  }
+
+  .presentation-toggle svg {
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .presentation-toggle svg .play { fill: currentColor; stroke: none; }
+  .presentation-toggle:hover { translate: 0 -2px; box-shadow: 3px 6px 0 #071720; background: #ffd269; }
+  .presentation-toggle[aria-pressed="true"] { border-color: #b8f0e0; background: #176b55; color: white; }
+  .presentation-toggle:focus-visible { outline: 3px solid white; outline-offset: 4px; }
+
+  @media (max-width: 760px) {
+    .top-nav {
+      min-height: 0;
+      padding-block: 0.65rem;
+    }
+
+    .brand small {
+      display: none;
+    }
+
+    .map-cta {
+      display: none;
+    }
+
+    .presentation-toggle {
+      min-height: 46px;
+      gap: .45rem;
+      padding: .62rem .78rem;
+      border-radius: .85rem;
+      font-size: .78rem;
+    }
+
+    .presentation-toggle svg {
+      width: 1.15rem;
+      height: 1.15rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .map-cta, .presentation-toggle { transition: none; }
+  }
+</style>
