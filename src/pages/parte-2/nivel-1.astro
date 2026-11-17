@@ -15,7 +15,7 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
     </LevelHero>
 
     <section id="agente" class="visual-section" aria-labelledby="agente-title">
-      <header><span class="step">01 · La idea completa</span><h2 id="agente-title">¿Cuándo deja de responder una vez y empieza a actuar?</h2></header>
+      <header><span class="step">01 · La idea completa</span><h2 id="agente-title">¿Qué hace que una IA sea un agente?</h2></header>
       <div class="definition-board">
         <article class="single-turn"><span class="concept-mark" aria-hidden="true">◇</span><div><p class="concept-label">Una salida</p><h3>El modelo responde</h3><p>Recibe contexto y produce texto, datos o una propuesta de acción.</p></div></article>
         <span class="versus" aria-hidden="true">≠</span>
@@ -34,42 +34,86 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
     </section>
 
     <section id="ciclo" class="visual-section" aria-labelledby="ciclo-title">
-      <header><span class="step">03 · La misión en movimiento</span><h2 id="ciclo-title">El agente avanza con evidencia</h2></header>
+      <header><span class="step">03 · Mirá el conjunto</span><h2 id="ciclo-title">El agente es todo el sistema</h2><p>Incluye el modelo, las tools y el harness. No son tres agentes: son piezas del mismo agente.</p></header>
       <AgentLoop />
     </section>
 
     <section id="harness" class="visual-section" aria-labelledby="harness-title">
-      <header><span class="step">04 · La mesa de trabajo</span><h2 id="harness-title">El harness organiza y limita</h2><p>No “piensa” por el modelo. Prepara y controla el entorno donde ocurre el ciclo.</p></header>
-      <div class="harness-explainer">
-        <article><span class="tag violet">Capa de orquestación</span><h3>No es un archivo universal</h3><p>Puede ser un script, una clase <code>Runner</code> o varios módulos. Conecta las piezas; no es el modelo ni las tools.</p><ul><li><b>Contexto</b> que recibe el modelo</li><li><b>Estado</b> de lo que ya ocurrió</li><li><b>Tools</b> disponibles</li><li><b>Permisos</b> y aprobaciones</li></ul></article>
-        <div class="runner-card" role="group" aria-label="Bucle simplificado del harness"><span>RUNNER · VERSIÓN SIMPLE</span><ol><li><span class="runner-number" aria-hidden="true">1</span><span>Preparar contexto</span></li><li><span class="runner-number" aria-hidden="true">2</span><span>Llamar al modelo</span></li><li><span class="runner-number" aria-hidden="true">3</span><span><b>Si pide una tool:</b> validar y ejecutar</span></li><li><span class="runner-number" aria-hidden="true">4</span><span>Guardar el resultado</span></li><li><span class="runner-number" aria-hidden="true">5</span><span>Repetir o terminar</span></li></ol></div>
-      </div>
-      <div class="client-row" role="group" aria-label="Ejemplos de clientes"><div><span aria-hidden="true">▣</span><b>Web</b><small>conversación y servicios</small></div><div><span aria-hidden="true">◫</span><b>Desktop</b><small>archivos y sistema local</small></div><div><span aria-hidden="true">›_</span><b>Terminal</b><small>repositorios y comandos</small></div></div>
-      <p class="under-note">El mismo modelo puede sentirse distinto: cada producto puede rodearlo con otro harness, otras tools y otros permisos.</p>
+      <header><span class="step">04 · Zoom dentro del mismo agente</span><h2 id="harness-title">El harness es una parte interna</h2><p>Agente es el sistema completo. Harness es la infraestructura que conecta sus piezas y controla la ejecución.</p></header>
+      <AgentLoop detail />
+      <p class="under-note">No es otro cerebro. Puede aplicar reglas fijas y servir a una sola respuesta: tener harness no basta para ser agente.</p>
     </section>
 
     <section id="reglas" class="visual-section" aria-labelledby="reglas-title">
-      <header><span class="step">05 · Métodos y límites</span><h2 id="reglas-title">No todo lo que guía es un guardrail</h2></header>
-      <div class="guidance-grid">
-        <article><span class="piece-icon sky" aria-hidden="true">→</span><h3>Instrucción</h3><p>Indica qué debe hacer o respetar.</p><small>“Entregá tres riesgos con evidencia.”</small></article>
-        <article><span class="piece-icon violet" aria-hidden="true">◇</span><h3>Skill</h3><p>Aporta un método reutilizable.</p><small>Cómo revisar un PDF o preparar un informe.</small></article>
-        <article><span class="piece-icon amber" aria-hidden="true">▣</span><h3>Guardrail</h3><p>Reduce lo permitido o exige una condición.</p><small>No publicar sin aprobación humana.</small></article>
+      <header><span class="step">05 · El harness también protege</span><h2 id="reglas-title">Guardrails dentro del harness</h2><p>Un guardrail es una protección que limita una acción o exige una condición. El harness incorpora estos controles antes de ejecutar una tool.</p></header>
+      <div class="definition" role="group" aria-label="Ejemplo de un guardrail de aprobación aplicado por el harness">
+        <p class="concept-label">Del PDF al resumen · publicar requiere aprobación humana</p>
+        <div class="guidance-grid">
+          <article><h3>Modelo · propone</h3><p>“Ya identifiqué tres riesgos. Quiero publicar el resumen del PDF.”</p></article>
+          <article><h3>Harness · controla</h3><p>Aplica el guardrail: ¿hay aprobación humana para publicar?</p><small><b>Sin aprobación: bloquea la ejecución.</b></small></article>
+          <article><h3>Tool · publica</h3><p>Sin aprobación, el harness no la invoca.</p><small>Con aprobación, puede ejecutarse si también cumple los demás permisos.</small></article>
+        </div>
       </div>
-      <FieldNote summary="Guardrail blando frente a guardrail duro" variant="warning"><div class="note-grid"><p><b>Blando:</b> es una instrucción dentro del contexto. Depende de que el modelo la siga.</p><p><b>Duro:</b> vive fuera del modelo: sandbox, permiso denegado, esquema obligatorio o aprobación humana.</p></div></FieldNote>
-      <FieldNote summary="Excavar más · ¿Dónde viven las instrucciones y las skills?" variant="technical"><p>No existe una ubicación universal. Pueden estar en el repositorio —por ejemplo <code>AGENTS.md</code>, <code>CLAUDE.md</code> o carpetas de skills—, en la configuración personal o incluidas por el producto.</p><p>Esos archivos aportan información al harness: <b>no ejecutan acciones por sí solos</b>. Una tool puede leerlos, pero un <code>.md</code> no es una tool.</p></FieldNote>
+      <p><b>Pedir no es bloquear:</b> escribir “no publiques” en el contexto es guía blanda, no una garantía. El control técnico del harness bloquea la acción fuera del modelo.</p>
+      <FieldNote summary="Guardrail blando frente a control técnico" variant="warning"><div class="note-grid"><p><b>Blando:</b> el modelo recibe una prohibición y debe respetarla; puede fallar.</p><p><b>Técnico:</b> el harness verifica la aprobación antes de llamar a la tool, aunque el modelo insista. Es una protección más fuerte.</p></div><p>No todos los guardrails son permisos ni viven solo en el harness. Acá vemos su función de protección durante la ejecución.</p></FieldNote>
+      <FieldNote summary="¿Y las instrucciones y las skills?" variant="technical"><p>El harness también aporta contexto: <b>instrucciones</b> sobre qué resultado buscar y <b>skills</b> con métodos para revisar el PDF. No equivalen a un bloqueo técnico.</p><p>Pueden venir del repositorio —como <code>AGENTS.md</code> o carpetas de skills— o de la configuración del producto. Esos archivos informan: <b>no ejecutan ni bloquean acciones por sí solos</b>.</p></FieldNote>
+    </section>
+
+    <section id="skills" class="visual-section" aria-labelledby="skills-title">
+      <header><span class="step">06 · Un método reutilizable</span><h2 id="skills-title">¿Qué es una skill?</h2><p>Es un conjunto de instrucciones escritas que guía cómo el modelo aborda una tarea. En nuestra misión: un método para revisar el PDF.</p></header>
+      <figure class="skill-example">
+        <figcaption><b>SKILL.md</b><span>Ejemplo ilustrativo · no se ejecuta como un programa</span></figcaption>
+        <pre aria-label="Ejemplo de contenido de SKILL.md"><code>{`---
+name: revisar-pdf
+description: Revisar riesgos con evidencia del PDF.
+---
+# Método
+1. Pedí leer el PDF con una tool disponible y permitida.
+2. Buscá hasta tres riesgos respaldados por el documento.
+3. Citá las páginas que sostienen cada riesgo.
+4. Si falta información, decilo; no inventes.
+5. Devolvé un resumen breve.`}</code></pre>
+      </figure>
+      <p class="under-note">Al cargarla, el harness aporta su contenido al modelo. No es otra IA, una tool ni un control técnico: <b>guía el trabajo, no ejecuta acciones ni otorga permisos.</b></p>
     </section>
 
     <section id="mcp" class="visual-section" aria-labelledby="mcp-title">
-      <header><span class="step">06 · El puente</span><h2 id="mcp-title">MCP conecta. No piensa.</h2><p>Es una forma común para que una app de IA descubra y use capacidades externas.</p></header>
-      <div class="mcp-bridge" role="group" aria-label="Una aplicación de IA con conexión MCP se comunica con un servidor MCP"><article><span>La que ya usás</span><strong>Tu app de IA</strong><small>ya incluye la conexión MCP</small></article><div class="bridge-protocol"><span aria-hidden="true">⇄</span><b>MCP</b><small>reglas comunes</small></div><article><span>Lo que conectás</span><strong>Servidor MCP</strong><small>ofrece tools · datos · recursos</small></article></div>
-      <p class="mcp-answer"><span aria-hidden="true">✓</span><span><b>¿Tengo que instalar un cliente MCP?</b> Normalmente no. Si la app soporta MCP, esa parte ya viene incorporada.</span></p>
-      <div class="mcp-flow" role="group" aria-label="Ejemplo simple de una conversación mediante MCP"><span><b>1</b>La app pregunta qué hay</span><i aria-hidden="true">→</i><span><b>2</b>El servidor lista capacidades</span><i aria-hidden="true">→</i><span><b>3</b>La app pide usar una</span><i aria-hidden="true">→</i><span><b>4</b>El servidor devuelve el resultado</span></div>
-      <ul class="not-list" aria-label="Qué no es MCP"><li>No es un modelo</li><li>No es un agente</li><li>No conserva el objetivo global</li></ul>
-      <FieldNote summary="Excavar más · Host, cliente y servidor" variant="technical"><div class="mcp-roles"><p><b>Host</b><span>La aplicación completa que usás.</span></p><p><b>Cliente MCP</b><span>La parte interna de esa app que habla MCP. No suele ser otra aplicación.</span></p><p><b>Servidor MCP</b><span>El proceso o servicio que ofrece capacidades.</span></p></div><p class="mcp-transport"><b>¿Cómo se conecta?</b> Un servidor local puede ejecutarse por <code>stdio</code>; uno remoto usa Streamable HTTP y autenticación cuando corresponde.</p></FieldNote>
+      <header><span class="step">07 · Cómo se comunican las piezas</span><h2 id="mcp-title">¿Qué es MCP?</h2><p><b>Model Context Protocol</b> es un protocolo: reglas y formatos de mensajes acordados para que una app de IA y un servicio externo se comuniquen.</p></header>
+      <figure class="document-exchange">
+        <figcaption>Pedís: “Mostrame los nombres de los productos”. El modelo propone esta consulta de lectura: <code>SELECT nombre FROM productos LIMIT 3;</code></figcaption>
+        <div class="document-route" role="group" aria-label="La app envía un pedido por MCP al servidor SQL. El servidor consulta la base de datos con SQL y devuelve las filas a la app por MCP">
+          <article><span class="tag violet">Dentro del agente</span><h3>App / harness</h3><p>Valida la solicitud. Su <b>cliente MCP incorporado</b> envía y recibe los mensajes.</p></article>
+          <div class="protocol-messages"><b>MCP · ida y vuelta</b><p><span>Pedido hacia el servidor →</span><code>{'consultar_sql({sql: "SELECT nombre FROM productos LIMIT 3;"})'}</code></p><p><span>← Respuesta hacia la app</span><strong>Filas: Cuaderno · Lápiz · Regla</strong></p></div>
+          <article><span class="tag teal">Servicio externo</span><h3>Servidor MCP para SQL</h3><p>Ofrece una tool de consulta y conecta con la base.</p><p class="document-source"><b>↓ SQL · consulta</b><br /><b>Base de datos</b><br />Ejecuta el SQL<br /><b>↑ Filas al servidor</b></p></article>
+        </div>
+      </figure>
+      <p class="under-note">La app entrega las filas al modelo. Responde: “Cuaderno, Lápiz y Regla”. <b>La base ejecuta SQL; MCP comunica al cliente con el servidor, no razona ni concede permisos.</b></p>
+      <ul class="not-list" aria-label="Qué no es MCP"><li>No es un modelo, una tool ni un agente</li><li>No todo agente necesita MCP</li></ul>
+      <FieldNote summary="Excavar más · Host, cliente y servidor" variant="technical"><div class="mcp-roles"><p><b>Host</b><span>La app de IA que contiene al cliente.</span></p><p><b>Cliente MCP</b><span>La parte de la app que habla el protocolo con el servidor.</span></p><p><b>Servidor MCP</b><span>El servicio que ofrece la consulta y se conecta a la base de datos.</span></p></div><p class="mcp-transport"><code>consultar_sql</code> es un nombre de ejemplo, no una tool estándar de MCP. El pedido abrevia la llamada; el cliente la convierte en mensajes MCP. Las filas son ilustrativas: sin <code>ORDER BY</code>, SQL no garantiza su orden. La conexión puede ser local por <code>stdio</code> o remota por Streamable HTTP, con autenticación cuando corresponda.</p></FieldNote>
+    </section>
+
+    <section id="repaso" class="visual-section" aria-labelledby="repaso-title">
+      <header><span class="step">08 · Repaso</span><h2 id="repaso-title">Cada pieza, en su lugar</h2></header>
+      <figure class="recap-agent">
+        <figcaption><b>AGENTE · el sistema completo</b><span>Todas estas piezas trabajan hacia un objetivo.</span></figcaption>
+        <div class="recap-pieces" role="group" aria-label="Dentro del agente, el harness conecta al modelo con las herramientas y controla la ejecución">
+          <article class="recap-model"><h3>Modelo</h3><b>Propone y elige</b><p>Usa el contexto y los resultados para decidir cómo seguir.</p></article>
+          <span class="recap-arrow" aria-hidden="true">↔</span>
+          <article class="recap-harness"><h3>Harness</h3><b>Conecta y controla</b><dl><div><dt>Contexto + skill</dt><dd>Aporta instrucciones y el método al modelo cuando se carga la skill.</dd></div><div><dt>Guardrails</dt><dd>Aplica protecciones antes de ejecutar, como exigir aprobación.</dd></div></dl></article>
+          <span class="recap-arrow" aria-hidden="true">↔</span>
+          <article class="recap-tools"><h3>Tools</h3><b>Ejecutan acciones</b><p>Leen archivos o consultan datos. Pueden ser locales o remotas.</p></article>
+        </div>
+        <p class="recap-return">El harness entrega los resultados al modelo: el sistema puede continuar hacia el objetivo.</p>
+      </figure>
+      <div class="recap-protocol" role="group" aria-label="Conexión opcional para usar una tool remota: el cliente de la app se comunica por MCP con un servidor externo">
+        <b>Para una tool remota, una opción es:</b>
+        <p><span>Cliente de la app</span><i aria-hidden="true">↔</i><span><b>MCP</b> · protocolo opcional</span><i aria-hidden="true">↔</i><span>Servidor externo · expone la tool</span></p>
+        <small>No todas las tools usan MCP. La skill guía; el guardrail limita; ninguno es otro cerebro.</small>
+      </div>
     </section>
 
     <section class="quick-check" aria-labelledby="check-title">
-      <div><span class="step">07 · Armá el sistema</span><h2 id="check-title">Una misión, un sistema completo</h2></div>
+      <div><span class="step">09 · Armá el sistema</span><h2 id="check-title">Una misión, un sistema completo</h2></div>
       <div class="system-flow" role="group" aria-label="El harness comunica a la persona con el modelo, media el uso de tools y reúne el resultado"><div><span>Persona</span><i aria-hidden="true">→</i><span>Harness</span><i aria-hidden="true">↔</i><span>Modelo</span></div><div><span>Harness</span><i aria-hidden="true">↔</i><span>Tools</span></div><div><span>Harness</span><i aria-hidden="true">→</i><span>Resultado</span></div></div>
       <div class="exit-questions"><p><b>¿Quién propone?</b><span>Modelo</span></p><p><b>¿Quién ejecuta?</b><span>El entorno, mediante la tool</span></p><p><b>¿Quién conserva estado, arma contexto y aplica permisos?</b><span>Harness</span></p></div>
       <strong>Si el sistema mantiene el objetivo y decide cómo continuar, estás viendo comportamiento de agente.</strong>
@@ -158,6 +202,57 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
   .mcp-flow i { color: #245d7c; font-style: normal; font-weight: 900; }
   .not-list { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin: .65rem 0 0; padding: 0; list-style: none; }
   .not-list li { padding: .5rem .7rem; border-radius: 999px; background: #fff0cc; color: #714c00; font-size: .82rem; font-weight: 850; }
+  #skills .skill-example { margin: 0; border-radius: 1rem; overflow: hidden; background: #20302b; color: #fff; }
+  #skills figcaption { display: flex; flex-wrap: wrap; gap: .35rem 1rem; padding: .7rem 1rem; background: #e8e0f5; color: #4e287f; }
+  #skills figcaption span { font-size: .85rem; }
+  #skills pre { margin: 0; padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font-size: clamp(.9rem, 1.3vw, 1.05rem); line-height: 1.5; }
+  #skills pre code { margin: 0; padding: 0; background: transparent; color: #e5f2eb; }
+  #mcp .document-exchange { margin: 0; padding: 1rem; border: 1px solid #bbd9e7; border-radius: 1.25rem; background: #edf6fa; }
+  #mcp .document-exchange figcaption { margin-bottom: .8rem; color: #245d7c; font-weight: 800; }
+  #mcp .document-route { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: .8rem; align-items: stretch; }
+  #mcp .document-route article { min-width: 0; padding: 1rem; border-radius: .9rem; background: #fff; }
+  #mcp .document-route h3 { font-size: 1.1rem; }
+  #mcp .document-route p { line-height: 1.4; }
+  #mcp .protocol-messages { display: grid; align-content: center; gap: .65rem; min-width: 0; text-align: center; color: #245d7c; }
+  #mcp .protocol-messages p { display: grid; gap: .35rem; margin: 0; padding: .65rem; border-radius: .7rem; background: #dceef6; }
+  #mcp .protocol-messages span { font-size: .85rem; font-weight: 800; }
+  #mcp .protocol-messages code { justify-self: stretch; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .9rem; }
+  #mcp .document-source { margin-top: .65rem; padding: .55rem; border-radius: .65rem; background: #e1f3ea; text-align: center; }
+  :global(body.is-presenting) #skills h2, :global(body.is-presenting) #mcp h2 { font-size: clamp(2.35rem, 4vw, 3.4rem); }
+  :global(body.is-presenting) #skills > header, :global(body.is-presenting) #mcp > header { margin-bottom: .7rem; }
+  @media (max-width: 760px) {
+    #mcp .document-route { grid-template-columns: 1fr; }
+    #mcp .protocol-messages { text-align: left; }
+  }
+  #repaso .recap-agent { margin: 0; padding: 1.1rem; border: 3px solid #6941a5; border-radius: 1.25rem; background: #f4f0fb; }
+  #repaso figcaption { display: grid; gap: .25rem; margin-bottom: .85rem; }
+  #repaso figcaption b { color: #5c358f; }
+  #repaso figcaption span, #repaso article p, #repaso dd { color: #51605a; line-height: 1.35; }
+  #repaso .recap-pieces { display: grid; grid-template-columns: 1fr auto 1.4fr auto 1fr; gap: .65rem; align-items: center; }
+  #repaso article { min-width: 0; padding: 1rem; border-radius: .85rem; }
+  #repaso article h3 { margin-top: 0; }
+  #repaso article p { margin-top: .5rem; }
+  #repaso .recap-model { background: #e8def8; }
+  #repaso .recap-harness { border: 2px solid #176b55; background: #fff; }
+  #repaso .recap-tools { background: #dcefe5; }
+  #repaso dl { display: grid; gap: .6rem; margin: .7rem 0 0; }
+  #repaso dl div { padding: .6rem; border-radius: .6rem; background: #f3f5f4; }
+  #repaso dt { font-weight: 850; }
+  #repaso dd { margin: .2rem 0 0; font-size: .9rem; }
+  #repaso .recap-arrow { color: #176b55; font-size: 1.5rem; }
+  #repaso .recap-return { margin: .85rem 0 0; color: #4e287f; font-weight: 750; }
+  #repaso .recap-protocol { margin-top: .8rem; padding: .8rem 1rem; border-radius: 1rem; background: #edf6fa; color: #245d7c; }
+  #repaso .recap-protocol p { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .5rem 0; }
+  #repaso .recap-protocol span { padding: .4rem .55rem; border-radius: .5rem; background: #fff; }
+  #repaso .recap-protocol i { font-style: normal; }
+  :global(body.is-presenting) #repaso h2 { font-size: clamp(2.35rem, 4vw, 3.4rem); }
+  :global(body.is-presenting) #repaso > header { margin-bottom: .7rem; }
+  @media (max-width: 760px) {
+    #repaso .recap-pieces { grid-template-columns: 1fr; }
+    #repaso .recap-arrow { justify-self: center; transform: rotate(90deg); }
+    #repaso .recap-protocol p { flex-direction: column; align-items: stretch; }
+    #repaso .recap-protocol i { align-self: center; transform: rotate(90deg); }
+  }
   .quick-check { margin: clamp(3rem, 8vw, 6rem) 0 2rem; padding: clamp(1.3rem, 4vw, 2.4rem); border-radius: 1.5rem; background: #172c3a; color: #fff; }
   .quick-check .step { color: #f5c45f; }
   .quick-check h2 { max-width: 22ch; }
@@ -175,8 +270,10 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
   .level-actions .map-link { margin-inline: auto; }
   .level-actions .next { color: #5c358f; }
   a:focus-visible { outline: 3px solid #d99a1e; outline-offset: 4px; }
-  :global(body.is-presenting) #ciclo > header { margin-bottom: .35rem; }
-  :global(body.is-presenting) #ciclo h2 { font-size: clamp(2.35rem, 4vw, 3.4rem); }
+  :global(body.is-presenting) #ciclo > header, :global(body.is-presenting) #harness > header { margin-bottom: .35rem; }
+  :global(body.is-presenting) #ciclo h2, :global(body.is-presenting) #harness h2 { font-size: clamp(2.35rem, 4vw, 3.4rem); }
+  :global(body.is-presenting) #ciclo header p, :global(body.is-presenting) #harness header p { margin: .5rem 0; }
+  :global(body.is-presenting) #harness .under-note { margin-top: .5rem; font-size: .9rem; }
   @media (max-width: 760px) {
     .definition-board, .compare, .concept-notes, .harness-explainer, .client-row, .guidance-grid, .mcp-bridge, .mcp-roles, .note-grid, .exit-questions { grid-template-columns: 1fr; }
     .tool-parts, .harness-explainer ul { grid-template-columns: 1fr; }
