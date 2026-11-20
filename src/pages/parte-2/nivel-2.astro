@@ -185,16 +185,88 @@ const showSpaces = (piece: string) => piece.replaceAll(" ", "␣");
       <p class="source">Referencia: <a href="https://www.trychroma.com/research/context-rot" rel="noreferrer">Context Rot, Chroma Research</a>.</p>
     </section>
 
-    <section class="visual-section" aria-labelledby="compact-title">
-      <header><span class="step">04 · Administrar lo que no entra</span><h2 id="compact-title">No compactes todo de la misma manera</h2><p>Compactar bien es decidir qué debe quedar exacto, qué puede resumirse y qué conviene recuperar sólo cuando haga falta.</p></header>
-      <div class="compact-strategy" role="list" aria-label="Cuatro destinos posibles al compactar contexto">
-        <article role="listitem"><span class="strategy-icon exact" aria-hidden="true">＝</span><h3>Conservar textual</h3><p>Límites, decisiones, cifras, IDs y excepciones.</p></article>
-        <article role="listitem"><span class="strategy-icon summary" aria-hidden="true">≋</span><h3>Resumir</h3><p>Historia, avance y razonamiento ya cerrado.</p></article>
-        <article role="listitem"><span class="strategy-icon discard" aria-hidden="true">×</span><h3>Descartar</h3><p>Repetición y logs que ya no cambian la decisión; lo auditable queda afuera.</p></article>
-        <article role="listitem"><span class="strategy-icon retrieve" aria-hidden="true">↗</span><h3>Recuperar después</h3><p>Archivos y fuentes que una tool puede volver a leer.</p></article>
+    <section id="compactar-contexto" class="visual-section compact-slide" aria-labelledby="compact-title">
+      <header>
+        <span class="step">04 · Hacer espacio</span>
+        <h2 id="compact-title">¿Qué es compactar contexto?</h2>
+        <p>Es reemplazar parte del historial por un resumen que usa <strong>menos tokens</strong> en las próximas llamadas. La ventana no se agranda: queda más espacio libre.</p>
+      </header>
+      <div class="compact-board" data-compact-board>
+        <article class="compact-notes">
+          <span class="compact-label">Antes · Historial</span>
+          <h3>Notas de la expedición</h3>
+          <ul>
+            <li>Probamos el sendero oeste: estaba bloqueado.</li>
+            <li>El sendero este termina en el río.</li>
+            <li>Elegimos seguir por el sendero norte.</li>
+          </ul>
+          <p class="compact-rule">Regla: <mark>«No cruces el río»</mark></p>
+        </article>
+        <div class="compact-demo">
+          <svg viewBox="0 0 240 140" aria-hidden="true" focusable="false">
+            <path d="M16 120H224" stroke="#3b5362" stroke-width="2" stroke-linecap="round" />
+            <path d="M99 70H142m-10-9 10 9-10 9" stroke="#8fd5e9" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            <rect x="22" y="36" width="62" height="76" rx="8" fill="#527985" transform="rotate(-14 53 74)" />
+            <rect x="23" y="32" width="62" height="76" rx="8" fill="#9ec1c7" transform="rotate(12 54 70)" />
+            <rect x="25" y="30" width="62" height="76" rx="8" fill="#edf7fa" />
+            <path d="M36 45H74m-38 10h28m-28 10h35" stroke="#527985" stroke-width="4" stroke-linecap="round" />
+            <rect x="36" y="78" width="39" height="11" rx="4" fill="#f5c45f" />
+            <g data-compact-card>
+              <rect x="155" y="48" width="64" height="50" rx="8" fill="#edf7fa" />
+              <path d="M165 62H202" stroke="#2f7196" stroke-width="4" stroke-linecap="round" />
+              <rect x="165" y="73" width="43" height="11" rx="4" fill="#f5c45f" />
+            </g>
+            <rect data-compact-flight x="25" y="30" width="62" height="76" rx="8" fill="#8fd5e9" />
+          </svg>
+          <button type="button" class="context-replay" data-compact-replay hidden>Ver cómo se compacta</button>
+        </div>
+        <article class="compact-summary">
+          <span class="compact-label">Después · Resumen</span>
+          <h3>Ficha para seguir</h3>
+          <p>Seguir por el sendero norte.</p>
+          <p class="compact-rule">Regla: <mark>«No cruces el río»</mark></p>
+        </article>
       </div>
-      <div class="loss-demo" role="group" aria-label="Ejemplo de una compactación que pierde información crítica"><article><span>Original</span><p>“Publicar el viernes <mark>sólo si Pagos está estable</mark>. Responsable: Ana.”</p></article><span aria-hidden="true">→</span><article><span>Resumen pobre</span><p>“Publicar el viernes.”</p><small>Perdió la condición y la responsable.</small></article></div>
-      <p class="truth warning"><b>Compactar puede perder información.</b> Cuanto más se resume o descarta, más importante es conservar textualmente límites, decisiones y excepciones.</p>
+      <p class="truth warning"><b>Ganás espacio, pero podés perder detalles.</b> Acá ya no figura por qué se descartó el sendero oeste. La regla, en cambio, se conserva textual.</p>
+    </section>
+
+    <section id="riesgo-compactacion" class="visual-section compact-slide" aria-labelledby="compact-loss-title">
+      <header>
+        <span class="step">04B · Lo que se pierde</span>
+        <h2 id="compact-loss-title">¿Y cuál es el problema de esto?</h2>
+        <p>Un resumen puede ser más corto y aun así dejar afuera una regla que cambia la respuesta.</p>
+      </header>
+      <div class="compact-board compact-loss" data-loss-board>
+        <article class="compact-notes">
+          <span class="compact-label">Antes · Historial</span>
+          <h3>Notas de la expedición</h3>
+          <p>El equipo decidió seguir por el sendero norte.</p>
+          <p class="compact-rule">Regla: <mark>«No cruces el río»</mark></p>
+        </article>
+        <div class="compact-demo">
+          <svg viewBox="0 0 240 140" aria-hidden="true" focusable="false">
+            <path d="M16 125H224" stroke="#3b5362" stroke-width="2" stroke-linecap="round" />
+            <path d="M100 62h42m-9-8 9 8-9 8" stroke="#8fd5e9" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            <rect x="22" y="29" width="62" height="76" rx="8" fill="#527985" transform="rotate(-12 53 67)" />
+            <rect x="25" y="26" width="62" height="76" rx="8" fill="#edf7fa" />
+            <path d="M36 42h36m-36 11h27m-27 11h34" stroke="#527985" stroke-width="4" stroke-linecap="round" />
+            <rect x="36" y="77" width="40" height="11" rx="4" fill="#f5c45f" />
+            <rect x="155" y="40" width="64" height="50" rx="8" fill="#fff3ef" />
+            <path d="M165 54h37" stroke="#2f7196" stroke-width="4" stroke-linecap="round" />
+            <rect x="165" y="67" width="43" height="11" rx="4" fill="none" stroke="#a24b3a" stroke-width="2" stroke-dasharray="3 3" />
+            <path d="M185 95v18m-5-6 5 6 5-6" stroke="#ef9a86" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            <rect data-loss-rule x="36" y="77" width="40" height="11" rx="4" fill="#f5c45f" />
+          </svg>
+          <button type="button" class="context-replay" data-loss-replay hidden>Ver qué se pierde</button>
+        </div>
+        <article class="compact-summary">
+          <span class="compact-label">Después · Resumen incompleto</span>
+          <h3>Ficha para seguir</h3>
+          <p>Seguir por el sendero norte.</p>
+          <p class="compact-rule loss-missing">La regla del río quedó afuera.</p>
+        </article>
+      </div>
+      <p class="truth warning"><b>El modelo no recibe el límite.</b> Si en la próxima llamada solo recibe esa ficha, podría sugerir un atajo que cruza el río.</p>
     </section>
 
     <FieldNote summary="Ventanas publicadas: una foto fechada" variant="technical">
@@ -248,6 +320,54 @@ const showSpaces = (piece: string) => piece.replaceAll(" ", "␣");
     });
   }
 
+  const compactBoard = document.querySelector("[data-compact-board]");
+  const compactReplay = compactBoard?.querySelector<HTMLButtonElement>("[data-compact-replay]");
+  const compactFlight = compactBoard?.querySelector<SVGElement>("[data-compact-flight]");
+  const compactCard = compactBoard?.querySelector<SVGElement>("[data-compact-card]");
+  if (compactReplay && compactFlight && compactCard) {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let running: Animation[] = [];
+    const cancelAnimations = () => running.forEach((animation) => animation.cancel());
+    compactReplay.hidden = false;
+    compactReplay.addEventListener("click", () => {
+      if (reducedMotion.matches) return;
+      cancelAnimations();
+      running = [
+        compactFlight.animate([
+          { opacity: .85, transform: "translate(0, 0) scaleY(1)" },
+          { opacity: .85, transform: "translate(130px, 18px) scaleY(.66)", offset: .8 },
+          { opacity: 0, transform: "translate(130px, 18px) scaleY(.66)" }
+        ], { duration: 900, easing: "ease-in-out" }),
+        compactCard.animate([
+          { transform: "scale(1)" }, { transform: "scale(1.09)" }, { transform: "scale(1)" }
+        ], { duration: 360, delay: 700, easing: "ease-out" })
+      ];
+    });
+    reducedMotion.addEventListener("change", () => {
+      if (reducedMotion.matches) cancelAnimations();
+    });
+  }
+
+  const lossBoard = document.querySelector("[data-loss-board]");
+  const lossReplay = lossBoard?.querySelector<HTMLButtonElement>("[data-loss-replay]");
+  const lossRule = lossBoard?.querySelector<SVGElement>("[data-loss-rule]");
+  if (lossReplay && lossRule) {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let drop: Animation | undefined;
+    lossReplay.hidden = false;
+    lossReplay.addEventListener("click", () => {
+      if (reducedMotion.matches) return;
+      drop?.cancel();
+      drop = lossRule.animate([
+        { transform: "translate(0, 0)", opacity: 1 },
+        { transform: "translate(129px, -10px)", opacity: 1, offset: .56 },
+        { transform: "translate(129px, 39px)", opacity: 0 }
+      ], { duration: 1050, easing: "ease-in-out" });
+    });
+    reducedMotion.addEventListener("change", () => {
+      if (reducedMotion.matches) drop?.cancel();
+    });
+  }
 </script>
 
 <style>
@@ -276,7 +396,29 @@ const showSpaces = (piece: string) => piece.replaceAll(" ", "␣");
   .token-flow article + article p { color: #dce6e8; }
   .token-flow article .token-flow-example { margin-top: 1rem; padding: .65rem .85rem; border-radius: .7rem; background: #dff0f6; color: #245d7c; font-weight: 800; }
   .token-flow article + article .token-flow-example { background: rgba(255,255,255,.12); color: #fff; }
-  @media (max-width: 760px) { .token-flow { grid-template-columns: minmax(0, 1fr); } }
+  .visual-section.compact-slide > header { max-width: none; }
+  .compact-slide > header p { max-width: 80ch; }
+  .compact-board { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(9rem, .8fr) minmax(0, 1fr); align-items: stretch; gap: clamp(.65rem, 1.5vw, 1.2rem); padding: clamp(.75rem, 2vw, 1.5rem); border-radius: 1.4rem; background: #172c3a; }
+  .compact-board article { display: flex; flex-direction: column; padding: clamp(.85rem, 2vw, 1.25rem); border-radius: .9rem; background: #edf7fa; }
+  .compact-board .compact-summary { background: #def1e7; }
+  .compact-label { color: #245d7c; font-size: .74rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .compact-summary .compact-label { color: #145c49; }
+  .compact-board h3 { margin: .35rem 0 .45rem; font-size: clamp(1.13rem, 2vw, 1.5rem); }
+  .compact-notes ul { display: grid; gap: .25rem; margin: 0 0 .8rem; padding-inline-start: 1.25rem; }
+  .compact-summary > p:not(.compact-rule) { margin: 0 0 .8rem; }
+  .compact-board .compact-rule { margin: auto 0 0; color: #20302b; font-weight: 800; }
+  .compact-rule mark { padding: .12em .3em; border-radius: .25em; background: #ffe2a8; color: inherit; }
+  .compact-demo { display: grid; align-content: center; justify-items: center; gap: .45rem; }
+  .compact-demo svg { display: block; width: min(100%, 15rem); height: auto; }
+  .compact-loss .compact-summary { background: #fff3ef; }
+  .compact-loss .compact-summary .compact-label, .compact-board .loss-missing { color: #913527; }
+  [data-compact-flight], [data-loss-rule] { opacity: 0; }
+  [data-compact-flight], [data-compact-card] { transform-box: fill-box; }
+  [data-compact-card] { transform-origin: center; }
+  @media (max-width: 760px) {
+    .token-flow, .compact-board { grid-template-columns: minmax(0, 1fr); }
+    .compact-demo svg { width: min(100%, 11rem); }
+  }
   .truth { margin: 1rem 0 0; padding: 1rem 1.15rem; border-left: 4px solid #2f7196; border-radius: 0 1rem 1rem 0; background: #e7f4fa; color: #4f5d58; }.truth.warning { border-color: #d99a1e; background: #fff7e5; }
   .visual-section.context-measure > header { max-width: none; }
   .context-measure > header p { max-width: 68ch; }
@@ -307,6 +449,8 @@ const showSpaces = (piece: string) => piece.replaceAll(" ", "␣");
   @media (min-width: 761px) and (max-height: 760px) {
     :global(body.is-presenting #contenido) > #entrada-modelo[data-presentation-slide] { padding-block: 1.1rem !important; }
     :global(body.is-presenting) .context-measure > header { margin-bottom: .85rem; }
+    :global(body.is-presenting #contenido) > :is(#compactar-contexto, #riesgo-compactacion)[data-presentation-slide] { padding-block: .75rem !important; }
+    :global(body.is-presenting) .compact-slide > header { margin-bottom: .85rem; }
   }
   .token-comparison { margin: 0; }
   .token-comparison figcaption { display: flex; flex-wrap: wrap; gap: .25rem 1rem; justify-content: space-between; margin-bottom: .55rem; }
@@ -327,10 +471,9 @@ const showSpaces = (piece: string) => piece.replaceAll(" ", "␣");
   .budget { display: flex; min-height: 4rem; margin-top: 1rem; overflow: hidden; border-radius: 1rem; }.budget div { display: grid; place-items: center; padding: .5rem; color: #172c3a; font-size: .72rem; font-weight: 900; text-align: center; }.rules{width:15%;background:#c4b5fd}.chat{width:23%;background:#9bd8ea}.files{width:34%;background:#9ed7b5}.tools{width:18%;background:#f5c45f}.output{width:10%;background:#ef9a86}.caption { display: block; margin-top: .4rem; color: #65716d; }
   .position-card { display: grid; grid-template-columns: 1.1fr .9fr; gap: 1.5rem; align-items: center; padding: clamp(1rem, 3vw, 1.6rem); border: 1px solid rgba(47,113,150,.2); border-radius: 1.4rem; background: #f4f9fa; }.curve { padding: .5rem; border-radius: 1rem; background: #fff; }.curve svg { display: block; width: 100%; height: auto; }.curve .axis { fill: none; stroke: #ccd8d4; stroke-width: 2; }.curve .line { fill: none; stroke: #2f7196; stroke-width: 8; stroke-linecap: round; }.curve circle { fill: #6941a5; }.curve circle.risk { fill: #c9573f; }.curve text { fill: #52615c; font-size: 15px; }.position-card h3 { margin: 0; font-size: 1.5rem; }.position-card p, .position-card li { color: #51605a; }.practice-label { display: block; margin-top: .75rem; color: #245d7c; font-size: .76rem; letter-spacing: .06em; text-transform: uppercase; }.caveat { padding: .7rem .8rem; border-radius: .8rem; background: #fff3d6; }.source { color: #65716d; font-size: .83rem; }.source a { color: #245d7c; font-weight: 800; }
   .rot-board { display: grid; grid-template-columns: repeat(3,1fr); gap: .7rem; }.rot-board article { padding: .9rem; border: 1px solid rgba(47,113,150,.17); border-radius: 1.1rem; background: #f7faf9; }.rot-stage { display: block; color: #245d7c; font-size: .7rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }.signal-field { display: flex; flex-wrap: wrap; gap: .32rem; align-content: center; min-height: 7.2rem; margin: .65rem 0; padding: .7rem; border-radius: .85rem; background: #fff; }.signal-field b,.signal-field em,.signal-field i { min-height: 1.6rem; border-radius: .45rem; }.signal-field b,.signal-field em { display: inline-flex; align-items: center; padding: .25rem .45rem; font-size: .7rem; font-style: normal; }.signal-field b { background: #d9f0e4; color: #145c49; }.signal-field em { background: #ffe0d7; color: #913527; }.signal-field i { width: 2.4rem; background: #e5ece9; }.rot-board p { margin: 0; font-size: .85rem; }.problem-compare { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin-top: .75rem; }.problem-compare p { display: grid; gap: .18rem; margin: 0; padding: .7rem .85rem; border-radius: .85rem; background: #edf6fa; }.problem-compare span { color: #51605a; font-size: .82rem; }
-  .compact-strategy { display: grid; grid-template-columns: repeat(4,1fr); gap: .65rem; }.compact-strategy article { min-height: 10rem; padding: .9rem; border: 1px solid rgba(32,48,43,.14); border-radius: 1rem; background: #fff; }.compact-strategy h3 { margin: .55rem 0 .25rem; font-size: 1rem; }.compact-strategy p { margin: 0; font-size: .82rem; }.strategy-icon { display: grid; width: 2.35rem; height: 2.35rem; place-items: center; border-radius: .7rem; font-size: 1.2rem; font-weight: 900; }.strategy-icon.exact { background: #e6def6; color: #5c358f; }.strategy-icon.summary { background: #dff0f6; color: #245d7c; }.strategy-icon.discard { background: #ffe0d7; color: #913527; }.strategy-icon.retrieve { background: #def1e7; color: #145c49; }.loss-demo { display: grid; grid-template-columns: 1fr auto 1fr; gap: .65rem; align-items: center; margin-top: .75rem; }.loss-demo article { min-height: 6.5rem; padding: .8rem 1rem; border-radius: .9rem; background: #f4f7f6; }.loss-demo article > span { color: #245d7c; font-size: .68rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }.loss-demo p { margin: .45rem 0 0; }.loss-demo mark { padding: .05rem .18rem; background: #ffe2a8; color: inherit; }.loss-demo small { display: block; margin-top: .35rem; color: #913527; }.loss-demo > span { color: #245d7c; font-size: 1.3rem; font-weight: 900; }
   .model-windows { display: grid; gap: .5rem; }.model-windows > span { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem .8rem; border-radius: .8rem; background: rgba(47,113,150,.07); }.model-windows small { text-align: right; }
   .quick-check { margin: clamp(3rem, 8vw, 6rem) 0 2rem; padding: clamp(1.3rem, 4vw, 2.4rem); border-radius: 1.5rem; background: #172c3a; color: #fff; }.quick-check .step { color: #8fd5e9; }.quick-check h2 { margin-bottom: 0; }.quick-check strong { color: #f5c45f; }
   .level-actions { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; }.level-actions a { color: #375249; font-weight: 850; }.level-actions .map-link { margin-inline: auto; }.level-actions .next { color: #245d7c; }a:focus-visible { outline: 3px solid #d99a1e; outline-offset: 4px; }
-  :global(body.is-presenting) .token-board>* { min-height: 8.8rem; }:global(body.is-presenting) .signal-field { min-height: 5.5rem; }:global(body.is-presenting) .compact-strategy article { min-height: 8.4rem; }
-  @media(max-width:760px){.token-board,.token-facts,.rot-board,.problem-compare,.compact-strategy,.loss-demo{grid-template-columns:1fr}.loss-demo>span{rotate:90deg;text-align:center}.position-card{grid-template-columns:1fr}.budget{flex-direction:column}.budget div{width:100%!important;min-height:2.5rem}.model-windows>span{display:grid}.model-windows small{text-align:left}.level-actions{flex-direction:column}}
+  :global(body.is-presenting) .token-board>* { min-height: 8.8rem; }:global(body.is-presenting) .signal-field { min-height: 5.5rem; }
+  @media(max-width:760px){.token-board,.token-facts,.rot-board,.problem-compare{grid-template-columns:1fr}.position-card{grid-template-columns:1fr}.budget{flex-direction:column}.budget div{width:100%!important;min-height:2.5rem}.model-windows>span{display:grid}.model-windows small{text-align:left}.level-actions{flex-direction:column}}
 </style>
