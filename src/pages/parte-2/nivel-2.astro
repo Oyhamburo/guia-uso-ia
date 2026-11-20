@@ -6,37 +6,154 @@ import ContextPack from "../../components/ContextPack.astro";
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
+
+const tokenExample = "Los dinosaurios usan IA.";
+const characterPairs = tokenExample.match(/.{1,2}/gu) ?? [];
+// Verified with tiktoken 0.12.0, o200k_base; leading spaces are part of the tokens.
+const realTokens = ["Los", " dinosaur", "ios", " usan", " IA", "."];
+const showSpaces = (piece: string) => piece.replaceAll(" ", "␣");
 ---
 
 <BaseLayout title="T2 · La mochila de contexto" description="Tokens, sesión, peticiones, contexto, posición y compactación explicados visualmente." current="parte-2" theme="technical">
   <main id="contenido" class="tech-level">
     <LevelHero eyebrow="Parte 2 · Nivel técnico 2" title="La mochila de contexto" intro="El modelo no mantiene una conversación abierta por sí mismo. En cada llamada recibe una selección concreta de instrucciones, mensajes, archivos y resultados." dino="bruna" dinoLabel="Bruna ve el mapa completo" guide="Más espacio no significa que cada dato sea igual de visible." tone="sky">
-      <div slot="actions" class="hero-actions"><a href="#mesa">Abrir la mochila ↓</a><a href={href("#mapa")}>Mapa de la expedición</a></div>
+      <div slot="actions" class="hero-actions"><a href="#que-es-contexto">Abrir la mochila ↓</a><a href={href("#mapa")}>Mapa de la expedición</a></div>
     </LevelHero>
 
-    <section id="mesa" class="visual-section" aria-labelledby="mesa-title">
-      <header><span class="step">01 · Guardar no es enviar</span><h2 id="mesa-title">La sesión guarda. El contexto viaja.</h2><p>La aplicación puede conservar mucho más de lo que el modelo recibe en una llamada.</p></header>
-      <div class="session-context" role="group" aria-label="La aplicación combina material guardado, instrucciones y datos recuperados para armar el contexto de una petición y enviarlo al modelo">
-        <article class="session-store"><span class="diagram-label">Vive en la aplicación</span><h3>Sesión</h3><p>Todo lo que la app conserva durante el trabajo.</p><div class="session-items" aria-label="Ejemplos guardados en la sesión"><span>20 mensajes</span><span>3 archivos</span><span>Estado</span><span>Resultados</span></div></article>
-        <div class="request-bridge"><span aria-hidden="true">→</span><b>Petición</b><small>combina lo guardado con instrucciones y datos recuperados</small></div>
-        <article class="context-call"><span class="diagram-label">Viaja en esta llamada</span><h3>Contexto</h3><p>El paquete exacto que la app arma para el modelo.</p><div class="context-items"><span>Instrucciones</span><span>Mensajes elegidos</span><span>Datos recuperados</span></div></article>
-        <span class="arrow" aria-hidden="true">→</span>
-        <article class="model-receives"><span aria-hidden="true">◇</span><h3>Modelo</h3><p>Sólo ve este paquete.</p></article>
-      </div>
-      <p class="truth"><b>En un chat corto pueden parecer iguales, pero no lo son.</b> Algo puede seguir visible en la sesión y no viajar en el contexto actual. Si la aplicación guarda la respuesta, pasa a formar parte de la sesión.</p>
+    <section id="que-es-contexto" class="visual-section" aria-labelledby="context-intro-title">
+      <header>
+        <span class="step">01 · Lo que recibe el modelo</span>
+        <h2 id="context-intro-title">¿Qué es el contexto?</h2>
+        <p>El contexto es toda la información que recibe el modelo para responder en ese momento. Incluye tu pedido y puede incluir mensajes anteriores, instrucciones o partes de un archivo.</p>
+      </header>
+      <figure class="context-example" data-context-example>
+        <figcaption>
+          <h3>Una pregunta en la expedición</h3>
+          <dl>
+            <div><dt>Tu pedido</dt><dd>«¿Por dónde seguimos?»</dd></div>
+            <div><dt>Mapa</dt><dd>Muestra los senderos y el río.</dd></div>
+            <div><dt>Instrucción</dt><dd>«No cruces el río».</dd></div>
+          </dl>
+          <p><strong>La mochila lleva las tres cosas, no solo tu pregunta.</strong></p>
+        </figcaption>
+        <div class="context-illustration">
+          <svg viewBox="0 0 320 220" aria-hidden="true" focusable="false">
+            <defs>
+              <g id="context-question">
+                <rect x="-21" y="-21" width="42" height="42" rx="12" fill="#dff0f6" />
+                <path d="M-9-7h18v12H0l-5 4V5h-4zM-5-1H5" stroke="#245d7c" />
+              </g>
+              <g id="context-map">
+                <rect x="-21" y="-21" width="42" height="42" rx="12" fill="#def1e7" />
+                <path d="m-10-7 7-3 6 3 7-3V7l-7 3-6-3-7 3zM-3-10V7M3-7v17" stroke="#145c49" />
+              </g>
+              <g id="context-rule">
+                <rect x="-21" y="-21" width="42" height="42" rx="12" fill="#fff3d6" />
+                <path d="M-6-10H2l4 4v16H-6zM-2-2H2M-2 3H2" stroke="#754a29" />
+              </g>
+            </defs>
+            <ellipse cx="160" cy="199" rx="70" ry="8" fill="#dff0f6" />
+            <path class="context-trails" d="M48 54Q100 61 147 101M160 54V101M272 54Q220 61 173 101" />
+            <use href="#context-question" x="48" y="31" />
+            <use href="#context-map" x="160" y="31" />
+            <use href="#context-rule" x="272" y="31" />
+            <path d="M107 137a12 12 0 0 0-12 12v24a12 12 0 0 0 12 12m106-48a12 12 0 0 1 12 12v24a12 12 0 0 1-12 12" fill="none" stroke="#245d7c" stroke-width="6" />
+            <path d="M116 108Q160 86 204 108L196 130H124Z" fill="#172c3a" />
+            <use href="#context-question" x="48" y="31" class="context-flight" data-context-flight data-travel="100" />
+            <use href="#context-map" x="160" y="31" class="context-flight" data-context-flight data-travel="0" />
+            <use href="#context-rule" x="272" y="31" class="context-flight" data-context-flight data-travel="-100" />
+            <path d="M109 111q51 19 102 0v61q0 23-22 23h-58q-22 0-22-23Z" fill="#2f7196" stroke="#245d7c" stroke-width="3" />
+            <rect x="135" y="148" width="50" height="34" rx="10" fill="#8fd5e9" stroke="#245d7c" stroke-width="2" />
+            <path d="M147 157h26" stroke="#245d7c" stroke-width="2" stroke-linecap="round" />
+            <rect x="147" y="119" width="26" height="13" rx="4" fill="#f5c45f" />
+          </svg>
+          <button type="button" class="context-replay" data-replay-context hidden>Ver cómo se arma la mochila</button>
+        </div>
+      </figure>
     </section>
 
-    <section class="visual-section" aria-labelledby="token-title">
-      <header><span class="step">02 · La unidad variable</span><h2 id="token-title">Un token no mide dos caracteres</h2><p>Es una unidad elegida por el tokenizer del modelo. Puede representar un signo, una palabra corta o una parte de una palabra.</p></header>
-      <div class="token-board">
-        <div class="fixed-pairs" aria-label="Idea incorrecta: dividir siempre el texto en pares de caracteres"><span class="board-label">No funciona así</span><p><s>di · no · sa · ur · io</s><b aria-hidden="true">×</b></p><small>No se corta siempre en pares fijos.</small></div>
-        <div class="token-demo" aria-label="Fragmentos ilustrativos de longitud variable; no representan un tokenizer concreto"><span class="board-label">Fragmentos ilustrativos</span><div><i>Los</i><i>&nbsp;dinosaur</i><i>ios</i><i>&nbsp;usan</i><i>&nbsp;IA</i><i>.</i></div><small>No es una tokenización real: muestra que las piezas pueden tener longitudes distintas.</small></div>
+    <section id="entrada-modelo" class="visual-section context-measure" aria-labelledby="entrada-modelo-title">
+      <header>
+        <span class="step">01B · Medir el uso</span>
+        <h2 id="entrada-modelo-title">¿Cuánto contexto estamos usando?</h2>
+        <p>La misma pregunta puede ocupar más espacio si la app envía más información junto con tu pedido.</p>
+      </header>
+      <div class="context-usage">
+        <figure class="usage-example">
+          <figcaption>
+            <strong>Misma pregunta: «¿Por dónde seguimos?»</strong>
+            <span>En este ejemplo, hay espacio para 12.000 tokens de entrada.</span>
+          </figcaption>
+          <div class="usage-case">
+            <div><strong id="usage-basic-label">Pedido + historial reciente</strong><b>25 %</b></div>
+            <meter min="0" value="3000" max="12000" aria-labelledby="usage-basic-label">25 %</meter>
+            <p>3.000 tokens usados · quedan 9.000</p>
+          </div>
+          <div class="usage-case with-report">
+            <div><strong id="usage-report-label">Lo mismo + el informe de la expedición</strong><b>75 %</b></div>
+            <meter min="0" value="9000" max="12000" aria-labelledby="usage-report-label">75 %</meter>
+            <p>9.000 tokens usados · quedan 3.000</p>
+          </div>
+        </figure>
+        <article class="usage-method">
+          <h3>¿Cómo se calcula?</h3>
+          <ol>
+            <li>Contá los tokens de <strong>toda la entrada</strong>, no solo los del último mensaje.</li>
+            <li>Dividí el total por los tokens disponibles para la entrada y multiplicá por 100.</li>
+          </ol>
+          <p class="usage-equation">9.000 ÷ 12.000 × 100 = <strong>75 %</strong></p>
+          <p class="usage-note"><strong>¿Dónde lo ves?</strong> Buscá un medidor de contexto en la app. Si usás una API, consultá el conteo de tokens de entrada que reporta.</p>
+        </article>
       </div>
-      <div class="token-facts" role="list" aria-label="Propiedades de los tokens"><p role="listitem"><b>Longitud variable</b><span>Uno o varios caracteres.</span></p><p role="listitem"><b>Depende del modelo</b><span>Cada tokenizer decide sus piezas.</span></p><p role="listitem"><b>Conviene medir</b><span>No adivinar el conteo.</span></p></div>
+    </section>
+
+    <section id="tokens" class="visual-section" aria-labelledby="token-title">
+      <header><span class="step">02 · La unidad variable</span><h2 id="token-title">¿Qué es un token?</h2><p>Un token es una de las piezas en las que el <i>tokenizer</i> divide el texto antes de que el modelo lo procese. Las piezas no tienen un tamaño fijo.</p></header>
+      <figure class="token-comparison">
+        <figcaption><strong>Mismo texto: «{tokenExample}»</strong><span><code>␣</code> marca un espacio.</span></figcaption>
+        <div class="token-board">
+          <div class="fixed-pairs">
+            <span class="board-label">Corte inventado: de a dos caracteres</span>
+            <ul class="token-pieces" data-token-example="pairs" aria-label="Pares de caracteres, no tokens">
+              {characterPairs.map((piece) => <li>{showSpaces(piece)}</li>)}
+            </ul>
+            <strong data-token-count="pairs" data-count={characterPairs.length}>{characterPairs.length} pares · no son tokens</strong>
+          </div>
+          <div class="token-demo">
+            <span class="board-label">Tokenización real de OpenAI · <code>o200k_base</code></span>
+            <ul class="token-pieces" data-token-example="real" aria-label="Tokens reales de o200k_base">
+              {realTokens.map((piece) => <li>{showSpaces(piece)}</li>)}
+            </ul>
+            <strong data-token-count="real" data-count={realTokens.length}>{realTokens.length} tokens</strong>
+          </div>
+        </div>
+      </figure>
+      <div class="token-facts" role="list" aria-label="Propiedades de los tokens"><p role="listitem"><b>No hay tamaño fijo</b><span>Un token puede ser un signo, una palabra o parte de ella. Incluso 🦖 ocupa 3 tokens con este tokenizer.</span></p><p role="listitem"><b>Depende del tokenizer</b><span>Otro modelo puede dividir la misma frase de otra manera.</span></p><p role="listitem"><b>Para medir el contexto</b><span>Usá el conteo de tokens del modelo; no dividas los caracteres por dos.</span></p></div>
       <div class="budget" aria-label="Ejemplo conceptual del reparto de una ventana de contexto">
         <div class="rules">Instrucciones</div><div class="chat">Conversación</div><div class="files">Archivos</div><div class="tools">Tools</div><div class="output">Salida</div>
       </div>
       <small class="caption"><b>Entrada y salida comparten presupuesto.</b> Las proporciones cambian según la tarea, el modelo y la API.</small>
+    </section>
+
+    <section id="tokens-entrada-salida" class="visual-section" aria-labelledby="token-flow-title">
+      <header>
+        <span class="step">02B · Entrada y salida</span>
+        <h2 id="token-flow-title">¿Entra al modelo o sale de él?</h2>
+        <p>No son dos tipos distintos de token. La diferencia es si el modelo recibe ese token o lo genera en esa llamada.</p>
+      </header>
+      <div class="token-flow">
+        <article>
+          <h3>Tokens de entrada</h3>
+          <p>Son los que recibe el modelo: tu pedido más todo lo que la app incluya para que pueda responder.</p>
+          <p class="token-flow-example">«¿Por dónde seguimos?»</p>
+        </article>
+        <article>
+          <h3>Tokens de salida</h3>
+          <p>Son los que genera el modelo. En este ejemplo, forman la respuesta que ves.</p>
+          <p class="token-flow-example">«Sigamos por el sendero norte.»</p>
+        </article>
+      </div>
+      <p class="truth"><b>La misma frase puede cambiar de lado.</b> Si esa respuesta se vuelve a enviar como parte del historial en la próxima llamada, ahora cuenta como entrada.</p>
     </section>
 
     <ContextPack />
@@ -96,12 +213,117 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
   </main>
 </BaseLayout>
 
+<script>
+  const example = document.querySelector<HTMLElement>("[data-context-example]");
+  const replay = example?.querySelector<HTMLButtonElement>("[data-replay-context]");
+  if (example && replay) {
+    const illustration = replay.parentElement!;
+    const packets = [...illustration.querySelectorAll<SVGUseElement>("[data-context-flight]")];
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let animations: Animation[] = [];
+
+    function packContext() {
+      if (motion.matches) return;
+      animations.forEach((animation) => animation.cancel());
+      animations = packets.map((packet, index) => {
+        const distance = Number(packet.dataset.travel);
+        return packet.animate([
+          { transform: "translate(0, 0)", opacity: 1 },
+          { transform: `translate(${distance * .6}px, 25px)`, opacity: 1, offset: .55 },
+          { transform: `translate(${distance}px, 85px)`, opacity: 0 }
+        ], { duration: 780, delay: index * 290, easing: "ease-in-out" });
+      });
+    }
+
+    replay.hidden = false;
+    replay.addEventListener("click", packContext);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      observer.disconnect();
+      packContext();
+    }, { threshold: .5 });
+    observer.observe(illustration);
+    motion.addEventListener("change", () => {
+      if (motion.matches) animations.forEach((animation) => animation.cancel());
+    });
+  }
+
+</script>
+
 <style>
+  .context-example { display: grid; grid-template-columns: 1fr minmax(0, 24rem); align-items: center; gap: clamp(1rem, 4vw, 2rem); margin: 0; padding: clamp(1rem, 4vw, 2rem); border: 1px solid rgba(47,113,150,.22); border-radius: 1.4rem; background: #edf7fa; }
+  .context-example h3 { margin: 0 0 .9rem; font-size: 1.25rem; }
+  .context-example dl { display: grid; gap: .55rem; margin: 0; }
+  .context-example dt { color: #245d7c; font-weight: 850; }
+  .context-example dd { margin: 0; }
+  .context-example p { margin: .9rem 0 0; }
+  .context-illustration { display: grid; justify-items: center; gap: .35rem; }
+  .context-illustration svg { display: block; width: 100%; max-width: 20rem; height: auto; }
+  .context-illustration defs path { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .context-trails { fill: none; stroke: #2f7196; stroke-width: 2; stroke-dasharray: 2 5; stroke-linecap: round; }
+  .context-flight { opacity: 0; }
+  .context-replay:not([hidden]) { min-height: 2.75rem; padding: .5rem .8rem; border: 1px solid #2f7196; border-radius: .8rem; background: #fff; color: #245d7c; font: inherit; font-weight: 800; cursor: pointer; }
+  .context-replay:focus-visible { outline: 3px solid #245d7c; outline-offset: 3px; }
+  @media (max-width: 680px) { .context-example { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .context-replay:not([hidden]) { display: none; } }
   .tech-level { width: min(1100px, calc(100% - 2rem)); margin: 0 auto; padding-bottom: 5rem; }.hero-actions { display: flex; flex-wrap: wrap; gap: .65rem; }.hero-actions a { min-height: 2.75rem; display: inline-flex; align-items: center; padding: .65rem .9rem; border-radius: .8rem; background: #fff; color: #20302b; text-decoration: none; font-weight: 850; }
   .visual-section { padding: clamp(3rem, 8vw, 6.5rem) 0 0; scroll-margin-top: 6rem; }.visual-section > header { max-width: 780px; margin-bottom: 1.25rem; }.step { display: block; color: #245d7c; font-size: .75rem; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }h2 { margin: .35rem 0 .6rem; font-size: clamp(2rem, 5vw, 4rem); line-height: 1; letter-spacing: -.035em; }header p, article p { color: #51605a; }
-  .session-context { display: grid; grid-template-columns: 1.15fr auto 1fr auto .68fr; gap: .65rem; align-items: center; padding: .9rem; border: 1px solid rgba(47,113,150,.22); border-radius: 1.4rem; background: #edf7fa; }.session-context article { min-height: 12rem; padding: 1rem; border-radius: 1rem; background: #fff; }.session-context h3 { margin: .35rem 0 .25rem; font-size: 1.35rem; }.session-context p { margin: 0; }.diagram-label { color: #245d7c; font-size: .67rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }.session-items { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; margin-top: .8rem; }.session-items span,.context-items span { padding: .4rem .5rem; border-radius: .55rem; background: #e9f3f6; color: #375249; font-size: .75rem; font-weight: 800; }.request-bridge { display: grid; max-width: 8.5rem; justify-items: center; gap: .15rem; color: #245d7c; text-align: center; }.request-bridge > span { font-size: 1.5rem; font-weight: 900; }.request-bridge small { color: #65716d; line-height: 1.25; }.context-call { border: 2px solid rgba(105,65,165,.28); }.context-items { display: grid; gap: .35rem; margin-top: .8rem; }.context-items span { background: #f0ebfa; }.arrow { color: #2f7196; font-size: 1.35rem; font-weight: 900; }.model-receives { display: grid; min-width: 0; justify-items: center; align-content: center; text-align: center; background: #172c3a!important; color: #fff; }.model-receives > span { display: grid; width: 2.6rem; height: 2.6rem; place-items: center; border-radius: .8rem; background: rgba(255,255,255,.12); color: #8fd5e9; font-size: 1.3rem; }.model-receives p { color: #dce6e8; }
+  .token-flow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+  .token-flow article { display: grid; grid-template-rows: auto 1fr auto; padding: clamp(1rem, 2.4vw, 1.65rem); border: 1px solid rgba(47,113,150,.22); border-radius: 1.25rem; background: #edf7fa; }
+  .token-flow article + article { background: #172c3a; color: #fff; }
+  .token-flow h3 { margin: 0; font-size: clamp(1.25rem, 2.6vw, 1.75rem); }
+  .token-flow article p { margin: .45rem 0 0; }
+  .token-flow article + article p { color: #dce6e8; }
+  .token-flow article .token-flow-example { margin-top: 1rem; padding: .65rem .85rem; border-radius: .7rem; background: #dff0f6; color: #245d7c; font-weight: 800; }
+  .token-flow article + article .token-flow-example { background: rgba(255,255,255,.12); color: #fff; }
+  @media (max-width: 760px) { .token-flow { grid-template-columns: minmax(0, 1fr); } }
   .truth { margin: 1rem 0 0; padding: 1rem 1.15rem; border-left: 4px solid #2f7196; border-radius: 0 1rem 1rem 0; background: #e7f4fa; color: #4f5d58; }.truth.warning { border-color: #d99a1e; background: #fff7e5; }
-  .token-board { display: grid; grid-template-columns: .8fr 1.2fr; gap: .75rem; }.fixed-pairs,.token-demo { min-height: 10rem; padding: 1.1rem; border-radius: 1.2rem; }.fixed-pairs { border: 1px solid rgba(185,61,50,.22); background: #fff3ef; }.board-label { color: #245d7c; font-size: .68rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }.fixed-pairs p { display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin: 1.1rem 0 .35rem; }.fixed-pairs s { color: #754a43; font: 850 1.15rem ui-monospace, monospace; }.fixed-pairs b { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: .65rem; background: #b83d32; color: #fff; }.fixed-pairs small { color: #754a43; }.token-demo { background: #172c3a; color: #fff; }.token-demo .board-label { color: #8fd5e9; }.token-demo > div { display: flex; flex-wrap: wrap; gap: .35rem; margin: .85rem 0 .55rem; }.token-demo i { padding: .45rem .6rem; border: 1px solid rgba(255,255,255,.18); border-radius: .55rem; background: rgba(255,255,255,.1); color: #fff; font: normal 800 .9rem ui-monospace, monospace; }.token-demo small { color: #dce6e8; }.token-facts { display: grid; grid-template-columns: repeat(3,1fr); gap: .65rem; margin-top: .7rem; }.token-facts p { display: grid; gap: .15rem; margin: 0; padding: .65rem .8rem; border: 1px solid rgba(32,48,43,.1); border-radius: .8rem; background: rgba(255,255,255,.72); }.token-facts span { color: #65716d; font-size: .78rem; }
+  .visual-section.context-measure > header { max-width: none; }
+  .context-measure > header p { max-width: 68ch; }
+  .context-usage { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: .8rem; }
+  .usage-example, .usage-method { margin: 0; padding: clamp(1rem, 2.2vw, 1.55rem); border-radius: 1.25rem; }
+  .usage-example { background: #172c3a; color: #fff; }
+  .usage-example figcaption { display: grid; gap: .25rem; margin-bottom: .7rem; }
+  .usage-example figcaption strong, .usage-method h3 { font-size: clamp(1.12rem, 2vw, 1.5rem); line-height: 1.2; }
+  .usage-example figcaption span, .usage-case p { color: #dce6e8; }
+  .usage-case { padding-top: .65rem; border-top: 1px solid rgba(255,255,255,.24); }
+  .usage-case + .usage-case { margin-top: .65rem; }
+  .usage-case > div { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem 1rem; }
+  .usage-case b { color: #8fd5e9; font-size: 1.35rem; white-space: nowrap; }
+  .usage-case p { margin: .22rem 0 0; font-size: .9rem; }
+  .usage-case meter { display: block; width: 100%; height: 1.5rem; }
+  .usage-case meter::-webkit-meter-bar { border: 0; border-radius: .4rem; background: #3b5362; }
+  .usage-case meter::-webkit-meter-optimum-value { border-radius: .4rem; background: #8fd5e9; }
+  .usage-case meter::-moz-meter-bar { border-radius: .4rem; background: #8fd5e9; }
+  .usage-case.with-report b { color: #f5c45f; }
+  .usage-case.with-report meter::-webkit-meter-optimum-value { background: #f5c45f; }
+  .usage-case.with-report meter::-moz-meter-bar { background: #f5c45f; }
+  .usage-method { border: 1px solid rgba(47,113,150,.22); background: #edf7fa; }
+  .usage-method h3 { margin: 0; }
+  .usage-method ol { display: grid; gap: .35rem; margin: .6rem 0; padding-inline-start: 1.25rem; }
+  .usage-method .usage-equation { margin: .55rem 0; padding: .45rem .7rem; border-radius: .6rem; background: #dff0f6; color: #245d7c; font-variant-numeric: tabular-nums; }
+  .usage-method .usage-note { margin: .55rem 0 0; font-size: .91rem; }
+  @media (max-width: 760px) { .context-usage { grid-template-columns: minmax(0, 1fr); } }
+  @media (min-width: 761px) and (max-height: 760px) {
+    :global(body.is-presenting #contenido) > #entrada-modelo[data-presentation-slide] { padding-block: 1.1rem !important; }
+    :global(body.is-presenting) .context-measure > header { margin-bottom: .85rem; }
+  }
+  .token-comparison { margin: 0; }
+  .token-comparison figcaption { display: flex; flex-wrap: wrap; gap: .25rem 1rem; justify-content: space-between; margin-bottom: .55rem; }
+  .token-comparison figcaption span { color: #51605a; }
+  .token-board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+  .fixed-pairs, .token-demo { min-height: 10rem; padding: 1.1rem; border-radius: 1.2rem; }
+  .fixed-pairs { border: 1px solid rgba(185,61,50,.22); background: #fff3ef; color: #754a43; }
+  .board-label { color: #245d7c; font-size: .68rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+  .fixed-pairs .board-label { color: inherit; }
+  .token-demo { background: #172c3a; color: #fff; }
+  .token-demo .board-label { color: #8fd5e9; }
+  .token-demo .board-label code { text-transform: none; }
+  .token-pieces { display: flex; flex-wrap: wrap; gap: .3rem; margin: .65rem 0 .55rem; padding: 0; list-style: none; }
+  .token-pieces li { padding: .38rem .48rem; border-radius: .55rem; font: 800 .9rem ui-monospace, monospace; }
+  .fixed-pairs li { background: #ffe0d7; }
+  .token-demo li { background: rgba(255,255,255,.14); }
+  .token-facts { display: grid; grid-template-columns: repeat(3,1fr); gap: .65rem; margin-top: .7rem; }.token-facts p { display: grid; gap: .15rem; margin: 0; padding: .65rem .8rem; border: 1px solid rgba(32,48,43,.1); border-radius: .8rem; background: rgba(255,255,255,.72); }.token-facts span { color: #65716d; font-size: .78rem; }
   .budget { display: flex; min-height: 4rem; margin-top: 1rem; overflow: hidden; border-radius: 1rem; }.budget div { display: grid; place-items: center; padding: .5rem; color: #172c3a; font-size: .72rem; font-weight: 900; text-align: center; }.rules{width:15%;background:#c4b5fd}.chat{width:23%;background:#9bd8ea}.files{width:34%;background:#9ed7b5}.tools{width:18%;background:#f5c45f}.output{width:10%;background:#ef9a86}.caption { display: block; margin-top: .4rem; color: #65716d; }
   .position-card { display: grid; grid-template-columns: 1.1fr .9fr; gap: 1.5rem; align-items: center; padding: clamp(1rem, 3vw, 1.6rem); border: 1px solid rgba(47,113,150,.2); border-radius: 1.4rem; background: #f4f9fa; }.curve { padding: .5rem; border-radius: 1rem; background: #fff; }.curve svg { display: block; width: 100%; height: auto; }.curve .axis { fill: none; stroke: #ccd8d4; stroke-width: 2; }.curve .line { fill: none; stroke: #2f7196; stroke-width: 8; stroke-linecap: round; }.curve circle { fill: #6941a5; }.curve circle.risk { fill: #c9573f; }.curve text { fill: #52615c; font-size: 15px; }.position-card h3 { margin: 0; font-size: 1.5rem; }.position-card p, .position-card li { color: #51605a; }.practice-label { display: block; margin-top: .75rem; color: #245d7c; font-size: .76rem; letter-spacing: .06em; text-transform: uppercase; }.caveat { padding: .7rem .8rem; border-radius: .8rem; background: #fff3d6; }.source { color: #65716d; font-size: .83rem; }.source a { color: #245d7c; font-weight: 800; }
   .rot-board { display: grid; grid-template-columns: repeat(3,1fr); gap: .7rem; }.rot-board article { padding: .9rem; border: 1px solid rgba(47,113,150,.17); border-radius: 1.1rem; background: #f7faf9; }.rot-stage { display: block; color: #245d7c; font-size: .7rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }.signal-field { display: flex; flex-wrap: wrap; gap: .32rem; align-content: center; min-height: 7.2rem; margin: .65rem 0; padding: .7rem; border-radius: .85rem; background: #fff; }.signal-field b,.signal-field em,.signal-field i { min-height: 1.6rem; border-radius: .45rem; }.signal-field b,.signal-field em { display: inline-flex; align-items: center; padding: .25rem .45rem; font-size: .7rem; font-style: normal; }.signal-field b { background: #d9f0e4; color: #145c49; }.signal-field em { background: #ffe0d7; color: #913527; }.signal-field i { width: 2.4rem; background: #e5ece9; }.rot-board p { margin: 0; font-size: .85rem; }.problem-compare { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin-top: .75rem; }.problem-compare p { display: grid; gap: .18rem; margin: 0; padding: .7rem .85rem; border-radius: .85rem; background: #edf6fa; }.problem-compare span { color: #51605a; font-size: .82rem; }
@@ -109,6 +331,6 @@ const href = (path: string) => `${base.replace(/\/?$/, "/")}${path}`;
   .model-windows { display: grid; gap: .5rem; }.model-windows > span { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem .8rem; border-radius: .8rem; background: rgba(47,113,150,.07); }.model-windows small { text-align: right; }
   .quick-check { margin: clamp(3rem, 8vw, 6rem) 0 2rem; padding: clamp(1.3rem, 4vw, 2.4rem); border-radius: 1.5rem; background: #172c3a; color: #fff; }.quick-check .step { color: #8fd5e9; }.quick-check h2 { margin-bottom: 0; }.quick-check strong { color: #f5c45f; }
   .level-actions { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; }.level-actions a { color: #375249; font-weight: 850; }.level-actions .map-link { margin-inline: auto; }.level-actions .next { color: #245d7c; }a:focus-visible { outline: 3px solid #d99a1e; outline-offset: 4px; }
-  :global(body.is-presenting) .session-context article { min-height: 10.5rem; }:global(body.is-presenting) .token-board>* { min-height: 8.8rem; }:global(body.is-presenting) .signal-field { min-height: 5.5rem; }:global(body.is-presenting) .compact-strategy article { min-height: 8.4rem; }
-  @media(max-width:760px){.session-context,.token-board,.token-facts,.rot-board,.problem-compare,.compact-strategy,.loss-demo{grid-template-columns:1fr}.request-bridge{max-width:none}.request-bridge>span,.session-context>.arrow,.loss-demo>span{rotate:90deg;text-align:center}.session-items{grid-template-columns:1fr}.position-card{grid-template-columns:1fr}.budget{flex-direction:column}.budget div{width:100%!important;min-height:2.5rem}.model-windows>span{display:grid}.model-windows small{text-align:left}.level-actions{flex-direction:column}}
+  :global(body.is-presenting) .token-board>* { min-height: 8.8rem; }:global(body.is-presenting) .signal-field { min-height: 5.5rem; }:global(body.is-presenting) .compact-strategy article { min-height: 8.4rem; }
+  @media(max-width:760px){.token-board,.token-facts,.rot-board,.problem-compare,.compact-strategy,.loss-demo{grid-template-columns:1fr}.loss-demo>span{rotate:90deg;text-align:center}.position-card{grid-template-columns:1fr}.budget{flex-direction:column}.budget div{width:100%!important;min-height:2.5rem}.model-windows>span{display:grid}.model-windows small{text-align:left}.level-actions{flex-direction:column}}
 </style>
